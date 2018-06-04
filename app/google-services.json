@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "1002207596437",
+    "firebase_url": "https://wishlist-app-aromko.firebaseio.com",
+    "project_id": "wishlist-app-aromko",
+    "storage_bucket": "wishlist-app-aromko.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1002207596437:android:1f1f2fad04f4aff6",
+        "android_client_info": {
+          "package_name": "aromko.de.wishlist"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1002207596437-e45j57olbmk7kpq3q3dpv89c92c7n8sj.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "1002207596437-e45j57olbmk7kpq3q3dpv89c92c7n8sj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGdruKu3QT54Tgx_Eq1vHcRK7_BzQ4jss"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
