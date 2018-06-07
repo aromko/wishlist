@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -14,19 +16,27 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-import aromko.de.wishlist.R;
+import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+import aromko.de.wishlist.R;
+import aromko.de.wishlist.fragment.ItemListFragment;
+import aromko.de.wishlist.fragment.dummy.DummyContent;
+
+public class MainActivity extends AppCompatActivity implements ItemListFragment.OnListFragmentInteractionListener{
 
     private FirebaseAuth mAuth;
     private TextView txtUserEmail;
     private TextView txtUserName;
+    private ListView listView;
+    private String[] listentxt =  {"Seite 1", "Seite 2", "Seite 2", "Seite 2", "Seite 2", "Seite 2", "Seite 2", "Seite 2", "Seite 2", "Seite 2", "Seite 2", "Seite 2"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,10 +61,41 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        listView =  (ListView) findViewById(R.id.listView);
+        ArrayAdapter<String> drawListAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,listentxt);
+        listView.setAdapter(drawListAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Fragment fragment = null;
+
+                switch (i) {
+                    case 0:
+                        FirebaseAuth.getInstance().signOut();
+                        startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                        finish();
+                        break;
+                    case 1:
+                        fragment = new ItemListFragment();
+                        break;
+                }
+                if (fragment != null) {
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.content_frame, fragment);
+                    ft.commit();
+                }
+
+                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                drawer.closeDrawer(GravityCompat.START);
+            }
+        });
         txtUserEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txtUserEmail);
         txtUserName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txtUserName);
+
+
 
         checkIfUserLoggedIn(navigationView);
 
@@ -102,21 +143,8 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        Toast.makeText(MainActivity.this, String.valueOf(item.getItemId()), Toast.LENGTH_SHORT).show();
-        item.setChecked(true);
-        int id = item.getItemId();
+    public void onListFragmentInteraction(DummyContent.DummyItem item) {
 
-        if (id == R.id.nav_signout) {
-            FirebaseAuth.getInstance().signOut();
-            startActivity(new Intent(MainActivity.this, LoginActivity.class));
-            finish();
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 }
