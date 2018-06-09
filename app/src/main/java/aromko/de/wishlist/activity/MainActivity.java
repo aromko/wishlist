@@ -81,6 +81,8 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
                     case 1:
                         fragment = new ItemListFragment();
                         break;
+                    case 2:
+                        startActivity(new Intent(MainActivity.this, ProfilActivity.class));
                 }
                 if (fragment != null) {
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
