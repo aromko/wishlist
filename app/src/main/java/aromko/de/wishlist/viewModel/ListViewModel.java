@@ -49,9 +49,9 @@ public class ListViewModel extends ViewModel {
         });
     }
 
-    public void insertList(){
+    public void insertList(String text) {
         String key = FirebaseDatabase.getInstance().getReference("/wishLists").push().getKey();
-        WishList list = new WishList("Sonstiges",  System.currentTimeMillis()/1000);
+        WishList list = new WishList(text, System.currentTimeMillis() / 1000);
         //Map<String, Object> postValues = list.toMap();
 
         //Map<String, Object> childUpdates = new HashMap<>();

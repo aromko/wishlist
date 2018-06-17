@@ -45,7 +45,4 @@ public class WishList {
         result.put("timestamp", timestamp);
         return result;
     }
-
-
-
 }

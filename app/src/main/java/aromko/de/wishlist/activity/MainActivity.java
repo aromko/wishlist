@@ -3,6 +3,7 @@ package aromko.de.wishlist.activity;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,18 +15,22 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,16 +48,31 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     private TextView txtUserName;
     private ListView listView;
     private ArrayList<String> listItems = new ArrayList<String>();
+    private ImageButton imgBtnAddWishList;
+    private ListViewModel listViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        imgBtnAddWishList = findViewById(R.id.imgBtnAddWishList);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+        txtUserEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txtUserEmail);
+        txtUserName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txtUserName);
+
+        checkIfUserLoggedIn(navigationView);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -63,20 +83,12 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
             }
         });
 
-        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-
         listView = (ListView) findViewById(R.id.listView);
+
         final ArrayAdapter<String> drawListAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listItems);
         listView.setAdapter(drawListAdapter);
 
-        final ListViewModel listViewModel = ViewModelProviders.of(this).get(ListViewModel.class);
+        listViewModel = ViewModelProviders.of(this).get(ListViewModel.class);
 
         LiveData<List<WishList>> listsLiveData = listViewModel.getListsLiveData();
 
@@ -91,7 +103,6 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
             }
         });
 
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -102,8 +113,6 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
                         /*FirebaseAuth.getInstance().signOut();
                         startActivity(new Intent(MainActivity.this, LoginActivity.class));
                         finish();*/
-                        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-                        listViewModel.insertList();
                         break;
                     case 1:
                         fragment = new ItemListFragment();
@@ -121,12 +130,6 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
                 drawer.closeDrawer(GravityCompat.START);
             }
         });
-        txtUserEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txtUserEmail);
-        txtUserName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txtUserName);
-
-
-        checkIfUserLoggedIn(navigationView);
-
     }
 
     public void checkIfUserLoggedIn(NavigationView navigationView) {
@@ -174,5 +177,33 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     @Override
     public void onListFragmentInteraction(DummyContent.DummyItem item) {
 
+    }
+
+    public void addWishList(View view) {
+        Log.i("test", "ksakdjgaskd");
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        LayoutInflater inflater = MainActivity.this.getLayoutInflater();
+
+        View viewAddWishlist = inflater.inflate(R.layout.dialog_addwishlist, null);
+        builder.setView(viewAddWishlist);
+        final EditText txtNewWishlist = viewAddWishlist.findViewById(R.id.txtNewWishlist);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                String text = txtNewWishlist.getText().toString();
+                if (!text.isEmpty()) {
+                    listViewModel.insertList(text);
+                }
+                dialogInterface.dismiss();
+            }
+        }).setNegativeButton("Abbrechen", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        AlertDialog dialog = builder.create();
+
+        dialog.show();
     }
 }
