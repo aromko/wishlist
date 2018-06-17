@@ -1,10 +1,8 @@
 package aromko.de.wishlist.viewModel;
 
-import android.arch.core.util.Function;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -40,13 +38,6 @@ public class HotStockViewModel extends ViewModel {
                 }
             }
         });
-    }
-
-    private class Deserializer implements Function<DataSnapshot, HotStock> {
-        @Override
-        public HotStock apply(DataSnapshot dataSnapshot) {
-            return dataSnapshot.getValue(HotStock.class);
-        }
     }
 
     @NonNull

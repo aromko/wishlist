@@ -12,8 +12,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.firebase.database.DataSnapshot;
-
 import java.util.Locale;
 
 import aromko.de.wishlist.R;

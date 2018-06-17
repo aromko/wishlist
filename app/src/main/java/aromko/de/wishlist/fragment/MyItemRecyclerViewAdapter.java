@@ -6,11 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.List;
+
 import aromko.de.wishlist.R;
 import aromko.de.wishlist.fragment.ItemListFragment.OnListFragmentInteractionListener;
 import aromko.de.wishlist.fragment.dummy.DummyContent.DummyItem;
-
-import java.util.List;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the

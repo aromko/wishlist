@@ -15,8 +15,6 @@ import aromko.de.wishlist.R;
 import aromko.de.wishlist.fragment.dummy.DummyContent;
 import aromko.de.wishlist.fragment.dummy.DummyContent.DummyItem;
 
-import java.util.List;
-
 /**
  * A fragment representing a list of Items.
  * <p/>
@@ -60,7 +58,7 @@ public class ItemListFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
-                            @Nullable Bundle savedInstanceState) {
+                             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
 
         // Set the adapter

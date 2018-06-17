@@ -1,8 +1,11 @@
 package aromko.de.wishlist.activity;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -13,6 +16,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,28 +24,33 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import aromko.de.wishlist.R;
 import aromko.de.wishlist.fragment.ItemListFragment;
 import aromko.de.wishlist.fragment.dummy.DummyContent;
+import aromko.de.wishlist.model.Lists;
+import aromko.de.wishlist.viewModel.ListViewModel;
 
-public class MainActivity extends AppCompatActivity implements ItemListFragment.OnListFragmentInteractionListener{
+public class MainActivity extends AppCompatActivity implements ItemListFragment.OnListFragmentInteractionListener {
 
     private FirebaseAuth mAuth;
     private TextView txtUserEmail;
     private TextView txtUserName;
     private ListView listView;
-    private String[] listentxt =  {"Seite 1", "Seite 2", "Seite 2", "Seite 2", "Seite 2", "Seite 2", "Seite 2", "Seite 2", "Seite 2", "Seite 2", "Seite 2", "Seite 2"};
+    private ArrayList<String> listItems = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -62,11 +71,28 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         toggle.syncState();
 
 
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        listView =  (ListView) findViewById(R.id.listView);
-        ArrayAdapter<String> drawListAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,listentxt);
+
+        listView = (ListView) findViewById(R.id.listView);
+        final ArrayAdapter<String> drawListAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listItems);
         listView.setAdapter(drawListAdapter);
+
+        final ListViewModel listViewModel = ViewModelProviders.of(this).get(ListViewModel.class);
+
+        LiveData<List<Lists>> listsLiveData = listViewModel.getListsLiveData();
+
+        listsLiveData.observe(this, new Observer<List<Lists>>() {
+            @Override
+            public void onChanged(@Nullable List<Lists> lists) {
+                listItems.clear();
+                for (Lists list : lists) {
+                    listItems.add(list.getName());
+                }
+                drawListAdapter.notifyDataSetChanged();
+            }
+        });
+
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -74,9 +100,11 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
 
                 switch (i) {
                     case 0:
-                        FirebaseAuth.getInstance().signOut();
+                        /*FirebaseAuth.getInstance().signOut();
                         startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                        finish();
+                        finish();*/
+                        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+                        listViewModel.insertList();
                         break;
                     case 1:
                         fragment = new ItemListFragment();
@@ -96,7 +124,6 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         });
         txtUserEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txtUserEmail);
         txtUserName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txtUserName);
-
 
 
         checkIfUserLoggedIn(navigationView);
