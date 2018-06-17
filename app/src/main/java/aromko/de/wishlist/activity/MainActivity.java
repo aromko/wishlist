@@ -39,7 +39,7 @@ import aromko.de.wishlist.R;
 import aromko.de.wishlist.fragment.ItemListFragment;
 import aromko.de.wishlist.fragment.dummy.DummyContent;
 import aromko.de.wishlist.model.WishList;
-import aromko.de.wishlist.viewModel.ListViewModel;
+import aromko.de.wishlist.viewModel.WishListViewModel;
 
 public class MainActivity extends AppCompatActivity implements ItemListFragment.OnListFragmentInteractionListener {
 
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     private ListView listView;
     private ArrayList<String> listItems = new ArrayList<String>();
     private ImageButton imgBtnAddWishList;
-    private ListViewModel listViewModel;
+    private WishListViewModel listViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         final ArrayAdapter<String> drawListAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listItems);
         listView.setAdapter(drawListAdapter);
 
-        listViewModel = ViewModelProviders.of(this).get(ListViewModel.class);
+        listViewModel = ViewModelProviders.of(this).get(WishListViewModel.class);
 
         LiveData<List<WishList>> listsLiveData = listViewModel.getListsLiveData();
 

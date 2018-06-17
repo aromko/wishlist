@@ -18,7 +18,7 @@ import aromko.de.wishlist.database.FirebaseQueryLiveData;
 import aromko.de.wishlist.model.WishList;
 import aromko.de.wishlist.tasks.AppExecutors;
 
-public class ListViewModel extends ViewModel {
+public class WishListViewModel extends ViewModel {
 
     private static final DatabaseReference LISTS_REF =
             FirebaseDatabase.getInstance().getReference("/wishLists");
@@ -26,7 +26,7 @@ public class ListViewModel extends ViewModel {
     private final FirebaseQueryLiveData liveData = new FirebaseQueryLiveData(LISTS_REF);
     private final MediatorLiveData<List<WishList>> listsLiveData = new MediatorLiveData<>();
 
-    public ListViewModel() {
+    public WishListViewModel() {
         listsLiveData.addSource(liveData, new Observer<DataSnapshot>() {
             @Override
             public void onChanged(@Nullable final DataSnapshot dataSnapshot) {
