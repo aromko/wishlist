@@ -16,7 +16,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,7 +33,7 @@ import java.util.List;
 import aromko.de.wishlist.R;
 import aromko.de.wishlist.fragment.ItemListFragment;
 import aromko.de.wishlist.fragment.dummy.DummyContent;
-import aromko.de.wishlist.model.Lists;
+import aromko.de.wishlist.model.WishList;
 import aromko.de.wishlist.viewModel.ListViewModel;
 
 public class MainActivity extends AppCompatActivity implements ItemListFragment.OnListFragmentInteractionListener {
@@ -79,13 +78,13 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
 
         final ListViewModel listViewModel = ViewModelProviders.of(this).get(ListViewModel.class);
 
-        LiveData<List<Lists>> listsLiveData = listViewModel.getListsLiveData();
+        LiveData<List<WishList>> listsLiveData = listViewModel.getListsLiveData();
 
-        listsLiveData.observe(this, new Observer<List<Lists>>() {
+        listsLiveData.observe(this, new Observer<List<WishList>>() {
             @Override
-            public void onChanged(@Nullable List<Lists> lists) {
+            public void onChanged(@Nullable List<WishList> lists) {
                 listItems.clear();
-                for (Lists list : lists) {
+                for (WishList list : lists) {
                     listItems.add(list.getName());
                 }
                 drawListAdapter.notifyDataSetChanged();
