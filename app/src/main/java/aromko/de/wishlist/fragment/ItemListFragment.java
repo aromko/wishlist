@@ -1,5 +1,8 @@
 package aromko.de.wishlist.fragment;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,9 +14,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import aromko.de.wishlist.R;
-import aromko.de.wishlist.fragment.dummy.DummyContent;
-import aromko.de.wishlist.fragment.dummy.DummyContent.DummyItem;
+import aromko.de.wishlist.model.Wish;
+import aromko.de.wishlist.viewModel.WishViewModel;
 
 /**
  * A fragment representing a list of Items.
@@ -28,6 +34,9 @@ public class ItemListFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+
+    private WishViewModel wishViewModel;
+    private ArrayList<Wish> listItems = new ArrayList<Wish>();
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -59,18 +68,33 @@ public class ItemListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        //String strtext = getArguments().getString("wishlistname");
+        //Log.i("XXXXXX", strtext);
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
 
-        // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
+            final RecyclerView recyclerView = (RecyclerView) view;
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+
+            wishViewModel = ViewModelProviders.of(this).get(WishViewModel.class);
+
+            LiveData<List<Wish>> listsLiveData = wishViewModel.getListsLiveData();
+
+            listsLiveData.observe(this, new Observer<List<Wish>>() {
+                @Override
+                public void onChanged(@Nullable List<Wish> lists) {
+                    listItems.clear();
+                    for (Wish list : lists) {
+                        listItems.add(list);
+                    }
+                    recyclerView.setAdapter(new WishRecyclerViewAdapter(listItems, mListener));
+                }
+            });
         }
         return view;
     }
@@ -93,18 +117,8 @@ public class ItemListFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(Wish item);
     }
 }

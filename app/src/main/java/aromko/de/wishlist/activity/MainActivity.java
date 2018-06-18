@@ -5,6 +5,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -38,6 +39,7 @@ import java.util.List;
 import aromko.de.wishlist.R;
 import aromko.de.wishlist.fragment.ItemListFragment;
 import aromko.de.wishlist.fragment.dummy.DummyContent;
+import aromko.de.wishlist.model.Wish;
 import aromko.de.wishlist.model.WishList;
 import aromko.de.wishlist.viewModel.WishListViewModel;
 
@@ -84,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         });
 
         listView = (ListView) findViewById(R.id.listView);
+        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
         final ArrayAdapter<String> drawListAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listItems);
         listView.setAdapter(drawListAdapter);
@@ -105,18 +108,29 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 Fragment fragment = null;
+                listView.setSelection(position);
 
-                switch (i) {
+                for (int i = 0; i < listView.getChildCount(); i++){
+                    if (i == position){
+                        listView.getChildAt(i).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                        MainActivity.this.setTitle(listView.getItemAtPosition(position).toString());
+                    } else {
+                        listView.getChildAt(i).setBackgroundColor(Color.WHITE);
+                    }
+                }
+                //Bundle bundle = new Bundle();
+                //bundle.putString("wishlistname", listView.getItemAtPosition(position).toString());
+                fragment = new ItemListFragment();
+                //fragment.setArguments(bundle);
+                switch (position) {
                     case 0:
                         /*FirebaseAuth.getInstance().signOut();
                         startActivity(new Intent(MainActivity.this, LoginActivity.class));
                         finish();*/
                         break;
-                    case 1:
-                        fragment = new ItemListFragment();
-                        break;
+                    case 1:break;
                     case 2:
                         startActivity(new Intent(MainActivity.this, ProfilActivity.class));
                 }
@@ -175,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     }
 
     @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+    public void onListFragmentInteraction(Wish item) {
 
     }
 
