@@ -38,7 +38,6 @@ import java.util.List;
 
 import aromko.de.wishlist.R;
 import aromko.de.wishlist.fragment.ItemListFragment;
-import aromko.de.wishlist.fragment.dummy.DummyContent;
 import aromko.de.wishlist.model.Wish;
 import aromko.de.wishlist.model.WishList;
 import aromko.de.wishlist.viewModel.WishListViewModel;
@@ -112,8 +111,8 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
                 Fragment fragment = null;
                 listView.setSelection(position);
 
-                for (int i = 0; i < listView.getChildCount(); i++){
-                    if (i == position){
+                for (int i = 0; i < listView.getChildCount(); i++) {
+                    if (i == position) {
                         listView.getChildAt(i).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                         MainActivity.this.setTitle(listView.getItemAtPosition(position).toString());
                     } else {
@@ -130,7 +129,8 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
                         startActivity(new Intent(MainActivity.this, LoginActivity.class));
                         finish();*/
                         break;
-                    case 1:break;
+                    case 1:
+                        break;
                     case 2:
                         startActivity(new Intent(MainActivity.this, ProfilActivity.class));
                 }
@@ -190,7 +190,10 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
 
     @Override
     public void onListFragmentInteraction(Wish item) {
+    }
 
+    @Override
+    public void onFavoriteInteraction(Wish item, Boolean isFavorite) {
     }
 
     public void addWishList(View view) {

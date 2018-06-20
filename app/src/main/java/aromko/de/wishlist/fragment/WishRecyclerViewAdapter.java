@@ -5,20 +5,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
 
 import aromko.de.wishlist.R;
 import aromko.de.wishlist.fragment.ItemListFragment.OnListFragmentInteractionListener;
-import aromko.de.wishlist.fragment.dummy.DummyContent.DummyItem;
 import aromko.de.wishlist.model.Wish;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
- */
 public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerViewAdapter.ViewHolder> {
 
     private final List<Wish> mValues;
@@ -38,42 +33,58 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        Log.i("KKKK", mValues.get(position).getName());
         holder.mItem = mValues.get(position);
-        holder.mContentView.setText(mValues.get(position).getName());
+        holder.item_name.setText(mValues.get(position).getName());
+        holder.item_price.setText(String.valueOf(mValues.get(position).getPrice()));
+
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 if (null != mListener) {
                     mListener.onListFragmentInteraction(holder.mItem);
                 }
             }
         });
+
+        holder.favorite.setOnClickListener(new ImageView.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ImageView imageView = (ImageView) view.findViewById(R.id.favorite);
+
+                imageView.setImageResource(R.drawable.ic_favorite);
+                if (null != mListener) {
+                    mListener.onFavoriteInteraction(holder.mItem, true);
+                }
+            }
+        });
+
     }
 
     @Override
     public int getItemCount() {
-        Log.i("OOOOO", String.valueOf(mValues.size()));
         return mValues.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
+        public final TextView item_name;
+        public final TextView item_price;
+        public final ImageView favorite;
+
         public Wish mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.item_number);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            item_name = (TextView) view.findViewById(R.id.item_name);
+            item_price = (TextView) view.findViewById(R.id.item_price);
+            favorite = (ImageView) view.findViewById(R.id.favorite);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + item_name.getText() + "'";
         }
     }
 }

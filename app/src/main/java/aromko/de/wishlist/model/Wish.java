@@ -3,6 +3,7 @@ package aromko.de.wishlist.model;
 public class Wish {
 
     private String name;
+    private double price;
 
     public String getName() {
         return name;
@@ -12,18 +13,27 @@ public class Wish {
         this.name = name;
     }
 
-    public Wish() {
+    public double getPrice() {
+        return price;
     }
 
-    public Wish(String name) {
+    public void setPrice(double price) {
+        this.price = price;
+    }
 
-        this.name = name;
+    public Wish() {
     }
 
     @Override
     public String toString() {
         return "Wish{" +
                 "name='" + name + '\'' +
+                ", price=" + price +
                 '}';
+    }
+
+    public Wish(String name, double price) {
+        this.name = name;
+        this.price = price;
     }
 }

@@ -7,9 +7,11 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +22,8 @@ import java.util.List;
 import aromko.de.wishlist.R;
 import aromko.de.wishlist.model.Wish;
 import aromko.de.wishlist.viewModel.WishViewModel;
+
+import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
 
 /**
  * A fragment representing a list of Items.
@@ -80,7 +84,8 @@ public class ItemListFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-
+            DividerItemDecoration itemDecor = new DividerItemDecoration(this.getContext(), HORIZONTAL);
+            recyclerView.addItemDecoration(itemDecor);
             wishViewModel = ViewModelProviders.of(this).get(WishViewModel.class);
 
             LiveData<List<Wish>> listsLiveData = wishViewModel.getListsLiveData();
@@ -95,6 +100,17 @@ public class ItemListFragment extends Fragment {
                     recyclerView.setAdapter(new WishRecyclerViewAdapter(listItems, mListener));
                 }
             });
+
+            mListener = new OnListFragmentInteractionListener() {
+                @Override
+                public void onListFragmentInteraction(Wish item) {
+                }
+
+                @Override
+                public void onFavoriteInteraction(Wish item, Boolean isFavorite) {
+                    wishViewModel.updateWish("hello");
+                }
+            };
         }
         return view;
     }
@@ -120,5 +136,7 @@ public class ItemListFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(Wish item);
+
+        void onFavoriteInteraction(Wish item, Boolean isFavorite);
     }
 }

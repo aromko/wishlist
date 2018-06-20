@@ -17,7 +17,6 @@ import java.util.List;
 
 import aromko.de.wishlist.database.FirebaseQueryLiveData;
 import aromko.de.wishlist.model.Wish;
-import aromko.de.wishlist.model.WishList;
 import aromko.de.wishlist.tasks.AppExecutors;
 
 public class WishViewModel extends ViewModel {
@@ -54,5 +53,9 @@ public class WishViewModel extends ViewModel {
     @NonNull
     public LiveData<List<Wish>> getListsLiveData() {
         return listsLiveData;
+    }
+
+    public void updateWish(String text) {
+        Log.i("uodate", text);
     }
 }
