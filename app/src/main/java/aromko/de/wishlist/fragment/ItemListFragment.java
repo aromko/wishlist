@@ -11,7 +11,6 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +20,7 @@ import java.util.List;
 
 import aromko.de.wishlist.R;
 import aromko.de.wishlist.model.Wish;
+import aromko.de.wishlist.model.WishModelFactory;
 import aromko.de.wishlist.viewModel.WishViewModel;
 
 import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
@@ -72,8 +72,7 @@ public class ItemListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        //String strtext = getArguments().getString("wishlistname");
-        //Log.i("XXXXXX", strtext);
+        String wishlistId = getArguments().getString("wishlistId");
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
 
         if (view instanceof RecyclerView) {
@@ -86,7 +85,8 @@ public class ItemListFragment extends Fragment {
             }
             DividerItemDecoration itemDecor = new DividerItemDecoration(this.getContext(), HORIZONTAL);
             recyclerView.addItemDecoration(itemDecor);
-            wishViewModel = ViewModelProviders.of(this).get(WishViewModel.class);
+            wishViewModel = ViewModelProviders.of(this, new WishModelFactory(this.getActivity().getApplication(), wishlistId.toString())).get(WishViewModel.class);
+            //wishViewModel = new WishViewModel(wishlistId.toString());
 
             LiveData<List<Wish>> listsLiveData = wishViewModel.getListsLiveData();
 

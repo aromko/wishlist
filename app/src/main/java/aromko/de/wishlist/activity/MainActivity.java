@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     private TextView txtUserEmail;
     private TextView txtUserName;
     private ListView listView;
-    private ArrayList<String> listItems = new ArrayList<String>();
+    private ArrayList<WishList> listItems = new ArrayList<WishList>();
     private ImageButton imgBtnAddWishList;
     private WishListViewModel listViewModel;
 
@@ -87,19 +87,19 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         listView = (ListView) findViewById(R.id.listView);
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
-        final ArrayAdapter<String> drawListAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listItems);
+        final ArrayAdapter<WishList> drawListAdapter = new ArrayAdapter<WishList>(this, android.R.layout.simple_list_item_1, listItems);
         listView.setAdapter(drawListAdapter);
 
         listViewModel = ViewModelProviders.of(this).get(WishListViewModel.class);
 
-        LiveData<List<WishList>> listsLiveData = listViewModel.getListsLiveData();
+        final LiveData<List<WishList>> listsLiveData = listViewModel.getListsLiveData();
 
         listsLiveData.observe(this, new Observer<List<WishList>>() {
             @Override
             public void onChanged(@Nullable List<WishList> lists) {
                 listItems.clear();
                 for (WishList list : lists) {
-                    listItems.add(list.getName());
+                    listItems.add(list);
                 }
                 drawListAdapter.notifyDataSetChanged();
             }
@@ -119,10 +119,11 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
                         listView.getChildAt(i).setBackgroundColor(Color.WHITE);
                     }
                 }
-                //Bundle bundle = new Bundle();
-                //bundle.putString("wishlistname", listView.getItemAtPosition(position).toString());
+
+                Bundle bundle = new Bundle();
+                bundle.putString("wishlistId", listItems.get(position).getKey());
                 fragment = new ItemListFragment();
-                //fragment.setArguments(bundle);
+                fragment.setArguments(bundle);
                 switch (position) {
                     case 0:
                         /*FirebaseAuth.getInstance().signOut();

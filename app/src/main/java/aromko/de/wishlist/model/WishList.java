@@ -1,11 +1,21 @@
 package aromko.de.wishlist.model;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.google.firebase.database.Exclude;
 
 public class WishList {
+
+    @Exclude
+    private String key;
     private String name;
     private long timestamp;
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
 
     public String getName() {
         return name;
@@ -33,16 +43,8 @@ public class WishList {
 
     @Override
     public String toString() {
-        return "WishList{" +
-                "name='" + name + '\'' +
-                ", timestamp=" + timestamp +
-                '}';
+        return name;
     }
 
-    public Map<String, Object> toMap() {
-        HashMap<String, Object> result = new HashMap<>();
-        result.put("name", name);
-        result.put("timestamp", timestamp);
-        return result;
-    }
+
 }

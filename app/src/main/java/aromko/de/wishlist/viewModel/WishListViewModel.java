@@ -36,7 +36,9 @@ public class WishListViewModel extends ViewModel {
                         @Override
                         public void run() {
                             for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                lists.add(snapshot.getValue(WishList.class));
+                                WishList wishList = snapshot.getValue(WishList.class);
+                                wishList.setKey(snapshot.getKey().toString());
+                                lists.add(wishList);
                             }
                             listsLiveData.postValue(lists);
                         }

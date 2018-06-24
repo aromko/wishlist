@@ -1,5 +1,6 @@
 package aromko.de.wishlist.viewModel;
 
+import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.Observer;
@@ -20,14 +21,14 @@ import aromko.de.wishlist.model.Wish;
 import aromko.de.wishlist.tasks.AppExecutors;
 
 public class WishViewModel extends ViewModel {
-
-    private static final DatabaseReference WISHES_REF =
-            FirebaseDatabase.getInstance().getReference("/wishes");
-
-    private final FirebaseQueryLiveData liveData = new FirebaseQueryLiveData(WISHES_REF);
+    private static DatabaseReference wishes_ref;
+    private final FirebaseQueryLiveData liveData;
     private final MediatorLiveData<List<Wish>> listsLiveData = new MediatorLiveData<>();
 
-    public WishViewModel() {
+    public WishViewModel(Application mApplication, String wishlistId) {
+
+        wishes_ref = FirebaseDatabase.getInstance().getReference("/wishes/" + wishlistId);
+        liveData = new FirebaseQueryLiveData(wishes_ref);
         listsLiveData.addSource(liveData, new Observer<DataSnapshot>() {
             @Override
             public void onChanged(@Nullable final DataSnapshot dataSnapshot) {
