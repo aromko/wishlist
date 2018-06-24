@@ -4,8 +4,6 @@ import android.app.Application;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 
-import aromko.de.wishlist.viewModel.WishViewModel;
-
 public class WishViewModelFactory extends ViewModelProvider.NewInstanceFactory {
     private Application mApplication;
     private String mParam;

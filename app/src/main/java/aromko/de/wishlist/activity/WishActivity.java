@@ -6,11 +6,8 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -20,7 +17,6 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 
 import aromko.de.wishlist.R;
-import aromko.de.wishlist.viewModel.WishListViewModel;
 import aromko.de.wishlist.viewModel.WishViewModel;
 
 public class WishActivity extends AppCompatActivity {
@@ -74,16 +70,16 @@ public class WishActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void addImageFromStorage(View view){
+    public void addImageFromStorage(View view) {
         startActivityForResult(new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI), 1);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 1) {
-            if(resultCode == RESULT_OK){
-                if(data != null) {
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                if (data != null) {
                     Uri uri = data.getData();
                     ivProduct.setImageURI(uri);
                 }
@@ -91,7 +87,7 @@ public class WishActivity extends AppCompatActivity {
         }
     }
 
-    public void saveWish(View view){
+    public void saveWish(View view) {
         wishViewModel.insertWish(wishlistId);
     }
 }

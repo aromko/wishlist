@@ -7,7 +7,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,10 +19,8 @@ import java.util.List;
 
 import aromko.de.wishlist.R;
 import aromko.de.wishlist.model.Wish;
-import aromko.de.wishlist.viewModel.WishViewModelFactory;
 import aromko.de.wishlist.viewModel.WishViewModel;
-
-import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
+import aromko.de.wishlist.viewModel.WishViewModelFactory;
 
 /**
  * A fragment representing a list of Items.

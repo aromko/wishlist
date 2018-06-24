@@ -9,6 +9,14 @@ public class WishList {
     private String name;
     private long timestamp;
 
+    public WishList() {
+    }
+
+    public WishList(String name, long timestamp) {
+        this.name = name;
+        this.timestamp = timestamp;
+    }
+
     public String getKey() {
         return key;
     }
@@ -30,14 +38,6 @@ public class WishList {
     }
 
     public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public WishList() {
-    }
-
-    public WishList(String name, long timestamp) {
-        this.name = name;
         this.timestamp = timestamp;
     }
 

@@ -5,6 +5,14 @@ public class Wish {
     private String name;
     private double price;
 
+    public Wish() {
+    }
+
+    public Wish(String name, double price) {
+        this.name = name;
+        this.price = price;
+    }
+
     public String getName() {
         return name;
     }
@@ -21,19 +29,11 @@ public class Wish {
         this.price = price;
     }
 
-    public Wish() {
-    }
-
     @Override
     public String toString() {
         return "Wish{" +
                 "name='" + name + '\'' +
                 ", price=" + price +
                 '}';
-    }
-
-    public Wish(String name, double price) {
-        this.name = name;
-        this.price = price;
     }
 }

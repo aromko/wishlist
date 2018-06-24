@@ -25,9 +25,11 @@ public class WishViewModel extends ViewModel {
     private final FirebaseQueryLiveData liveData;
     private final MediatorLiveData<List<Wish>> listsLiveData = new MediatorLiveData<>();
 
-    public WishViewModel(){
+    public WishViewModel() {
         liveData = new FirebaseQueryLiveData(wishes_ref);
-    };
+    }
+
+    ;
 
     public WishViewModel(Application mApplication, String wishlistId) {
 

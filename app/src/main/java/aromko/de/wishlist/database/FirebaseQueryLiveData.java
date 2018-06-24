@@ -15,8 +15,8 @@ public class FirebaseQueryLiveData extends LiveData<DataSnapshot> {
 
     private final Query query;
     private final MyValueEventListener listener = new MyValueEventListener();
-    private boolean listenerRemovePending = false;
     private final Handler handler = new Handler();
+    private boolean listenerRemovePending = false;
     private final Runnable removeListener = new Runnable() {
         @Override
         public void run() {
