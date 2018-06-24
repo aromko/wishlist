@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 
 import aromko.de.wishlist.R;
+import aromko.de.wishlist.model.Wish;
 import aromko.de.wishlist.viewModel.WishViewModel;
 
 public class WishActivity extends AppCompatActivity {
@@ -27,6 +28,7 @@ public class WishActivity extends AppCompatActivity {
     private EditText txtPrice;
     private EditText txtUrl;
     private EditText txtDescription;
+    private Spinner spinner;
 
     private WishViewModel wishViewModel;
     private String wishlistId;
@@ -49,7 +51,7 @@ public class WishActivity extends AppCompatActivity {
         txtUrl = findViewById(R.id.txtUrl);
         txtDescription = findViewById(R.id.txtDescription);
 
-        Spinner spinner = (Spinner) findViewById(R.id.spWishstrength);
+        spinner = findViewById(R.id.spWishstrength);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.wishstrength_selection_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_list_item_1);
@@ -88,6 +90,7 @@ public class WishActivity extends AppCompatActivity {
     }
 
     public void saveWish(View view) {
-        wishViewModel.insertWish(wishlistId);
+        Wish wish = new Wish(txtTitle.getText().toString(), Double.valueOf(txtPrice.getText().toString()), txtUrl.getText().toString(), txtDescription.getText().toString(), Long.valueOf(spinner.getSelectedItemId()), true, System.currentTimeMillis() / 1000);
+        wishViewModel.insertWish(wishlistId, wish);
     }
 }

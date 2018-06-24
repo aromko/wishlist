@@ -66,9 +66,9 @@ public class WishViewModel extends ViewModel {
         Log.i("uodate", text);
     }
 
-    public void insertWish(String wishlistId) {
+    public void insertWish(String wishlistId, Wish wish) {
+        Log.i("xxxxxx", wish.toString());
         String key = FirebaseDatabase.getInstance().getReference("/wishes").push().getKey();
-        Wish wish = new Wish("TESTXXXX", 100.00);
         //Map<String, Object> postValuesinsert = list.toMap();
 
         //Map<String, Object> childUpdates = new HashMap<>();
