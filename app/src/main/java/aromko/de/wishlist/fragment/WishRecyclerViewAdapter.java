@@ -34,7 +34,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         holder.item_name.setText(mValues.get(position).getName());
-        holder.item_price.setText(String.valueOf(mValues.get(position).getPrice()));
+        holder.item_price.setText(String.valueOf(mValues.get(position).getPrice() + " €"));
 
 
         holder.mView.setOnClickListener(new View.OnClickListener() {

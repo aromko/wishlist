@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="wishstrength_selection_array">
+        <item>nice-to-have</item>
+        <item>am liebsten sofort</item>
+    </string-array>
+</resources>

@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -51,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     private ArrayList<WishList> listItems = new ArrayList<WishList>();
     private ImageButton imgBtnAddWishList;
     private WishListViewModel listViewModel;
+    private String selectedWishlistId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,8 +79,9 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent wishActivity = new Intent(MainActivity.this, WishActivity.class);
+                wishActivity.putExtra("wishlistId", selectedWishlistId);
+                startActivity(wishActivity);
             }
         });
 
@@ -120,8 +121,9 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
                     }
                 }
 
+                selectedWishlistId = listItems.get(position).getKey();
                 Bundle bundle = new Bundle();
-                bundle.putString("wishlistId", listItems.get(position).getKey());
+                bundle.putString("wishlistId", selectedWishlistId);
                 fragment = new ItemListFragment();
                 fragment.setArguments(bundle);
                 switch (position) {

@@ -25,6 +25,10 @@ public class WishViewModel extends ViewModel {
     private final FirebaseQueryLiveData liveData;
     private final MediatorLiveData<List<Wish>> listsLiveData = new MediatorLiveData<>();
 
+    public WishViewModel(){
+        liveData = new FirebaseQueryLiveData(wishes_ref);
+    };
+
     public WishViewModel(Application mApplication, String wishlistId) {
 
         wishes_ref = FirebaseDatabase.getInstance().getReference("/wishes/" + wishlistId);
@@ -58,5 +62,17 @@ public class WishViewModel extends ViewModel {
 
     public void updateWish(String text) {
         Log.i("uodate", text);
+    }
+
+    public void insertWish(String wishlistId) {
+        String key = FirebaseDatabase.getInstance().getReference("/wishes").push().getKey();
+        Wish wish = new Wish("TESTXXXX", 100.00);
+        //Map<String, Object> postValuesinsert = list.toMap();
+
+        //Map<String, Object> childUpdates = new HashMap<>();
+        //childUpdates.put(key, postValues);
+
+        //mDatabase.getReference("/lists").updateChildren(childUpdates);
+        FirebaseDatabase.getInstance().getReference("/wishes/" + wishlistId + "/" + key).setValue(wish);
     }
 }

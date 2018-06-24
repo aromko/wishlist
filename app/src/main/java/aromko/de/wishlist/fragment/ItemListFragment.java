@@ -20,7 +20,7 @@ import java.util.List;
 
 import aromko.de.wishlist.R;
 import aromko.de.wishlist.model.Wish;
-import aromko.de.wishlist.model.WishModelFactory;
+import aromko.de.wishlist.viewModel.WishViewModelFactory;
 import aromko.de.wishlist.viewModel.WishViewModel;
 
 import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
@@ -83,9 +83,7 @@ public class ItemListFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            DividerItemDecoration itemDecor = new DividerItemDecoration(this.getContext(), HORIZONTAL);
-            recyclerView.addItemDecoration(itemDecor);
-            wishViewModel = ViewModelProviders.of(this, new WishModelFactory(this.getActivity().getApplication(), wishlistId.toString())).get(WishViewModel.class);
+            wishViewModel = ViewModelProviders.of(this, new WishViewModelFactory(this.getActivity().getApplication(), wishlistId.toString())).get(WishViewModel.class);
             //wishViewModel = new WishViewModel(wishlistId.toString());
 
             LiveData<List<Wish>> listsLiveData = wishViewModel.getListsLiveData();
