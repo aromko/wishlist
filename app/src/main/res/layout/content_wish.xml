@@ -132,7 +132,8 @@
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/btnAddPhoto"
-                app:srcCompat="@drawable/no_image_available" />
+                app:srcCompat="@drawable/no_image_available"
+                android:tag="no_image_available"/>
 
             <ImageButton
                 android:id="@+id/imageButton2"
@@ -159,5 +160,22 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/flProgressBarHolder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:clickable="true">
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:clickable="true"
+            android:indeterminate="true"
+            android:visibility="gone" />
+    </FrameLayout>
 
 </android.support.constraint.ConstraintLayout>

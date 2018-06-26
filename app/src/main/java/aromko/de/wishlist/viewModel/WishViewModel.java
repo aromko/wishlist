@@ -66,7 +66,7 @@ public class WishViewModel extends ViewModel {
         Log.i("uodate", text);
     }
 
-    public void insertWish(String wishlistId, Wish wish) {
+    public String insertWish(String wishlistId, Wish wish) {
         Log.i("xxxxxx", wish.toString());
         String key = FirebaseDatabase.getInstance().getReference("/wishes").push().getKey();
         //Map<String, Object> postValuesinsert = list.toMap();
@@ -76,5 +76,6 @@ public class WishViewModel extends ViewModel {
 
         //mDatabase.getReference("/lists").updateChildren(childUpdates);
         FirebaseDatabase.getInstance().getReference("/wishes/" + wishlistId + "/" + key).setValue(wish);
+        return key;
     }
 }

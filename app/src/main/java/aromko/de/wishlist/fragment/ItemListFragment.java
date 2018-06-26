@@ -69,7 +69,11 @@ public class ItemListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        String wishlistId = getArguments().getString("wishlistId");
+        String wishlistId = "";
+
+        if (getArguments().size() > 0) {
+            wishlistId = getArguments().getString("wishlistId");
+        }
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
 
         if (view instanceof RecyclerView) {
@@ -80,7 +84,7 @@ public class ItemListFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            wishViewModel = ViewModelProviders.of(this, new WishViewModelFactory(this.getActivity().getApplication(), wishlistId.toString())).get(WishViewModel.class);
+            wishViewModel = ViewModelProviders.of(this, new WishViewModelFactory(this.getActivity().getApplication(), wishlistId)).get(WishViewModel.class);
             //wishViewModel = new WishViewModel(wishlistId.toString());
 
             LiveData<List<Wish>> listsLiveData = wishViewModel.getListsLiveData();

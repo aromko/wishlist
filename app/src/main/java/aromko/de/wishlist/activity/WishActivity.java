@@ -2,19 +2,33 @@ package aromko.de.wishlist.activity;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageException;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.ByteArrayOutputStream;
 
 import aromko.de.wishlist.R;
 import aromko.de.wishlist.model.Wish;
@@ -28,7 +42,8 @@ public class WishActivity extends AppCompatActivity {
     private EditText txtPrice;
     private EditText txtUrl;
     private EditText txtDescription;
-    private Spinner spinner;
+    private Spinner spWishstrength;
+    private FrameLayout flProgressBarHolder;
 
     private WishViewModel wishViewModel;
     private String wishlistId;
@@ -50,12 +65,13 @@ public class WishActivity extends AppCompatActivity {
         txtPrice = findViewById(R.id.txtPrice);
         txtUrl = findViewById(R.id.txtUrl);
         txtDescription = findViewById(R.id.txtDescription);
+        flProgressBarHolder = findViewById(R.id.flProgressBarHolder);
+        spWishstrength = findViewById(R.id.spWishstrength);
 
-        spinner = findViewById(R.id.spWishstrength);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.wishstrength_selection_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_list_item_1);
-        spinner.setAdapter(adapter);
+        spWishstrength.setAdapter(adapter);
 
         wishViewModel = ViewModelProviders.of(this).get(WishViewModel.class);
 
@@ -84,13 +100,56 @@ public class WishActivity extends AppCompatActivity {
                 if (data != null) {
                     Uri uri = data.getData();
                     ivProduct.setImageURI(uri);
+                    ivProduct.setTag("imageChanged");
                 }
             }
         }
     }
 
     public void saveWish(View view) {
-        Wish wish = new Wish(txtTitle.getText().toString(), Double.valueOf(txtPrice.getText().toString()), txtUrl.getText().toString(), txtDescription.getText().toString(), Long.valueOf(spinner.getSelectedItemId()), true, System.currentTimeMillis() / 1000);
-        wishViewModel.insertWish(wishlistId, wish);
+        flProgressBarHolder.setVisibility(View.VISIBLE);
+        Bitmap bitmap = ((BitmapDrawable) ivProduct.getDrawable()).getBitmap();
+
+        Wish wish = new Wish(txtTitle.getText().toString(), Double.valueOf(txtPrice.getText().toString()), txtUrl.getText().toString(), txtDescription.getText().toString(), Long.valueOf(spWishstrength.getSelectedItemId()), true, System.currentTimeMillis() / 1000);
+        String wishkey = wishViewModel.insertWish(wishlistId, wish);
+        if (wishkey.isEmpty() || !ivProduct.getTag().toString().equals("imageChanged")) {
+            Toast.makeText(getApplicationContext(), "Wunsch wurde erfolgreich hinzugefügt.", Toast.LENGTH_LONG).show();
+            flProgressBarHolder.setVisibility(View.GONE);
+            finish();
+        } else {
+            uploadImage(bitmap, wishkey);
+        }
+    }
+
+    public void uploadImage(Bitmap bitmap, String wishkey) {
+        FirebaseStorage storage = FirebaseStorage.getInstance("gs://wishlist-app-aromko.appspot.com");
+        StorageReference storageRef = storage.getReference(wishkey);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        UploadTask uploadTask = storageRef.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                int errorCode = ((StorageException) exception).getErrorCode();
+                String errorMessage = exception.getMessage();
+                switch (errorCode) {
+                    case -13000:
+                        errorMessage += "Unbekannter Fehler.";
+                }
+                flProgressBarHolder.setVisibility(View.GONE);
+                Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_LONG).show();
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Toast.makeText(getApplicationContext(), "Wunsch wurde erfolgreich hinzugefügt.", Toast.LENGTH_LONG).show();
+                flProgressBarHolder.setVisibility(View.GONE);
+                finish();
+            }
+        });
+
     }
 }
