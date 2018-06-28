@@ -110,7 +110,7 @@ public class WishActivity extends AppCompatActivity {
         flProgressBarHolder.setVisibility(View.VISIBLE);
         Bitmap bitmap = ((BitmapDrawable) ivProduct.getDrawable()).getBitmap();
 
-        Wish wish = new Wish(txtTitle.getText().toString(), Double.valueOf(txtPrice.getText().toString()), txtUrl.getText().toString(), txtDescription.getText().toString(), Long.valueOf(spWishstrength.getSelectedItemId()), true, System.currentTimeMillis() / 1000);
+        Wish wish = new Wish(txtTitle.getText().toString(), Double.valueOf(txtPrice.getText().toString()), txtUrl.getText().toString(), txtDescription.getText().toString(), Long.valueOf(spWishstrength.getSelectedItemId()), true, false, System.currentTimeMillis() / 1000);
         String wishkey = wishViewModel.insertWish(wishlistId, wish);
         if (wishkey.isEmpty() || !ivProduct.getTag().toString().equals("imageChanged")) {
             Toast.makeText(getApplicationContext(), "Wunsch wurde erfolgreich hinzugefügt.", Toast.LENGTH_LONG).show();

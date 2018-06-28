@@ -18,7 +18,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -43,6 +42,7 @@ import aromko.de.wishlist.viewModel.WishListViewModel;
 
 public class MainActivity extends AppCompatActivity implements ItemListFragment.OnListFragmentInteractionListener {
 
+    public static final String FAVORITE_LIST_ID = "-LFy-qZjZ7hbaJGYB81t";
     private FirebaseAuth mAuth;
     private TextView txtUserEmail;
     private TextView txtUserName;
@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     private ImageButton imgBtnAddWishList;
     private WishListViewModel listViewModel;
     private String selectedWishlistId;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
 
         checkIfUserLoggedIn(navigationView);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -90,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
 
         final ArrayAdapter<WishList> drawListAdapter = new ArrayAdapter<WishList>(this, android.R.layout.simple_list_item_1, listItems);
         listView.setAdapter(drawListAdapter);
-
+        drawListAdapter.setNotifyOnChange(true);
         listViewModel = ViewModelProviders.of(this).get(WishListViewModel.class);
 
         final LiveData<List<WishList>> listsLiveData = listViewModel.getListsLiveData();
@@ -98,55 +99,68 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         listsLiveData.observe(this, new Observer<List<WishList>>() {
             @Override
             public void onChanged(@Nullable List<WishList> lists) {
-                listItems.clear();
+                drawListAdapter.clear();
                 for (WishList list : lists) {
-                    listItems.add(list);
+                    drawListAdapter.add(list);
                 }
-                drawListAdapter.notifyDataSetChanged();
             }
         });
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Fragment fragment = null;
-                listView.setSelection(position);
+
 
                 for (int i = 0; i < listView.getChildCount(); i++) {
-                    if (i == position) {
-                        listView.getChildAt(i).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-                        MainActivity.this.setTitle(listView.getItemAtPosition(position).toString());
-                    } else {
-                        listView.getChildAt(i).setBackgroundColor(Color.WHITE);
-                    }
+                    listView.getChildAt(i).setBackgroundColor(Color.WHITE);
                 }
 
-                selectedWishlistId = listItems.get(position).getKey();
-                Bundle bundle = new Bundle();
-                bundle.putString("wishlistId", selectedWishlistId);
-                fragment = new ItemListFragment();
-                fragment.setArguments(bundle);
-                switch (position) {
-                    case 0:
-                        /*FirebaseAuth.getInstance().signOut();
-                        startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                        finish();*/
-                        break;
-                    case 1:
-                        break;
-                    case 2:
-                        startActivity(new Intent(MainActivity.this, ProfilActivity.class));
-                }
-                if (fragment != null) {
-                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                    ft.replace(R.id.content_frame, fragment);
-                    ft.commit();
-                }
+                openFragment(position);
 
                 DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                 drawer.closeDrawer(GravityCompat.START);
             }
         });
+
+        listView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+                if (listView.getAdapter().getCount() > 0) {
+                    listView.removeOnLayoutChangeListener(this);
+                    selectFavoritesOnStartup();
+                }
+            }
+        });
+
+    }
+
+    public void openFragment(int position) {
+        listView.setSelection(position);
+        selectedWishlistId = listItems.get(position).getKey();
+        if (selectedWishlistId.equals(FAVORITE_LIST_ID)) {
+            fab.hide();
+        } else {
+            fab.show();
+        }
+
+        Fragment fragment = null;
+        Bundle bundle = new Bundle();
+        bundle.putString("wishlistId", selectedWishlistId);
+        fragment = new ItemListFragment();
+        fragment.setArguments(bundle);
+
+        if (fragment != null) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.content_frame, fragment);
+            ft.commit();
+        }
+
+        listView.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        MainActivity.this.setTitle(listView.getItemAtPosition(position).toString());
+    }
+
+    public void selectFavoritesOnStartup() {
+        openFragment(0);
     }
 
     public void checkIfUserLoggedIn(NavigationView navigationView) {
@@ -192,15 +206,14 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     }
 
     @Override
-    public void onListFragmentInteraction(Wish item) {
+    public void onListFragmentInteraction(Wish item, int adapterPosition) {
     }
 
     @Override
-    public void onFavoriteInteraction(Wish item, Boolean isFavorite) {
+    public void onFavoriteInteraction(Wish wish, Boolean isFavorite) {
     }
 
     public void addWishList(View view) {
-        Log.i("test", "ksakdjgaskd");
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         LayoutInflater inflater = MainActivity.this.getLayoutInflater();
 

@@ -15,6 +15,7 @@ import aromko.de.wishlist.model.Wish;
 
 public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerViewAdapter.ViewHolder> {
 
+    public static final String FAVORITE_LIST_ID = "-LFy-qZjZ7hbaJGYB81t";
     private final List<Wish> mValues;
     private final OnListFragmentInteractionListener mListener;
 
@@ -33,15 +34,24 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
+        if (holder.mItem.getWishlistId().equals(FAVORITE_LIST_ID)) {
+            holder.favorite.setVisibility(View.INVISIBLE);
+        }
         holder.item_name.setText(mValues.get(position).getTitle());
         holder.item_price.setText(String.valueOf(mValues.get(position).getPrice() + " €"));
+        if (mValues.get(position).isFavorite()) {
+            holder.favorite.setImageResource(R.drawable.ic_favorite);
+            holder.favorite.setTag("isFavorite");
+        } else {
+            holder.favorite.setTag("isNoFavorite");
+        }
 
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (null != mListener) {
-                    mListener.onListFragmentInteraction(holder.mItem);
+                    mListener.onListFragmentInteraction(holder.mItem, holder.getAdapterPosition());
                 }
             }
         });
@@ -49,11 +59,18 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
         holder.favorite.setOnClickListener(new ImageView.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ImageView imageView = (ImageView) view.findViewById(R.id.favorite);
+                boolean isFavorite = true;
 
-                imageView.setImageResource(R.drawable.ic_favorite);
+                if (holder.favorite.getTag() == "isNoFavorite") {
+                    holder.favorite.setImageResource(R.drawable.ic_favorite);
+                    holder.favorite.setTag("isFavorite");
+                } else {
+                    holder.favorite.setImageResource(R.drawable.ic_favorite_border);
+                    holder.favorite.setTag("isNoFavorite");
+                    isFavorite = false;
+                }
                 if (null != mListener) {
-                    mListener.onFavoriteInteraction(holder.mItem, true);
+                    mListener.onFavoriteInteraction(holder.mItem, isFavorite);
                 }
             }
         });

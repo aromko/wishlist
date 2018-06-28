@@ -7,7 +7,6 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
@@ -21,6 +20,7 @@ import aromko.de.wishlist.model.Wish;
 import aromko.de.wishlist.tasks.AppExecutors;
 
 public class WishViewModel extends ViewModel {
+    public static final String FAVORITE_LIST_ID = "-LFy-qZjZ7hbaJGYB81t/";
     private static DatabaseReference wishes_ref;
     private final FirebaseQueryLiveData liveData;
     private final MediatorLiveData<List<Wish>> listsLiveData = new MediatorLiveData<>();
@@ -31,7 +31,7 @@ public class WishViewModel extends ViewModel {
 
     ;
 
-    public WishViewModel(Application mApplication, String wishlistId) {
+    public WishViewModel(Application mApplication, final String wishlistId) {
 
         wishes_ref = FirebaseDatabase.getInstance().getReference("/wishes/" + wishlistId);
         liveData = new FirebaseQueryLiveData(wishes_ref);
@@ -44,7 +44,10 @@ public class WishViewModel extends ViewModel {
                         @Override
                         public void run() {
                             for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                lists.add(snapshot.getValue(Wish.class));
+                                Wish wish = snapshot.getValue(Wish.class);
+                                wish.setWishId(snapshot.getKey().toString());
+                                wish.setWishlistId(wishlistId);
+                                lists.add(wish);
                             }
                             listsLiveData.postValue(lists);
                         }
@@ -62,12 +65,10 @@ public class WishViewModel extends ViewModel {
         return listsLiveData;
     }
 
-    public void updateWish(String text) {
-        Log.i("uodate", text);
+    public void updateWish(String wishlistId, Wish wish) {
     }
 
     public String insertWish(String wishlistId, Wish wish) {
-        Log.i("xxxxxx", wish.toString());
         String key = FirebaseDatabase.getInstance().getReference("/wishes").push().getKey();
         //Map<String, Object> postValuesinsert = list.toMap();
 
@@ -77,5 +78,14 @@ public class WishViewModel extends ViewModel {
         //mDatabase.getReference("/lists").updateChildren(childUpdates);
         FirebaseDatabase.getInstance().getReference("/wishes/" + wishlistId + "/" + key).setValue(wish);
         return key;
+    }
+
+    public void setWishAsFavorite(String wishlistId, String wishId, Wish wish) {
+        FirebaseDatabase.getInstance().getReference("/wishes/" + wishlistId + "/" + wishId).setValue(wish);
+        if (wish.isFavorite()) {
+            FirebaseDatabase.getInstance().getReference("/wishes/" + FAVORITE_LIST_ID + "/" + wishId).setValue(wish);
+        } else {
+            FirebaseDatabase.getInstance().getReference("/wishes/" + FAVORITE_LIST_ID + "/" + wishId).removeValue();
+        }
     }
 }

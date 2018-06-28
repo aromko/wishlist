@@ -74,6 +74,7 @@ public class ItemListFragment extends Fragment {
         if (getArguments().size() > 0) {
             wishlistId = getArguments().getString("wishlistId");
         }
+
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
 
         if (view instanceof RecyclerView) {
@@ -87,7 +88,7 @@ public class ItemListFragment extends Fragment {
             wishViewModel = ViewModelProviders.of(this, new WishViewModelFactory(this.getActivity().getApplication(), wishlistId)).get(WishViewModel.class);
             //wishViewModel = new WishViewModel(wishlistId.toString());
 
-            LiveData<List<Wish>> listsLiveData = wishViewModel.getListsLiveData();
+            final LiveData<List<Wish>> listsLiveData = wishViewModel.getListsLiveData();
 
             listsLiveData.observe(this, new Observer<List<Wish>>() {
                 @Override
@@ -97,17 +98,20 @@ public class ItemListFragment extends Fragment {
                         listItems.add(list);
                     }
                     recyclerView.setAdapter(new WishRecyclerViewAdapter(listItems, mListener));
+                    recyclerView.scrollToPosition(recyclerView.getChildAdapterPosition(recyclerView.getFocusedChild()));
                 }
             });
 
             mListener = new OnListFragmentInteractionListener() {
                 @Override
-                public void onListFragmentInteraction(Wish item) {
+                public void onListFragmentInteraction(Wish item, int adapterPosition) {
+                    recyclerView.scrollToPosition(adapterPosition);
                 }
 
                 @Override
-                public void onFavoriteInteraction(Wish item, Boolean isFavorite) {
-                    wishViewModel.updateWish("hello");
+                public void onFavoriteInteraction(Wish wish, Boolean isFavorite) {
+                    wish.setFavorite(isFavorite);
+                    wishViewModel.setWishAsFavorite(wish.getWishlistId(), wish.getWishId(), wish);
                 }
             };
         }
@@ -134,8 +138,8 @@ public class ItemListFragment extends Fragment {
 
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(Wish item);
+        void onListFragmentInteraction(Wish item, int adapterPosition);
 
-        void onFavoriteInteraction(Wish item, Boolean isFavorite);
+        void onFavoriteInteraction(Wish wish, Boolean isFavorite);
     }
 }
