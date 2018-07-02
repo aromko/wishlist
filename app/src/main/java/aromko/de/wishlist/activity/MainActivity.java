@@ -200,6 +200,10 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        } else if (id == R.id.action_logout) {
+            FirebaseAuth.getInstance().signOut();
+            finish();
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
         }
 
         return super.onOptionsItemSelected(item);
