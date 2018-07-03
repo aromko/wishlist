@@ -5,10 +5,13 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -25,10 +28,13 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageException;
+import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import aromko.de.wishlist.R;
 import aromko.de.wishlist.model.Wish;
@@ -60,7 +66,7 @@ public class WishActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Wunsch hinzufügen");
 
         btnAddPhoto = findViewById(R.id.btnAddPhoto);
-        ivProduct = findViewById(R.id.ivProduct);
+        ivProduct = findViewById(R.id.ivProductImage);
         txtTitle = findViewById(R.id.txtTitle);
         txtPrice = findViewById(R.id.txtPrice);
         txtUrl = findViewById(R.id.txtUrl);
@@ -92,6 +98,7 @@ public class WishActivity extends AppCompatActivity {
         startActivityForResult(new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI), 1);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -99,8 +106,29 @@ public class WishActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 if (data != null) {
                     Uri uri = data.getData();
+                    int rotate = 0;
+                    try {
+                        InputStream inputStream = getApplicationContext().getContentResolver().openInputStream(uri);
+                        ExifInterface exif = new ExifInterface(inputStream);
+                        int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+                        switch (orientation) {
+                            case ExifInterface.ORIENTATION_ROTATE_270:
+                                rotate = 270;
+                                break;
+                            case ExifInterface.ORIENTATION_ROTATE_180:
+                                rotate = 180;
+                                break;
+                            case ExifInterface.ORIENTATION_ROTATE_90:
+                                rotate = 90;
+                                break;
+                        }
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     ivProduct.setImageURI(uri);
                     ivProduct.setTag("imageChanged");
+                    ivProduct.setRotation(rotate);
                 }
             }
         }
@@ -124,12 +152,15 @@ public class WishActivity extends AppCompatActivity {
     public void uploadImage(Bitmap bitmap, String wishkey) {
         FirebaseStorage storage = FirebaseStorage.getInstance("gs://wishlist-app-aromko.appspot.com");
         StorageReference storageRef = storage.getReference(wishkey);
+        StorageMetadata metadata = new StorageMetadata.Builder()
+                .setCustomMetadata("rotation", Float.valueOf(ivProduct.getRotation()).toString())
+                .build();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] data = baos.toByteArray();
 
-        UploadTask uploadTask = storageRef.putBytes(data);
+        UploadTask uploadTask = storageRef.putBytes(data, metadata);
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {

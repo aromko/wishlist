@@ -14,16 +14,15 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/imageView3"
+            android:id="@+id/ivProductImage"
             android:layout_width="368dp"
-            android:layout_height="wrap_content"
+            android:layout_height="329dp"
+            android:layout_marginTop="35dp"
             android:adjustViewBounds="true"
-            android:maxHeight="200dp"
+            app:layout_constraintBottom_toTopOf="@+id/item_price"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/item_name"
-            app:srcCompat="@drawable/no_image_available" />
+            app:layout_constraintTop_toBottomOf="@+id/item_name" />
 
         <TextView
             android:id="@+id/item_name"
@@ -33,7 +32,6 @@
             android:layout_marginStart="8dp"
             android:text="Samsung S7"
             android:textSize="24sp"
-            app:layout_constraintBottom_toTopOf="@+id/imageView3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.076"
             app:layout_constraintStart_toStartOf="parent"
@@ -46,7 +44,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginRight="7dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="20dp"
             android:text="100 €"
             android:textSize="24sp"
             android:textStyle="bold"
@@ -55,7 +53,7 @@
             app:layout_constraintEnd_toStartOf="@+id/favorite"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView3"
+            app:layout_constraintTop_toBottomOf="@+id/ivProductImage"
             app:layout_constraintVertical_bias="0.0" />
 
         <ImageView
@@ -71,6 +69,13 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.008"
             app:srcCompat="@drawable/ic_favorite_border" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="20dp" />
 
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>

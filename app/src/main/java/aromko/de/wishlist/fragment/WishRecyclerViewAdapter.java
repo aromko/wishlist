@@ -1,11 +1,24 @@
 package aromko.de.wishlist.fragment;
 
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 
@@ -18,6 +31,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
     public static final String FAVORITE_LIST_ID = "-LFy-qZjZ7hbaJGYB81t";
     private final List<Wish> mValues;
     private final OnListFragmentInteractionListener mListener;
+    FirebaseStorage storage = FirebaseStorage.getInstance("gs://wishlist-app-aromko.appspot.com");
 
     public WishRecyclerViewAdapter(List<Wish> items, OnListFragmentInteractionListener listener) {
         mValues = items;
@@ -75,6 +89,34 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
             }
         });
 
+        if (mValues.get(position).isImageSet()) {
+            final StorageReference storageRef = storage.getReference(mValues.get(position).getWishId());
+            final float[] rotation = new float[1];
+
+            storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(final Uri uri) {
+                    String imageUrl = uri.toString();
+                    Glide.with(holder.productImage)
+                        .load(imageUrl)
+                        .into(new SimpleTarget<Drawable>() {
+                            @Override
+                            public void onResourceReady(@NonNull final Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                                storageRef.getMetadata().addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
+                                    @Override
+                                    public void onSuccess(StorageMetadata storageMetadata) {
+                                        rotation[0] = Float.valueOf(storageMetadata.getCustomMetadata("rotation"));
+                                        holder.productImage.setImageDrawable(resource);
+                                        holder.productImage.setRotation(rotation[0]);
+                                    }
+                                });
+                            }
+                        });
+                }
+            });
+
+
+        }
     }
 
     @Override
@@ -87,6 +129,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
         public final TextView item_name;
         public final TextView item_price;
         public final ImageView favorite;
+        public final ImageView productImage;
 
         public Wish mItem;
 
@@ -96,6 +139,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
             item_name = (TextView) view.findViewById(R.id.item_name);
             item_price = (TextView) view.findViewById(R.id.item_price);
             favorite = (ImageView) view.findViewById(R.id.favorite);
+            productImage = (ImageView) view.findViewById(R.id.ivProductImage);
         }
 
         @Override
