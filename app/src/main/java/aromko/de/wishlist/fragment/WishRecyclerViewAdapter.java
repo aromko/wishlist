@@ -1,15 +1,17 @@
 package aromko.de.wishlist.fragment;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -32,6 +34,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
     private final List<Wish> mValues;
     private final OnListFragmentInteractionListener mListener;
     FirebaseStorage storage = FirebaseStorage.getInstance("gs://wishlist-app-aromko.appspot.com");
+    private Context context;
 
     public WishRecyclerViewAdapter(List<Wish> items, OnListFragmentInteractionListener listener) {
         mValues = items;
@@ -42,6 +45,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_item, parent, false);
+        context = parent.getContext();
         return new ViewHolder(view);
     }
 
@@ -98,25 +102,46 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
                 public void onSuccess(final Uri uri) {
                     String imageUrl = uri.toString();
                     Glide.with(holder.productImage)
-                        .load(imageUrl)
-                        .into(new SimpleTarget<Drawable>() {
-                            @Override
-                            public void onResourceReady(@NonNull final Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                                storageRef.getMetadata().addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
-                                    @Override
-                                    public void onSuccess(StorageMetadata storageMetadata) {
-                                        rotation[0] = Float.valueOf(storageMetadata.getCustomMetadata("rotation"));
-                                        holder.productImage.setImageDrawable(resource);
-                                        holder.productImage.setRotation(rotation[0]);
-                                    }
-                                });
-                            }
-                        });
+                            .load(imageUrl)
+                            .into(new SimpleTarget<Drawable>() {
+                                @Override
+                                public void onResourceReady(@NonNull final Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                                    storageRef.getMetadata().addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
+                                        @Override
+                                        public void onSuccess(StorageMetadata storageMetadata) {
+                                            rotation[0] = Float.valueOf(storageMetadata.getCustomMetadata("rotation"));
+                                            holder.productImage.setImageDrawable(resource);
+                                            holder.productImage.setRotation(rotation[0]);
+                                        }
+                                    });
+                                }
+                            });
                 }
             });
-
-
         }
+
+        holder.tvItemOptions.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupMenu popupMenu = new PopupMenu(context, holder.tvItemOptions);
+
+                popupMenu.inflate(R.menu.item_options_menu);
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.edit:
+                                return true;
+                            case R.id.new_game:
+                                return true;
+                            default:
+                                return false;
+                        }
+                    }
+                });
+                popupMenu.show();
+            }
+        });
     }
 
     @Override
@@ -130,6 +155,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
         public final TextView item_price;
         public final ImageView favorite;
         public final ImageView productImage;
+        public final TextView tvItemOptions;
 
         public Wish mItem;
 
@@ -140,6 +166,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
             item_price = (TextView) view.findViewById(R.id.item_price);
             favorite = (ImageView) view.findViewById(R.id.favorite);
             productImage = (ImageView) view.findViewById(R.id.ivProductImage);
+            tvItemOptions = view.findViewById(R.id.tvItemOptions);
         }
 
         @Override
