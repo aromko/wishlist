@@ -165,17 +165,17 @@
         android:id="@+id/flProgressBarHolder"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        android:clickable="true">
+        android:background="#7F000000"
+        android:clickable="true"
+        android:visibility="gone">
 
         <ProgressBar
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:clickable="true"
             android:indeterminate="true"
-            android:visibility="gone" />
+            android:visibility="visible" />
     </FrameLayout>
 
 </android.support.constraint.ConstraintLayout>
