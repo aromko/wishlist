@@ -2,12 +2,15 @@ package aromko.de.wishlist.model;
 
 import com.google.firebase.database.Exclude;
 
+import java.util.Map;
+
 public class WishList {
 
     @Exclude
     private String key;
     private String name;
     private long timestamp;
+    private Map<String, Object> allowedUsers;
 
     public WishList() {
     }
@@ -15,6 +18,12 @@ public class WishList {
     public WishList(String name, long timestamp) {
         this.name = name;
         this.timestamp = timestamp;
+    }
+
+    public WishList(String name, long timestamp, Map<String, Object> allowedUsers) {
+        this.name = name;
+        this.timestamp = timestamp;
+        this.allowedUsers = allowedUsers;
     }
 
     public String getKey() {
@@ -39,6 +48,14 @@ public class WishList {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public Map<String, Object> getAllowedUsers() {
+        return allowedUsers;
+    }
+
+    public void setAllowedUsers(Map<String, Object> allowedUsers) {
+        this.allowedUsers = allowedUsers;
     }
 
     @Override

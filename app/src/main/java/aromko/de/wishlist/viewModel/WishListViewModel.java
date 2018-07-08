@@ -6,13 +6,17 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import aromko.de.wishlist.database.FirebaseQueryLiveData;
 import aromko.de.wishlist.model.WishList;
@@ -38,7 +42,10 @@ public class WishListViewModel extends ViewModel {
                             for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                 WishList wishList = snapshot.getValue(WishList.class);
                                 wishList.setKey(snapshot.getKey().toString());
-                                lists.add(wishList);
+                                String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                if (wishList.getAllowedUsers() != null && wishList.getAllowedUsers().containsKey(currentUid) && wishList.getAllowedUsers().get(currentUid).equals(true)) {
+                                    lists.add(wishList);
+                                }
                             }
                             listsLiveData.postValue(lists);
                         }
@@ -53,7 +60,9 @@ public class WishListViewModel extends ViewModel {
 
     public void insertList(String text) {
         String key = FirebaseDatabase.getInstance().getReference("/wishLists").push().getKey();
-        WishList wishList = new WishList(text, System.currentTimeMillis() / 1000);
+        Map<String, Object> allowedUser = new HashMap<>();
+        allowedUser.put(FirebaseAuth.getInstance().getCurrentUser().getUid(), true);
+        WishList wishList = new WishList(text, System.currentTimeMillis() / 1000, allowedUser);
         //Map<String, Object> postValues = list.toMap();
 
         //Map<String, Object> childUpdates = new HashMap<>();
