@@ -17,6 +17,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
@@ -57,7 +58,8 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
         }
         holder.item_name.setText(mValues.get(position).getTitle());
         holder.item_price.setText(String.valueOf(mValues.get(position).getPrice() + " €"));
-        if (mValues.get(position).isFavorite()) {
+
+        if (mValues.get(position).getMarkedAsFavorite() != null && mValues.get(position).getMarkedAsFavorite().containsKey(FirebaseAuth.getInstance().getCurrentUser().getUid()) && mValues.get(position).getMarkedAsFavorite().get(FirebaseAuth.getInstance().getCurrentUser().getUid()).equals(true)) {
             holder.favorite.setImageResource(R.drawable.ic_favorite);
             holder.favorite.setTag("isFavorite");
         } else {

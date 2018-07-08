@@ -2,6 +2,8 @@ package aromko.de.wishlist.model;
 
 import com.google.firebase.database.Exclude;
 
+import java.util.Map;
+
 public class Wish {
 
     @Exclude
@@ -14,20 +16,30 @@ public class Wish {
     private String description;
     private long wishstrength;
     private boolean isImageSet;
-    private boolean isFavorite;
+    private Map<String, Boolean> markedAsFavorite;
     private long timestamp;
 
     public Wish() {
     }
 
-    public Wish(String title, double price, String url, String description, long wishstrength, boolean isImageSet, boolean isFavorite, long timestamp) {
+    public Wish(String title, double price, String url, String description, long wishstrength, boolean isImageSet, Map<String, Boolean> markedAsFavorite, long timestamp) {
         this.title = title;
         this.price = price;
         this.url = url;
         this.description = description;
         this.wishstrength = wishstrength;
         this.isImageSet = isImageSet;
-        this.isFavorite = isFavorite;
+        this.markedAsFavorite = markedAsFavorite;
+        this.timestamp = timestamp;
+    }
+
+    public Wish(String title, double price, String url, String description, long wishstrength, boolean isImageSet, long timestamp) {
+        this.title = title;
+        this.price = price;
+        this.url = url;
+        this.description = description;
+        this.wishstrength = wishstrength;
+        this.isImageSet = isImageSet;
         this.timestamp = timestamp;
     }
 
@@ -99,20 +111,20 @@ public class Wish {
         isImageSet = imageSet;
     }
 
-    public boolean isFavorite() {
-        return isFavorite;
-    }
-
-    public void setFavorite(boolean favorite) {
-        isFavorite = favorite;
-    }
-
     public long getTimestamp() {
         return timestamp;
     }
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public Map<String, Boolean> getMarkedAsFavorite() {
+        return markedAsFavorite;
+    }
+
+    public void setMarkedAsFavorite(Map<String, Boolean> markedAsFavorite) {
+        this.markedAsFavorite = markedAsFavorite;
     }
 
     @Override
@@ -124,7 +136,7 @@ public class Wish {
                 ", description='" + description + '\'' +
                 ", wishstrength=" + wishstrength +
                 ", isImageSet=" + isImageSet +
-                ", isFavorite=" + isFavorite +
+                ", markedAsFavorite=" + markedAsFavorite +
                 ", timestamp=" + timestamp +
                 '}';
     }

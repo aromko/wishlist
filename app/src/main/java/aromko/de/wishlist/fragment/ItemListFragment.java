@@ -14,8 +14,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import aromko.de.wishlist.R;
 import aromko.de.wishlist.model.Wish;
@@ -109,7 +113,9 @@ public class ItemListFragment extends Fragment {
 
                 @Override
                 public void onFavoriteInteraction(Wish wish, Boolean isFavorite) {
-                    wish.setFavorite(isFavorite);
+                    Map<String, Boolean> markAsFavorite = new HashMap<>();
+                    markAsFavorite.put(FirebaseAuth.getInstance().getCurrentUser().getUid(), isFavorite);
+                    wish.setMarkedAsFavorite(markAsFavorite);
                     wishViewModel.setWishAsFavorite(wish.getWishlistId(), wish.getWishId(), wish);
                 }
             };

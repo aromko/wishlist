@@ -8,6 +8,7 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -82,10 +83,12 @@ public class WishViewModel extends ViewModel {
 
     public void setWishAsFavorite(String wishlistId, String wishId, Wish wish) {
         FirebaseDatabase.getInstance().getReference("/wishes/" + wishlistId + "/" + wishId).setValue(wish);
-        if (wish.isFavorite()) {
+
+        if (wish.getMarkedAsFavorite() != null && wish.getMarkedAsFavorite().get(FirebaseAuth.getInstance().getCurrentUser().getUid()).equals(true)) {
             FirebaseDatabase.getInstance().getReference("/wishes/" + FAVORITE_LIST_ID + "/" + wishId).setValue(wish);
         } else {
             FirebaseDatabase.getInstance().getReference("/wishes/" + FAVORITE_LIST_ID + "/" + wishId).removeValue();
         }
+
     }
 }
