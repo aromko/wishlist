@@ -15,6 +15,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -25,6 +26,7 @@ import com.google.firebase.storage.StorageReference;
 import java.util.List;
 
 import aromko.de.wishlist.R;
+import aromko.de.wishlist.activity.GlideApp;
 import aromko.de.wishlist.fragment.ItemListFragment.OnListFragmentInteractionListener;
 import aromko.de.wishlist.model.Wish;
 
@@ -97,27 +99,23 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
             final StorageReference storageRef = storage.getReference(mValues.get(position).getWishId());
             final float[] rotation = new float[1];
 
-            storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                @Override
-                public void onSuccess(final Uri uri) {
-                    String imageUrl = uri.toString();
-                    Glide.with(holder.productImage)
-                            .load(imageUrl)
-                            .into(new SimpleTarget<Drawable>() {
+            GlideApp.with(holder.productImage)
+                    .load(storageRef)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .onlyRetrieveFromCache(true)
+                    .into(new SimpleTarget<Drawable>() {
+                        @Override
+                        public void onResourceReady(@NonNull final Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                            storageRef.getMetadata().addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
                                 @Override
-                                public void onResourceReady(@NonNull final Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                                    storageRef.getMetadata().addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
-                                        @Override
-                                        public void onSuccess(StorageMetadata storageMetadata) {
-                                            rotation[0] = Float.valueOf(storageMetadata.getCustomMetadata("rotation"));
-                                            holder.productImage.setImageDrawable(resource);
-                                            holder.productImage.setRotation(rotation[0]);
-                                        }
-                                    });
+                                public void onSuccess(StorageMetadata storageMetadata) {
+                                    rotation[0] = Float.valueOf(storageMetadata.getCustomMetadata("rotation"));
+                                    holder.productImage.setImageDrawable(resource);
+                                    holder.productImage.setRotation(rotation[0]);
                                 }
                             });
-                }
-            });
+                        }
+                    });
         }
 
         holder.tvItemOptions.setOnClickListener(new View.OnClickListener() {
@@ -132,7 +130,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
                         switch (item.getItemId()) {
                             case R.id.edit:
                                 return true;
-                            case R.id.new_game:
+                            case R.id.partial_payment:
                                 return true;
                             default:
                                 return false;

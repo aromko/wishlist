@@ -98,7 +98,6 @@ public class ItemListFragment extends Fragment {
                         listItems.add(list);
                     }
                     recyclerView.setAdapter(new WishRecyclerViewAdapter(listItems, mListener));
-                    recyclerView.scrollToPosition(recyclerView.getChildAdapterPosition(recyclerView.getFocusedChild()));
                 }
             });
 

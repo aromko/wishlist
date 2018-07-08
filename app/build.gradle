@@ -40,6 +40,9 @@ dependencies {
         exclude group: "com.android.support"
     }
     annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
+    implementation ('com.firebaseui:firebase-ui-storage:4.1.0'){
+        exclude group: "com.android.support"
+    }
 }
 
 apply plugin: 'com.google.gms.google-services'
