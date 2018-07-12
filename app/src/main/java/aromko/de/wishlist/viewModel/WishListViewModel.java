@@ -63,7 +63,7 @@ public class WishListViewModel extends ViewModel {
         String key = FirebaseDatabase.getInstance().getReference("/wishLists").push().getKey();
         Map<String, Object> allowedUser = new HashMap<>();
         allowedUser.put(FirebaseAuth.getInstance().getCurrentUser().getUid(), true);
-        WishList wishList = new WishList(text, System.currentTimeMillis() / 1000, allowedUser);
+        WishList wishList = new WishList(text, System.currentTimeMillis() / 1000, allowedUser, 0);
         //Map<String, Object> postValues = list.toMap();
 
         //Map<String, Object> childUpdates = new HashMap<>();

@@ -11,6 +11,7 @@ public class WishList {
     private String name;
     private long timestamp;
     private Map<String, Object> allowedUsers;
+    private int wishCounter;
 
     public WishList() {
     }
@@ -20,10 +21,11 @@ public class WishList {
         this.timestamp = timestamp;
     }
 
-    public WishList(String name, long timestamp, Map<String, Object> allowedUsers) {
+    public WishList(String name, long timestamp, Map<String, Object> allowedUsers, int wishCounter) {
         this.name = name;
         this.timestamp = timestamp;
         this.allowedUsers = allowedUsers;
+        this.wishCounter = wishCounter;
     }
 
     public String getKey() {
@@ -56,6 +58,14 @@ public class WishList {
 
     public void setAllowedUsers(Map<String, Object> allowedUsers) {
         this.allowedUsers = allowedUsers;
+    }
+
+    public int getWishCounter() {
+        return wishCounter;
+    }
+
+    public void setWishCounter(int wishCounter) {
+        this.wishCounter = wishCounter;
     }
 
     @Override

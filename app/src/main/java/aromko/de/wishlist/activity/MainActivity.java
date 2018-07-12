@@ -26,7 +26,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -46,6 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import aromko.de.wishlist.R;
+import aromko.de.wishlist.adapter.WishlistAdapter;
 import aromko.de.wishlist.fragment.ItemListFragment;
 import aromko.de.wishlist.model.Wish;
 import aromko.de.wishlist.model.WishList;
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         listView = (ListView) findViewById(R.id.listView);
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
-        final ArrayAdapter<WishList> drawListAdapter = new ArrayAdapter<WishList>(this, android.R.layout.simple_list_item_1, listItems);
+        final WishlistAdapter drawListAdapter = new WishlistAdapter(this, listItems);
         listView.setAdapter(drawListAdapter);
         drawListAdapter.setNotifyOnChange(true);
         listViewModel = ViewModelProviders.of(this).get(WishListViewModel.class);
@@ -120,8 +120,6 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-
-
                 for (int i = 0; i < listView.getChildCount(); i++) {
                     listView.getChildAt(i).setBackgroundColor(Color.WHITE);
                 }
