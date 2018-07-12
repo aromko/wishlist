@@ -6,7 +6,9 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -18,6 +20,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,7 +32,15 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.dynamiclinks.DynamicLink;
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
+import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
+import com.google.firebase.dynamiclinks.ShortDynamicLink;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -132,6 +143,25 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
             }
         });
 
+        FirebaseDynamicLinks.getInstance().getDynamicLink(getIntent())
+                .addOnSuccessListener(this, new OnSuccessListener<PendingDynamicLinkData>() {
+                    @Override
+                    public void onSuccess(PendingDynamicLinkData data) {
+                        if (data != null) {
+                            Uri deepLink = data.getLink();
+                            listViewModel.addUserToWishlist(deepLink.getQueryParameter("param"));
+                        } else {
+                            return;
+                        }
+                    }
+                })
+                .addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("SSSSSSSSSSSSSSSS", "getDynamicLink:onFailure", e);
+                    }
+                });
+
     }
 
     public void openFragment(int position) {
@@ -193,17 +223,15 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         } else if (id == R.id.action_logout) {
             FirebaseAuth.getInstance().signOut();
             finish();
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
+        } else if (id == R.id.action_shareList) {
+            onInviteClicked();
         }
 
         return super.onOptionsItemSelected(item);
@@ -242,5 +270,32 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         AlertDialog dialog = builder.create();
 
         dialog.show();
+    }
+
+    public void onInviteClicked() {
+        Task<ShortDynamicLink> shortLinkTask = FirebaseDynamicLinks.getInstance().createDynamicLink()
+                .setLink(Uri.parse("https://www.example.com/page?param=" + selectedWishlistId))
+                .setDynamicLinkDomain("aromko.page.link")
+                .setAndroidParameters(new DynamicLink.AndroidParameters.Builder().build())
+                .buildShortDynamicLink()
+                .addOnCompleteListener(this, new OnCompleteListener<ShortDynamicLink>() {
+                    @Override
+                    public void onComplete(@NonNull Task<ShortDynamicLink> task) {
+                        if (task.isSuccessful()) {
+                            Uri shortLink = task.getResult().getShortLink();
+                            Uri flowchartLink = task.getResult().getPreviewLink();
+                            Intent sendIntent = new Intent();
+                            String msg = "Hey, ich möchte meine Liste mit dir teilen. Klicke auf den Link, um ihr beizutreten: " + shortLink.toString();
+                            sendIntent.setAction(Intent.ACTION_SEND);
+                            sendIntent.putExtra(Intent.EXTRA_TEXT, msg);
+                            sendIntent.setType("text/plain");
+                            startActivityForResult(sendIntent, 0);
+                            Log.i("SHORTLINK", shortLink.toString());
+                        } else {
+                            // Error
+                            // ...
+                        }
+                    }
+                });
     }
 }

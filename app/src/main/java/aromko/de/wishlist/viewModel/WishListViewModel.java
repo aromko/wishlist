@@ -9,8 +9,10 @@ import android.support.annotation.Nullable;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -74,5 +76,26 @@ public class WishListViewModel extends ViewModel {
     @NonNull
     public LiveData<List<WishList>> getListsLiveData() {
         return listsLiveData;
+    }
+
+    public void addUserToWishlist(String wishlistId) {
+        FirebaseDatabase.getInstance().getReference("/wishLists/" + wishlistId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                WishList currentWishlist = dataSnapshot.getValue(WishList.class);
+                Map<String, Object> allowedUsers = new HashMap<>();
+                if (currentWishlist.getAllowedUsers() != null) {
+                    allowedUsers.putAll(currentWishlist.getAllowedUsers());
+                }
+                allowedUsers.put(FirebaseAuth.getInstance().getCurrentUser().getUid(), true);
+                currentWishlist.setAllowedUsers(allowedUsers);
+                dataSnapshot.getRef().setValue(currentWishlist);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }
