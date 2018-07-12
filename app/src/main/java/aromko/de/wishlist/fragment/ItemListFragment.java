@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,11 +98,14 @@ public class ItemListFragment extends Fragment {
             listsLiveData.observe(this, new Observer<List<Wish>>() {
                 @Override
                 public void onChanged(@Nullable List<Wish> lists) {
+                    LinearLayoutManager myLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                    int scrollPosition = myLayoutManager.findFirstVisibleItemPosition();
                     listItems.clear();
                     for (Wish list : lists) {
                         listItems.add(list);
                     }
                     recyclerView.setAdapter(new WishRecyclerViewAdapter(listItems, mListener));
+                    recyclerView.scrollToPosition(scrollPosition);
                 }
             });
 
