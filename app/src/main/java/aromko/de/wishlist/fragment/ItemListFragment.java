@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -43,6 +44,8 @@ public class ItemListFragment extends Fragment {
     private WishViewModel wishViewModel;
     private ArrayList<Wish> listItems = new ArrayList<Wish>();
 
+    private String favoriteListId = "";
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -67,6 +70,9 @@ public class ItemListFragment extends Fragment {
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
+
+        SharedPreferences sharedPreferences = this.getActivity().getPreferences(Context.MODE_PRIVATE);
+        favoriteListId = sharedPreferences.getString("favoriteListId", "");
     }
 
     @Nullable
@@ -103,7 +109,7 @@ public class ItemListFragment extends Fragment {
                     for (Wish list : lists) {
                         listItems.add(list);
                     }
-                    recyclerView.setAdapter(new WishRecyclerViewAdapter(listItems, mListener));
+                    recyclerView.setAdapter(new WishRecyclerViewAdapter(listItems, mListener, favoriteListId));
                     recyclerView.scrollToPosition(scrollPosition);
                 }
             });
@@ -119,7 +125,7 @@ public class ItemListFragment extends Fragment {
                     Map<String, Boolean> markAsFavorite = new HashMap<>();
                     markAsFavorite.put(FirebaseAuth.getInstance().getCurrentUser().getUid(), isFavorite);
                     wish.setMarkedAsFavorite(markAsFavorite);
-                    wishViewModel.setWishAsFavorite(wish.getWishlistId(), wish.getWishId(), wish);
+                    wishViewModel.setWishAsFavorite(wish.getWishlistId(), wish.getWishId(), wish, favoriteListId);
                 }
             };
         }

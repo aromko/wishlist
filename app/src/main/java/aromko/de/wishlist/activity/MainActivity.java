@@ -5,6 +5,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -53,7 +54,7 @@ import aromko.de.wishlist.viewModel.WishListViewModel;
 
 public class MainActivity extends AppCompatActivity implements ItemListFragment.OnListFragmentInteractionListener {
 
-    public static final String FAVORITE_LIST_ID = "-LFy-qZjZ7hbaJGYB81t";
+    private String favoriteListId = "";
     private FirebaseAuth mAuth;
     private TextView txtUserEmail;
     private TextView txtUserName;
@@ -104,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         listView.setAdapter(drawListAdapter);
         drawListAdapter.setNotifyOnChange(true);
         listViewModel = ViewModelProviders.of(this).get(WishListViewModel.class);
+        favoriteListId = checkIfFavoriteListIdExists();
 
         final LiveData<List<WishList>> listsLiveData = listViewModel.getListsLiveData();
 
@@ -165,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     public void openFragment(int position) {
         listView.setSelection(position);
         selectedWishlistId = listItems.get(position).getKey();
-        if (selectedWishlistId.equals(FAVORITE_LIST_ID)) {
+        if (selectedWishlistId.equals(favoriteListId)) {
             fab.hide();
         } else {
             fab.show();
@@ -255,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
             public void onClick(DialogInterface dialogInterface, int i) {
                 String text = txtNewWishlist.getText().toString();
                 if (!text.isEmpty()) {
-                    listViewModel.insertList(text);
+                    listViewModel.insertList(text, false);
                 }
                 dialogInterface.dismiss();
             }
@@ -295,5 +297,17 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
                         }
                     }
                 });
+    }
+
+    public String checkIfFavoriteListIdExists() {
+        SharedPreferences sharedPreferences = this.getPreferences(MODE_PRIVATE);
+        String favoriteListId = "";
+        if (!sharedPreferences.contains("favoriteListId")) {
+            favoriteListId = listViewModel.insertList("Favoriten", true);
+            sharedPreferences.edit().putString("favoriteListId", favoriteListId).commit();
+        } else {
+            favoriteListId = sharedPreferences.getString("favoriteListId", "");
+        }
+        return favoriteListId;
     }
 }

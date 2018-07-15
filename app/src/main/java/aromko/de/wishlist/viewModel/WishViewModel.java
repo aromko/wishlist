@@ -10,18 +10,20 @@ import android.support.annotation.Nullable;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import aromko.de.wishlist.database.FirebaseQueryLiveData;
 import aromko.de.wishlist.model.Wish;
+import aromko.de.wishlist.model.WishList;
 import aromko.de.wishlist.tasks.AppExecutors;
 
 public class WishViewModel extends ViewModel {
-    public static final String FAVORITE_LIST_ID = "-LFy-qZjZ7hbaJGYB81t/";
     private static DatabaseReference wishes_ref;
     private final FirebaseQueryLiveData liveData;
     private final MediatorLiveData<List<Wish>> listsLiveData = new MediatorLiveData<>();
@@ -78,16 +80,31 @@ public class WishViewModel extends ViewModel {
 
         //mDatabase.getReference("/lists").updateChildren(childUpdates);
         FirebaseDatabase.getInstance().getReference("/wishes/" + wishlistId + "/" + key).setValue(wish);
+
+        FirebaseDatabase.getInstance().getReference("/wishLists/" + wishlistId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                WishList currentWishlist = dataSnapshot.getValue(WishList.class);
+                int counter = 1;
+                counter += currentWishlist.getWishCounter();
+                currentWishlist.setWishCounter(counter);
+                dataSnapshot.getRef().setValue(currentWishlist);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         return key;
     }
 
-    public void setWishAsFavorite(String wishlistId, String wishId, Wish wish) {
+    public void setWishAsFavorite(String wishlistId, String wishId, Wish wish, String favoriteListId) {
         FirebaseDatabase.getInstance().getReference("/wishes/" + wishlistId + "/" + wishId).setValue(wish);
-
         if (wish.getMarkedAsFavorite() != null && wish.getMarkedAsFavorite().get(FirebaseAuth.getInstance().getCurrentUser().getUid()).equals(true)) {
-            FirebaseDatabase.getInstance().getReference("/wishes/" + FAVORITE_LIST_ID + "/" + wishId).setValue(wish);
+            FirebaseDatabase.getInstance().getReference("/wishes/" + favoriteListId + "/" + wishId).setValue(wish);
         } else {
-            FirebaseDatabase.getInstance().getReference("/wishes/" + FAVORITE_LIST_ID + "/" + wishId).removeValue();
+            FirebaseDatabase.getInstance().getReference("/wishes/" + favoriteListId + "/" + wishId).removeValue();
         }
 
     }

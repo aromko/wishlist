@@ -59,11 +59,11 @@ public class WishListViewModel extends ViewModel {
         });
     }
 
-    public void insertList(String text) {
+    public String insertList(String text, boolean isFavortieList) {
         String key = FirebaseDatabase.getInstance().getReference("/wishLists").push().getKey();
         Map<String, Object> allowedUser = new HashMap<>();
         allowedUser.put(FirebaseAuth.getInstance().getCurrentUser().getUid(), true);
-        WishList wishList = new WishList(text, System.currentTimeMillis() / 1000, allowedUser, 0);
+        WishList wishList = new WishList(text, System.currentTimeMillis() / 1000, allowedUser, 0, isFavortieList);
         //Map<String, Object> postValues = list.toMap();
 
         //Map<String, Object> childUpdates = new HashMap<>();
@@ -71,6 +71,7 @@ public class WishListViewModel extends ViewModel {
 
         //mDatabase.getReference("/lists").updateChildren(childUpdates);
         FirebaseDatabase.getInstance().getReference("/wishLists/" + key).setValue(wishList);
+        return key;
     }
 
     @NonNull

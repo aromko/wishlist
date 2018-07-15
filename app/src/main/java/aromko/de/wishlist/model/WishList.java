@@ -12,6 +12,7 @@ public class WishList {
     private long timestamp;
     private Map<String, Object> allowedUsers;
     private int wishCounter;
+    private boolean isFavoriteList;
 
     public WishList() {
     }
@@ -21,11 +22,12 @@ public class WishList {
         this.timestamp = timestamp;
     }
 
-    public WishList(String name, long timestamp, Map<String, Object> allowedUsers, int wishCounter) {
+    public WishList(String name, long timestamp, Map<String, Object> allowedUsers, int wishCounter, boolean isFavoriteList) {
         this.name = name;
         this.timestamp = timestamp;
         this.allowedUsers = allowedUsers;
         this.wishCounter = wishCounter;
+        this.isFavoriteList = isFavoriteList;
     }
 
     public String getKey() {
@@ -66,6 +68,14 @@ public class WishList {
 
     public void setWishCounter(int wishCounter) {
         this.wishCounter = wishCounter;
+    }
+
+    public boolean isFavoriteList() {
+        return isFavoriteList;
+    }
+
+    public void setFavoriteList(boolean favoriteList) {
+        isFavoriteList = favoriteList;
     }
 
     @Override

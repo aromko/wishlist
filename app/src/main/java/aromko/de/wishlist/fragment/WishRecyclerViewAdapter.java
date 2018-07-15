@@ -1,6 +1,7 @@
 package aromko.de.wishlist.fragment;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -31,15 +32,16 @@ import aromko.de.wishlist.model.Wish;
 
 public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerViewAdapter.ViewHolder> {
 
-    public static final String FAVORITE_LIST_ID = "-LFy-qZjZ7hbaJGYB81t";
     private final List<Wish> mValues;
     private final OnListFragmentInteractionListener mListener;
     FirebaseStorage storage = FirebaseStorage.getInstance("gs://wishlist-app-aromko.appspot.com");
     private Context context;
+    private String mFavoriteListId = "";
 
-    public WishRecyclerViewAdapter(List<Wish> items, OnListFragmentInteractionListener listener) {
+    public WishRecyclerViewAdapter(List<Wish> items, OnListFragmentInteractionListener listener, String favoriteListId) {
         mValues = items;
         mListener = listener;
+        mFavoriteListId = favoriteListId;
     }
 
     @Override
@@ -47,15 +49,18 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_item, parent, false);
         context = parent.getContext();
+        SharedPreferences sharedPreferences = context.getSharedPreferences("", Context.MODE_PRIVATE);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        if (holder.mItem.getWishlistId().equals(FAVORITE_LIST_ID)) {
+
+        if (holder.mItem.getWishlistId().equals(mFavoriteListId)) {
             holder.favorite.setVisibility(View.INVISIBLE);
         }
+
         holder.item_name.setText(mValues.get(position).getTitle());
         holder.item_price.setText(String.valueOf(mValues.get(position).getPrice() + " €"));
 
