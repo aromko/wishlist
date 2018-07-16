@@ -122,9 +122,13 @@ public class ItemListFragment extends Fragment {
 
                 @Override
                 public void onFavoriteInteraction(Wish wish, Boolean isFavorite) {
-                    Map<String, Boolean> markAsFavorite = new HashMap<>();
-                    markAsFavorite.put(FirebaseAuth.getInstance().getCurrentUser().getUid(), isFavorite);
-                    wish.setMarkedAsFavorite(markAsFavorite);
+
+                    Map<String, Boolean> markedAsFavorite = new HashMap<>();
+                    if (wish.getMarkedAsFavorite() != null) {
+                        markedAsFavorite.putAll(wish.getMarkedAsFavorite());
+                    }
+                    markedAsFavorite.put(FirebaseAuth.getInstance().getCurrentUser().getUid(), isFavorite);
+                    wish.setMarkedAsFavorite(markedAsFavorite);
                     wishViewModel.setWishAsFavorite(wish.getWishlistId(), wish.getWishId(), wish, favoriteListId);
                 }
             };

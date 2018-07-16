@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -23,7 +24,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Map;
 
 import aromko.de.wishlist.R;
 import aromko.de.wishlist.activity.GlideApp;
@@ -59,12 +62,25 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
 
         if (holder.mItem.getWishlistId().equals(mFavoriteListId)) {
             holder.favorite.setVisibility(View.INVISIBLE);
+            holder.rlUsers.setVisibility(View.INVISIBLE);
         }
 
-        holder.item_name.setText(mValues.get(position).getTitle());
-        holder.item_price.setText(String.valueOf(mValues.get(position).getPrice() + " €"));
+        int counter = 0;
+        if (holder.mItem.getMarkedAsFavorite() != null) {
+            for (Map.Entry<String, Boolean> entry : holder.mItem.getMarkedAsFavorite().entrySet()) {
+                if (entry.getValue().equals(true)) {
+                    counter += 1;
+                }
+            }
+        }
 
-        if (mValues.get(position).getMarkedAsFavorite() != null && mValues.get(position).getMarkedAsFavorite().containsKey(FirebaseAuth.getInstance().getCurrentUser().getUid()) && mValues.get(position).getMarkedAsFavorite().get(FirebaseAuth.getInstance().getCurrentUser().getUid()).equals(true)) {
+        holder.tvUsers.setText(String.valueOf(counter));
+
+        holder.item_name.setText(holder.mItem.getTitle());
+        NumberFormat format = NumberFormat.getCurrencyInstance();
+        holder.item_price.setText(format.format(holder.mItem.getPrice()));
+
+        if (holder.mItem.getMarkedAsFavorite() != null && holder.mItem.getMarkedAsFavorite().containsKey(FirebaseAuth.getInstance().getCurrentUser().getUid()) && holder.mItem.getMarkedAsFavorite().get(FirebaseAuth.getInstance().getCurrentUser().getUid()).equals(true)) {
             holder.favorite.setImageResource(R.drawable.ic_favorite);
             holder.favorite.setTag("isFavorite");
         } else {
@@ -159,17 +175,21 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
         public final ImageView favorite;
         public final ImageView productImage;
         public final TextView tvItemOptions;
+        public final TextView tvUsers;
+        public final RelativeLayout rlUsers;
 
         public Wish mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            item_name = (TextView) view.findViewById(R.id.item_name);
-            item_price = (TextView) view.findViewById(R.id.item_price);
-            favorite = (ImageView) view.findViewById(R.id.favorite);
-            productImage = (ImageView) view.findViewById(R.id.ivProductImage);
+            item_name = view.findViewById(R.id.item_name);
+            item_price = view.findViewById(R.id.item_price);
+            favorite = view.findViewById(R.id.favorite);
+            productImage = view.findViewById(R.id.ivProductImage);
             tvItemOptions = view.findViewById(R.id.tvItemOptions);
+            tvUsers = view.findViewById(R.id.tvUsers);
+            rlUsers = view.findViewById(R.id.rlUsers);
         }
 
         @Override

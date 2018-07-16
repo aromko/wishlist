@@ -63,7 +63,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:inputType="numberDecimal"
+                    android:inputType="textCapWords"
+                    android:digits="0123456789,"
                     tools:layout_editor_absoluteX="16dp"
                     tools:layout_editor_absoluteY="36dp" />
             </android.support.design.widget.TextInputLayout>
@@ -156,6 +157,7 @@
         android:backgroundTint="@color/colorPrimary"
         android:onClick="saveWish"
         android:text="Speichern"
+        android:textColor="@color/cardview_light_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"

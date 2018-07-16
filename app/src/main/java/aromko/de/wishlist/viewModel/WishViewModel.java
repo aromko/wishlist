@@ -101,11 +101,31 @@ public class WishViewModel extends ViewModel {
 
     public void setWishAsFavorite(String wishlistId, String wishId, Wish wish, String favoriteListId) {
         FirebaseDatabase.getInstance().getReference("/wishes/" + wishlistId + "/" + wishId).setValue(wish);
+        int counter = 0;
         if (wish.getMarkedAsFavorite() != null && wish.getMarkedAsFavorite().get(FirebaseAuth.getInstance().getCurrentUser().getUid()).equals(true)) {
             FirebaseDatabase.getInstance().getReference("/wishes/" + favoriteListId + "/" + wishId).setValue(wish);
+            counter = 1;
         } else {
             FirebaseDatabase.getInstance().getReference("/wishes/" + favoriteListId + "/" + wishId).removeValue();
+            counter = -1;
         }
 
+        final int finalCounter = counter;
+        FirebaseDatabase.getInstance().getReference("/wishLists/" + favoriteListId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                WishList wishList = dataSnapshot.getValue(WishList.class);
+                wishList.setWishCounter(wishList.getWishCounter() + finalCounter);
+                if (wishList.getWishCounter() < 0) {
+                    wishList.setWishCounter(0);
+                }
+                dataSnapshot.getRef().setValue(wishList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }
