@@ -88,6 +88,16 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
         }
 
 
+        switch ((int) holder.mItem.getWishstrength()) {
+            case 1:
+                holder.ivWishstrength.setImageResource(R.drawable.ic_wishstrength_medium);
+                break;
+            case 2:
+                holder.ivWishstrength.setImageResource(R.drawable.ic_wishstrength_high);
+                break;
+            default:
+                holder.ivWishstrength.setImageResource(R.drawable.ic_wishstrength_low);
+        }
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -123,7 +133,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
             GlideApp.with(holder.productImage)
                     .load(storageRef)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .onlyRetrieveFromCache(true)
+                    .onlyRetrieveFromCache(false)
                     .into(new SimpleTarget<Drawable>() {
                         @Override
                         public void onResourceReady(@NonNull final Drawable resource, @Nullable Transition<? super Drawable> transition) {
@@ -177,6 +187,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
         public final TextView tvItemOptions;
         public final TextView tvUsers;
         public final RelativeLayout rlUsers;
+        public final ImageView ivWishstrength;
 
         public Wish mItem;
 
@@ -190,6 +201,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
             tvItemOptions = view.findViewById(R.id.tvItemOptions);
             tvUsers = view.findViewById(R.id.tvUsers);
             rlUsers = view.findViewById(R.id.rlUsers);
+            ivWishstrength = view.findViewById(R.id.ivWishstrength);
         }
 
         @Override

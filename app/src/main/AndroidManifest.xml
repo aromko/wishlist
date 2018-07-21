@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="aromko.de.wishlist">
 
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
+
     <application
         android:name=".database.FirebasePersistence"
         android:allowBackup="true"

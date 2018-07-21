@@ -3,17 +3,21 @@ package aromko.de.wishlist.activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -35,6 +39,10 @@ import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.concurrent.ExecutionException;
 
 import aromko.de.wishlist.R;
 import aromko.de.wishlist.model.Wish;
@@ -42,6 +50,8 @@ import aromko.de.wishlist.viewModel.WishViewModel;
 
 public class WishActivity extends AppCompatActivity {
 
+    static final int REQUEST_IMAGE_FROM_STORAGE = 1;
+    static final int REQUEST_IMAGE_CAPTURE = 2;
     private ImageButton btnAddPhoto;
     private ImageView ivProduct;
     private EditText txtTitle;
@@ -50,9 +60,10 @@ public class WishActivity extends AppCompatActivity {
     private EditText txtDescription;
     private Spinner spWishstrength;
     private FrameLayout flProgressBarHolder;
-
+    private EditText tvDownloadUrl;
     private WishViewModel wishViewModel;
     private String wishlistId;
+    private AlertDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,43 +105,88 @@ public class WishActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void showPhotoSelectionDialog(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View v = inflater.inflate(R.layout.dialog_photo_selection, null);
+        tvDownloadUrl = (EditText) v.findViewById(R.id.downloadurl);
+        builder.setView(v);
+        dialog = builder.create();
+        dialog.show();
+    }
+
     public void addImageFromStorage(View view) {
+        dialog.cancel();
         startActivityForResult(new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI), 1);
+    }
+
+    public void dispatchTakePictureIntent(View view) {
+        dialog.cancel();
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+    public void downloadImage(View view) {
+        ImageDownloader task = new ImageDownloader();
+        Bitmap myImage;
+
+        String url = tvDownloadUrl.getText().toString();
+        try {
+            myImage = task.execute(url).get();
+            ivProduct.setImageBitmap(myImage);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        dialog.cancel();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1) {
-            if (resultCode == RESULT_OK) {
-                if (data != null) {
-                    Uri uri = data.getData();
-                    int rotate = 0;
-                    try {
-                        InputStream inputStream = getApplicationContext().getContentResolver().openInputStream(uri);
-                        ExifInterface exif = new ExifInterface(inputStream);
-                        int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-                        switch (orientation) {
-                            case ExifInterface.ORIENTATION_ROTATE_270:
-                                rotate = 270;
-                                break;
-                            case ExifInterface.ORIENTATION_ROTATE_180:
-                                rotate = 180;
-                                break;
-                            case ExifInterface.ORIENTATION_ROTATE_90:
-                                rotate = 90;
-                                break;
-                        }
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
+        }
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case REQUEST_IMAGE_FROM_STORAGE:
+                    if (data != null) {
+                        Uri uri = data.getData();
+                        int rotate = 0;
+                        try {
+                            InputStream inputStream = getApplicationContext().getContentResolver().openInputStream(uri);
+                            ExifInterface exif = new ExifInterface(inputStream);
+                            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+                            switch (orientation) {
+                                case ExifInterface.ORIENTATION_ROTATE_270:
+                                    rotate = 270;
+                                    break;
+                                case ExifInterface.ORIENTATION_ROTATE_180:
+                                    rotate = 180;
+                                    break;
+                                case ExifInterface.ORIENTATION_ROTATE_90:
+                                    rotate = 90;
+                                    break;
+                            }
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        ivProduct.setRotation(rotate);
+                        ivProduct.setImageURI(uri);
                     }
-                    ivProduct.setImageURI(uri);
-                    ivProduct.setTag("imageChanged");
-                    ivProduct.setRotation(rotate);
-                }
+                    break;
+                case REQUEST_IMAGE_CAPTURE:
+                    Bundle extras = data.getExtras();
+                    Bitmap imageBitmap = (Bitmap) extras.get("data");
+                    ivProduct.setImageBitmap(imageBitmap);
+                    break;
             }
+            ivProduct.setTag("imageChanged");
         }
     }
 
@@ -138,7 +194,11 @@ public class WishActivity extends AppCompatActivity {
         flProgressBarHolder.setVisibility(View.VISIBLE);
         Bitmap bitmap = ((BitmapDrawable) ivProduct.getDrawable()).getBitmap();
 
-        Wish wish = new Wish(txtTitle.getText().toString(), Double.valueOf(txtPrice.getText().toString().replace(",", ".")), txtUrl.getText().toString(), txtDescription.getText().toString(), Long.valueOf(spWishstrength.getSelectedItemId()), true, System.currentTimeMillis() / 1000);
+        boolean isImageSet = false;
+        if (ivProduct.getTag().toString().equals("imageChanged")) {
+            isImageSet = true;
+        }
+        Wish wish = new Wish(txtTitle.getText().toString(), Double.valueOf(txtPrice.getText().toString().replace(",", ".")), txtUrl.getText().toString(), txtDescription.getText().toString(), Long.valueOf(spWishstrength.getSelectedItemId()), isImageSet, System.currentTimeMillis() / 1000);
         String wishkey = wishViewModel.insertWish(wishlistId, wish);
         if (wishkey.isEmpty() || !ivProduct.getTag().toString().equals("imageChanged")) {
             Toast.makeText(getApplicationContext(), "Wunsch wurde erfolgreich hinzugefügt.", Toast.LENGTH_LONG).show();
@@ -182,5 +242,32 @@ public class WishActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public class ImageDownloader extends AsyncTask<String, Void, Bitmap> {
+
+        @Override
+        protected Bitmap doInBackground(String... urls) {
+
+            try {
+                URL url = new URL(urls[0]);
+                try {
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.connect();
+
+                    InputStream inputStream = connection.getInputStream();
+
+                    Bitmap myBitmap = BitmapFactory.decodeStream(inputStream);
+
+                    return myBitmap;
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 }

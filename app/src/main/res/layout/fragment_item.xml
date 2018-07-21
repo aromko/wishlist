@@ -17,14 +17,17 @@
             android:id="@+id/ivProductImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             android:layout_marginTop="35dp"
             android:adjustViewBounds="true"
-            android:maxHeight="280dp"
+            android:maxHeight="227dp"
             android:maxWidth="368dp"
-            app:layout_constraintBottom_toTopOf="@+id/item_price"
+            app:layout_constraintBottom_toTopOf="@+id/relativeLayout"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.613"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/item_name" />
+            app:layout_constraintTop_toBottomOf="@+id/item_name"
+            app:layout_constraintVertical_bias="0.0" />
 
         <TextView
             android:id="@+id/tvItemOptions"
@@ -59,59 +62,78 @@
             android:id="@+id/item_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginRight="7dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="8dp"
             android:text="100 €"
             android:textSize="24sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/favorite"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ivProductImage"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@+id/relativeLayout" />
 
         <ImageView
-            android:id="@+id/favorite"
-            android:layout_width="30dp"
+            android:id="@+id/ivWishstrength"
+            android:layout_width="29dp"
             android:layout_height="27dp"
-            android:layout_margin="4dp"
-            android:layout_marginBottom="8dp"
+            android:layout_margin="3dp"
+            android:layout_marginBottom="96dp"
             android:layout_marginEnd="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/item_price"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/tvItemOptions"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/item_name"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0"
-            app:srcCompat="@drawable/ic_favorite_border" />
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@drawable/ic_wishstrength_low" />
 
         <RelativeLayout
-            android:id="@+id/rlUsers"
-            android:layout_width="38dp"
-            android:layout_height="31dp"
-            android:layout_marginStart="8dp"
+            android:id="@+id/relativeLayout"
+            android:layout_width="235dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="30dp"
             app:layout_constraintBottom_toTopOf="@+id/item_price"
-            app:layout_constraintStart_toEndOf="@+id/favorite">
+            app:layout_constraintTop_toBottomOf="@+id/ivProductImage"
+            tools:layout_editor_absoluteX="0dp">
+
+            <RelativeLayout
+                android:id="@+id/rlUsers"
+                android:layout_width="34dp"
+                android:layout_height="30dp"
+                app:layout_constraintBottom_toTopOf="@+id/item_price"
+                app:layout_constraintTop_toBottomOf="@+id/item_name"
+                app:layout_constraintVertical_bias="1.0"
+                tools:layout_editor_absoluteX="8dp">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="29dp"
+                    app:srcCompat="@drawable/ic_person" />
+
+                <TextView
+                    android:id="@+id/tvUsers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="2dp"
+                    android:background="@color/cardview_light_background"
+                    android:text="10"
+                    android:textSize="12sp" />
+
+            </RelativeLayout>
 
             <ImageView
-                android:layout_width="30dp"
+                android:id="@+id/favorite"
+                android:layout_width="29dp"
                 android:layout_height="27dp"
-                app:srcCompat="@drawable/ic_person" />
-
-            <TextView
-                android:id="@+id/tvUsers"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="2dp"
-                android:background="@color/cardview_light_background"
-                android:text="10"
-                android:textSize="12sp" />
-
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="45dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/tvItemOptions"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/rlUsers"
+                app:layout_constraintTop_toBottomOf="@+id/item_name"
+                app:layout_constraintVertical_bias="0.447"
+                app:srcCompat="@drawable/ic_favorite_border" />
         </RelativeLayout>
 
     </android.support.constraint.ConstraintLayout>
