@@ -12,6 +12,10 @@
         android:roundIcon="@mipmap/appicon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyD-KB0cNj0mGvmhNQ2FyFXIXDRKeHDV5Ck"/>
+
         <activity
             android:name=".activity.LoginActivity"
             android:label="@string/app_name" />

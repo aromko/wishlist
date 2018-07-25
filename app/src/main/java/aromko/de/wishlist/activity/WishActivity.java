@@ -26,8 +26,13 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
@@ -52,6 +57,7 @@ public class WishActivity extends AppCompatActivity {
 
     static final int REQUEST_IMAGE_FROM_STORAGE = 1;
     static final int REQUEST_IMAGE_CAPTURE = 2;
+    static final int PLACE_PICKER_REQUEST = 3;
     private ImageButton btnAddPhoto;
     private ImageView ivProduct;
     private EditText txtTitle;
@@ -64,6 +70,9 @@ public class WishActivity extends AppCompatActivity {
     private WishViewModel wishViewModel;
     private String wishlistId;
     private AlertDialog dialog;
+    private TextView tvLocation;
+    private double longitude;
+    private double latitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,10 +93,11 @@ public class WishActivity extends AppCompatActivity {
         txtDescription = findViewById(R.id.txtDescription);
         flProgressBarHolder = findViewById(R.id.flProgressBarHolder);
         spWishstrength = findViewById(R.id.spWishstrength);
+        tvLocation = findViewById(R.id.tvLocation);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.wishstrength_selection_array, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_list_item_1);
+                R.array.wishstrength_selection_array, R.layout.spinner_item);
+        adapter.setDropDownViewResource(R.layout.spinner_item);
         spWishstrength.setAdapter(adapter);
 
         wishViewModel = ViewModelProviders.of(this).get(WishViewModel.class);
@@ -185,6 +195,14 @@ public class WishActivity extends AppCompatActivity {
                     Bitmap imageBitmap = (Bitmap) extras.get("data");
                     ivProduct.setImageBitmap(imageBitmap);
                     break;
+                case PLACE_PICKER_REQUEST:
+                    if (resultCode == RESULT_OK) {
+                        Place place = PlacePicker.getPlace(this, data);
+                        tvLocation.setText(place.getName() + "\n" + place.getAddress());
+                        longitude = place.getLatLng().longitude;
+                        latitude = place.getLatLng().latitude;
+                    }
+                    break;
             }
             ivProduct.setTag("imageChanged");
         }
@@ -198,7 +216,7 @@ public class WishActivity extends AppCompatActivity {
         if (ivProduct.getTag().toString().equals("imageChanged")) {
             isImageSet = true;
         }
-        Wish wish = new Wish(txtTitle.getText().toString(), Double.valueOf(txtPrice.getText().toString().replace(",", ".")), txtUrl.getText().toString(), txtDescription.getText().toString(), Long.valueOf(spWishstrength.getSelectedItemId()), isImageSet, System.currentTimeMillis() / 1000);
+        Wish wish = new Wish(txtTitle.getText().toString(), Double.valueOf(txtPrice.getText().toString().replace(",", ".")), txtUrl.getText().toString(), txtDescription.getText().toString(), Long.valueOf(spWishstrength.getSelectedItemId()), isImageSet, System.currentTimeMillis() / 1000, longitude, latitude);
         String wishkey = wishViewModel.insertWish(wishlistId, wish);
         if (wishkey.isEmpty() || !ivProduct.getTag().toString().equals("imageChanged")) {
             Toast.makeText(getApplicationContext(), "Wunsch wurde erfolgreich hinzugefügt.", Toast.LENGTH_LONG).show();
@@ -242,6 +260,13 @@ public class WishActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void placePicker(View view) throws GooglePlayServicesNotAvailableException, GooglePlayServicesRepairableException {
+
+        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+
+        startActivityForResult(builder.build(this), PLACE_PICKER_REQUEST);
     }
 
     public class ImageDownloader extends AsyncTask<String, Void, Bitmap> {

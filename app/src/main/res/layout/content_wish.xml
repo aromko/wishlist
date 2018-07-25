@@ -45,6 +45,7 @@
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:inputType="textPersonName"
+                    android:textSize="18dp"
                     tools:layout_editor_absoluteX="16dp"
                     tools:layout_editor_absoluteY="36dp" />
             </android.support.design.widget.TextInputLayout>
@@ -62,9 +63,10 @@
                     android:id="@+id/txtPrice"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:digits="0123456789,"
                     android:ems="10"
                     android:inputType="textCapWords"
-                    android:digits="0123456789,"
+                    android:textSize="18dp"
                     tools:layout_editor_absoluteX="16dp"
                     tools:layout_editor_absoluteY="36dp" />
             </android.support.design.widget.TextInputLayout>
@@ -84,6 +86,7 @@
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:inputType="textPersonName"
+                    android:textSize="18dp"
                     tools:layout_editor_absoluteX="16dp"
                     tools:layout_editor_absoluteY="36dp" />
             </android.support.design.widget.TextInputLayout>
@@ -102,8 +105,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:inputType="textMultiLine" />
+                    android:inputType="textMultiLine"
+                    android:textSize="18dp" />
             </android.support.design.widget.TextInputLayout>
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="2dp"
+                android:text="Wunschstärke"
+                android:textSize="18dp" />
 
             <Spinner
                 android:id="@+id/spWishstrength"
@@ -115,8 +128,8 @@
 
             <ImageButton
                 android:id="@+id/btnAddPhoto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="30dp"
+                android:layout_height="33dp"
                 android:layout_marginTop="12dp"
                 android:backgroundTint="@android:color/white"
                 android:onClick="showPhotoSelectionDialog"
@@ -137,14 +150,25 @@
                 app:srcCompat="@drawable/no_image_available" />
 
             <ImageButton
-                android:id="@+id/imageButton2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/btnLocation"
+                android:layout_width="26dp"
+                android:layout_height="32dp"
                 android:layout_marginTop="8dp"
                 android:backgroundTint="@android:color/white"
+                android:onClick="placePicker"
                 app:layout_constraintTop_toBottomOf="@+id/ivProductImage"
                 app:srcCompat="@drawable/ic_add_location"
                 tools:layout_editor_absoluteX="0dp" />
+
+            <TextView
+                android:id="@+id/tvLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="2dp"
+                android:ems="10"
+                android:text="Wähle einen Ort."
+                android:textSize="18dp" />
 
         </LinearLayout>
     </ScrollView>

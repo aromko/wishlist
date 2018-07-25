@@ -18,6 +18,8 @@ public class Wish {
     private boolean isImageSet;
     private Map<String, Boolean> markedAsFavorite;
     private long timestamp;
+    private double longitude;
+    private double latitude;
 
     public Wish() {
     }
@@ -33,14 +35,17 @@ public class Wish {
         this.timestamp = timestamp;
     }
 
-    public Wish(String title, double price, String url, String description, long wishstrength, boolean isImageSet, long timestamp) {
+    public Wish(String title, double price, String url, String description, long wishstrength, boolean isImageSet, long timestamp, double longitude, double latitude) {
         this.title = title;
         this.price = price;
         this.url = url;
         this.description = description;
         this.wishstrength = wishstrength;
         this.isImageSet = isImageSet;
+        this.markedAsFavorite = markedAsFavorite;
         this.timestamp = timestamp;
+        this.longitude = longitude;
+        this.latitude = latitude;
     }
 
     @Exclude
@@ -127,6 +132,22 @@ public class Wish {
         this.markedAsFavorite = markedAsFavorite;
     }
 
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
     @Override
     public String toString() {
         return "Wish{" +
@@ -138,6 +159,8 @@ public class Wish {
                 ", isImageSet=" + isImageSet +
                 ", markedAsFavorite=" + markedAsFavorite +
                 ", timestamp=" + timestamp +
+                ", longitude=" + longitude +
+                ", latitude=" + latitude +
                 '}';
     }
 }
