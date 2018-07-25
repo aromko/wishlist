@@ -4,7 +4,9 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -131,6 +133,16 @@ public class ItemListFragment extends Fragment {
                     wish.setMarkedAsFavorite(markedAsFavorite);
                     wishViewModel.setWishAsFavorite(wish.getWishlistId(), wish.getWishId(), wish, favoriteListId);
                 }
+
+                @Override
+                public void onMapInteraction(double longitude, double latitude){
+                    Uri gmmIntentUri = Uri.parse("google.navigation:q=" + String.valueOf(latitude) + "," + String.valueOf(longitude));
+                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                    mapIntent.setPackage("com.google.android.apps.maps");
+                    if (mapIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                        startActivity(mapIntent);
+                    }
+                }
             };
         }
         return view;
@@ -159,5 +171,7 @@ public class ItemListFragment extends Fragment {
         void onListFragmentInteraction(Wish item, int adapterPosition);
 
         void onFavoriteInteraction(Wish wish, Boolean isFavorite);
+
+        void onMapInteraction(double longitude, double latitude);
     }
 }

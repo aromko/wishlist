@@ -126,6 +126,14 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
             }
         });
 
+        holder.ivMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (null != mListener) {
+                    mListener.onMapInteraction(holder.mItem.getLongitude(), holder.mItem.getLatitude());
+                }
+            }
+        });
         if (mValues.get(position).isImageSet()) {
             final StorageReference storageRef = storage.getReference(mValues.get(position).getWishId());
             final float[] rotation = new float[1];
@@ -188,6 +196,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
         public final TextView tvUsers;
         public final RelativeLayout rlUsers;
         public final ImageView ivWishstrength;
+        public final ImageView ivMap;
 
         public Wish mItem;
 
@@ -202,6 +211,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
             tvUsers = view.findViewById(R.id.tvUsers);
             rlUsers = view.findViewById(R.id.rlUsers);
             ivWishstrength = view.findViewById(R.id.ivWishstrength);
+            ivMap = view.findViewById(R.id.ivMap);
         }
 
         @Override

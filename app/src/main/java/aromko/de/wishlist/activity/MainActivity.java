@@ -245,6 +245,11 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     public void onFavoriteInteraction(Wish wish, Boolean isFavorite) {
     }
 
+    @Override
+    public void onMapInteraction(double longitude, double latitude) {
+
+    }
+
     public void addWishList(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         LayoutInflater inflater = MainActivity.this.getLayoutInflater();

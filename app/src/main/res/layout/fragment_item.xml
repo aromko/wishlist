@@ -134,6 +134,14 @@
                 app:layout_constraintTop_toBottomOf="@+id/item_name"
                 app:layout_constraintVertical_bias="0.447"
                 app:srcCompat="@drawable/ic_favorite_border" />
+
+            <ImageView
+                android:id="@+id/ivMap"
+                android:layout_width="29dp"
+                android:layout_height="27dp"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="85dp"
+                app:srcCompat="@drawable/ic_map" />
         </RelativeLayout>
 
     </android.support.constraint.ConstraintLayout>
