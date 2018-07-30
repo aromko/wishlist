@@ -62,7 +62,10 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
 
         if (holder.mItem.getWishlistId().equals(mFavoriteListId)) {
             holder.favorite.setVisibility(View.INVISIBLE);
-            holder.rlUsers.setVisibility(View.INVISIBLE);
+        }
+
+        if(holder.mItem.getLatitude() == 0 && holder.mItem.getLongitude() == 0 ){
+            holder.ivMap.setVisibility(View.INVISIBLE);
         }
 
         int counter = 0;
@@ -86,7 +89,6 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
         } else {
             holder.favorite.setTag("isNoFavorite");
         }
-
 
         switch ((int) holder.mItem.getWishstrength()) {
             case 1:

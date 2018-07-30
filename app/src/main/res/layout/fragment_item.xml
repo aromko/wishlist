@@ -47,14 +47,14 @@
 
         <TextView
             android:id="@+id/item_name"
-            android:layout_width="272dp"
+            android:layout_width="240dp"
             android:layout_height="33dp"
             android:layout_margin="4dp"
             android:layout_marginStart="8dp"
             android:text="Samsung S7"
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.076"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -81,10 +81,29 @@
             android:layout_marginTop="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/tvItemOptions"
+            app:layout_constraintHorizontal_bias="0.88"
             app:layout_constraintStart_toEndOf="@+id/item_name"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0"
             app:srcCompat="@drawable/ic_wishstrength_low" />
+
+        <ImageView
+            android:id="@+id/favorite"
+            android:layout_width="29dp"
+            android:layout_height="27dp"
+            android:layout_alignParentStart="false"
+            android:layout_margin="3dp"
+            android:layout_marginBottom="96dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/ivWishstrength"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/item_name"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@drawable/ic_favorite_border" />
 
         <RelativeLayout
             android:id="@+id/relativeLayout"
@@ -122,25 +141,11 @@
             </RelativeLayout>
 
             <ImageView
-                android:id="@+id/favorite"
-                android:layout_width="29dp"
-                android:layout_height="27dp"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="45dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/tvItemOptions"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/rlUsers"
-                app:layout_constraintTop_toBottomOf="@+id/item_name"
-                app:layout_constraintVertical_bias="0.447"
-                app:srcCompat="@drawable/ic_favorite_border" />
-
-            <ImageView
                 android:id="@+id/ivMap"
                 android:layout_width="29dp"
                 android:layout_height="27dp"
                 android:layout_alignParentStart="true"
-                android:layout_marginStart="85dp"
+                android:layout_marginStart="43dp"
                 app:srcCompat="@drawable/ic_map" />
         </RelativeLayout>
 

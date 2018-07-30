@@ -188,12 +188,14 @@ public class WishActivity extends AppCompatActivity {
                         }
                         ivProduct.setRotation(rotate);
                         ivProduct.setImageURI(uri);
+                        ivProduct.setTag("imageChanged");
                     }
                     break;
                 case REQUEST_IMAGE_CAPTURE:
                     Bundle extras = data.getExtras();
                     Bitmap imageBitmap = (Bitmap) extras.get("data");
                     ivProduct.setImageBitmap(imageBitmap);
+                    ivProduct.setTag("imageChanged");
                     break;
                 case PLACE_PICKER_REQUEST:
                     if (resultCode == RESULT_OK) {
@@ -204,7 +206,6 @@ public class WishActivity extends AppCompatActivity {
                     }
                     break;
             }
-            ivProduct.setTag("imageChanged");
         }
     }
 

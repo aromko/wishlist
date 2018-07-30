@@ -318,10 +318,10 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
 
     public String checkIfFavoriteListIdExists() {
         SharedPreferences sharedPreferences = this.getPreferences(MODE_PRIVATE);
-        String favoriteListId = "";
+        String favoriteListId;
         if (!sharedPreferences.contains("favoriteListId")) {
             favoriteListId = listViewModel.insertList("Favoriten", true);
-            sharedPreferences.edit().putString("favoriteListId", favoriteListId).commit();
+            sharedPreferences.edit().putString("favoriteListId", favoriteListId).apply();
         } else {
             favoriteListId = sharedPreferences.getString("favoriteListId", "");
         }
