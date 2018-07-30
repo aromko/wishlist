@@ -135,7 +135,7 @@ public class ItemListFragment extends Fragment {
                 }
 
                 @Override
-                public void onMapInteraction(double longitude, double latitude){
+                public void onMapInteraction(double longitude, double latitude) {
                     Uri gmmIntentUri = Uri.parse("google.navigation:q=" + String.valueOf(latitude) + "," + String.valueOf(longitude));
                     Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                     mapIntent.setPackage("com.google.android.apps.maps");

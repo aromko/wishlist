@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     private WishListViewModel listViewModel;
     private String selectedWishlistId;
     private FloatingActionButton fab;
+    private TextView tvInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         setContentView(R.layout.activity_main);
 
         imgBtnAddWishList = findViewById(R.id.imgBtnAddWishList);
+        tvInfo = findViewById(R.id.tvInfo);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -126,6 +128,11 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
                     listView.getChildAt(i).setBackgroundColor(Color.WHITE);
                 }
 
+                if (listItems.get(position).getWishCounter() > 0) {
+                    tvInfo.setVisibility(View.INVISIBLE);
+                } else {
+                    tvInfo.setVisibility(View.VISIBLE);
+                }
                 openFragment(position);
 
                 DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -190,7 +197,12 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     }
 
     public void selectFavoritesOnStartup() {
-        openFragment(0);
+        for (WishList favoriteWishlist : listItems) {
+            if (favoriteWishlist.isFavoriteList()) {
+                openFragment(listItems.indexOf(favoriteWishlist));
+                break;
+            }
+        }
     }
 
     public void checkIfUserLoggedIn(NavigationView navigationView) {
