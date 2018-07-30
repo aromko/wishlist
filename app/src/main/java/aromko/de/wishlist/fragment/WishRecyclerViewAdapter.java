@@ -68,6 +68,10 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
             holder.ivMap.setVisibility(View.INVISIBLE);
         }
 
+        if (holder.mItem.getUrl().isEmpty()) {
+            holder.ivUrl.setVisibility(View.INVISIBLE);
+        }
+
         int counter = 0;
         if (holder.mItem.getMarkedAsFavorite() != null) {
             for (Map.Entry<String, Boolean> entry : holder.mItem.getMarkedAsFavorite().entrySet()) {
@@ -181,6 +185,15 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
                 popupMenu.show();
             }
         });
+
+        holder.ivUrl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onUrlInteraction(holder.mItem.getUrl());
+            }
+        });
+
+        holder.tvDescription.setText(holder.mItem.getDescription());
     }
 
     @Override
@@ -199,6 +212,8 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
         public final RelativeLayout rlUsers;
         public final ImageView ivWishstrength;
         public final ImageView ivMap;
+        public final ImageView ivUrl;
+        public final TextView tvDescription;
 
         public Wish mItem;
 
@@ -214,6 +229,8 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
             rlUsers = view.findViewById(R.id.rlUsers);
             ivWishstrength = view.findViewById(R.id.ivWishstrength);
             ivMap = view.findViewById(R.id.ivMap);
+            ivUrl = view.findViewById(R.id.ivUrl);
+            tvDescription = view.findViewById(R.id.tvDescription);
         }
 
         @Override

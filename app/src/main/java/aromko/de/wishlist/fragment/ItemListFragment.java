@@ -143,6 +143,11 @@ public class ItemListFragment extends Fragment {
                         startActivity(mapIntent);
                     }
                 }
+
+                @Override
+                public void onUrlInteraction(String url) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                }
             };
         }
         return view;
@@ -173,5 +178,7 @@ public class ItemListFragment extends Fragment {
         void onFavoriteInteraction(Wish wish, Boolean isFavorite);
 
         void onMapInteraction(double longitude, double latitude);
+
+        void onUrlInteraction(String url);
     }
 }

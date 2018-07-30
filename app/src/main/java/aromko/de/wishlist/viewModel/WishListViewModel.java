@@ -99,4 +99,20 @@ public class WishListViewModel extends ViewModel {
             }
         });
     }
+
+    public void updateList(String wishlistId, final String name) {
+        FirebaseDatabase.getInstance().getReference("/wishLists/" + wishlistId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                WishList currentWishlist = dataSnapshot.getValue(WishList.class);
+                currentWishlist.setName(name);
+                dataSnapshot.getRef().setValue(currentWishlist);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
 }

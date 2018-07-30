@@ -150,6 +150,18 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
             }
         });
 
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                listView.setSelection(position);
+                selectedWishlistId = listItems.get(position).getKey();
+
+                showAlertDialog(position, R.layout.dialog_editwishlist);
+
+                return true;
+            }
+        });
+
         FirebaseDynamicLinks.getInstance().getDynamicLink(getIntent())
                 .addOnSuccessListener(this, new OnSuccessListener<PendingDynamicLinkData>() {
                     @Override
@@ -169,6 +181,43 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
                     }
                 });
 
+    }
+
+    public void showAlertDialog(int position, final int layoutId) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        LayoutInflater inflater = MainActivity.this.getLayoutInflater();
+
+        View viewAddWishlist = inflater.inflate(layoutId, null);
+
+        builder.setView(viewAddWishlist);
+        final EditText txtNewWishlist = viewAddWishlist.findViewById(R.id.txtNewWishlist);
+        if(position != -1){
+            txtNewWishlist.setText(listItems.get(position).getName());
+        }
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                String text = txtNewWishlist.getText().toString();
+                if (!text.isEmpty()) {
+                    switch (layoutId){
+                        case R.layout.dialog_editwishlist:
+                            listViewModel.updateList(selectedWishlistId, text);
+                            break;
+                        case R.layout.dialog_addwishlist:
+                            listViewModel.insertList(text, false);
+                            break;
+                    }
+                }
+                dialogInterface.dismiss();
+            }
+        }).setNegativeButton("Abbrechen", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     public void openFragment(int position) {
@@ -259,34 +308,14 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
 
     @Override
     public void onMapInteraction(double longitude, double latitude) {
+    }
 
+    @Override
+    public void onUrlInteraction(String url) {
     }
 
     public void addWishList(View view) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        LayoutInflater inflater = MainActivity.this.getLayoutInflater();
-
-        View viewAddWishlist = inflater.inflate(R.layout.dialog_addwishlist, null);
-        builder.setView(viewAddWishlist);
-        final EditText txtNewWishlist = viewAddWishlist.findViewById(R.id.txtNewWishlist);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                String text = txtNewWishlist.getText().toString();
-                if (!text.isEmpty()) {
-                    listViewModel.insertList(text, false);
-                }
-                dialogInterface.dismiss();
-            }
-        }).setNegativeButton("Abbrechen", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-            }
-        });
-        AlertDialog dialog = builder.create();
-
-        dialog.show();
+        showAlertDialog(-1, R.layout.dialog_addwishlist);
     }
 
     public void onInviteClicked() {
@@ -327,4 +356,6 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         }
         return favoriteListId;
     }
+
+
 }
