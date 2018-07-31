@@ -37,7 +37,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
 
     private final List<Wish> mValues;
     private final OnListFragmentInteractionListener mListener;
-    FirebaseStorage storage = FirebaseStorage.getInstance("gs://wishlist-app-aromko.appspot.com");
+    private final static FirebaseStorage STORAGE = FirebaseStorage.getInstance("gs://wishlist-app-aromko.appspot.com");
     private Context context;
     private String mFavoriteListId = "";
 
@@ -64,7 +64,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
             holder.favorite.setVisibility(View.INVISIBLE);
         }
 
-        if(holder.mItem.getLatitude() == 0 && holder.mItem.getLongitude() == 0 ){
+        if (holder.mItem.getLatitude() == 0 && holder.mItem.getLongitude() == 0) {
             holder.ivMap.setVisibility(View.INVISIBLE);
         }
 
@@ -141,7 +141,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
             }
         });
         if (mValues.get(position).isImageSet()) {
-            final StorageReference storageRef = storage.getReference(mValues.get(position).getWishId());
+            final StorageReference storageRef = STORAGE.getReference(mValues.get(position).getWishId());
             final float[] rotation = new float[1];
 
             GlideApp.with(holder.productImage)

@@ -191,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
 
         builder.setView(viewAddWishlist);
         final EditText txtNewWishlist = viewAddWishlist.findViewById(R.id.txtNewWishlist);
-        if(position != -1){
+        if (position != -1) {
             txtNewWishlist.setText(listItems.get(position).getName());
         }
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -199,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
             public void onClick(DialogInterface dialogInterface, int i) {
                 String text = txtNewWishlist.getText().toString();
                 if (!text.isEmpty()) {
-                    switch (layoutId){
+                    switch (layoutId) {
                         case R.layout.dialog_editwishlist:
                             listViewModel.updateList(selectedWishlistId, text);
                             break;
@@ -291,8 +291,10 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
             FirebaseAuth.getInstance().signOut();
             finish();
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
-        } else if (id == R.id.action_shareList) {
+        } else if (id == R.id.action_invitePeople) {
             onInviteClicked();
+        } else if (id == R.id.action_profile) {
+            startActivity(new Intent(MainActivity.this, ProfilActivity.class));
         }
 
         return super.onOptionsItemSelected(item);

@@ -1,29 +1,29 @@
 package aromko.de.wishlist.activity;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.EditText;
 
-import java.util.Locale;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 import aromko.de.wishlist.R;
-import aromko.de.wishlist.model.HotStock;
-import aromko.de.wishlist.viewModel.HotStockViewModel;
 
 public class ProfilActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = "ProfilActivity";
 
-    private TextView tvTicker;
-    private TextView tvPrice;
+    private EditText etName;
+    private EditText etEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,37 +31,44 @@ public class ProfilActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profil);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle("Profil bearbeiten");
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        etName = findViewById(R.id.etName);
+        etEmail = findViewById(R.id.etEmail);
 
-        tvTicker = findViewById(R.id.ticker);
-        tvPrice = findViewById(R.id.price);
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        etName.setText(user.getDisplayName());
+        etEmail.setText(user.getEmail());
 
-        // Obtain a new or prior instance of HotStockViewModel from the
-        // ViewModelProviders utility class.
-        HotStockViewModel hotStockViewModel =
-                ViewModelProviders.of(this).get(HotStockViewModel.class);
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+        }
 
-        LiveData<HotStock> hotStockLiveData = hotStockViewModel.getHotStockLiveData();
+        return super.onOptionsItemSelected(item);
+    }
 
-        hotStockLiveData.observe(this, new Observer<HotStock>() {
-            @Override
-            public void onChanged(@Nullable HotStock hotStock) {
-                if (hotStock != null) {
-                    // update the UI here
-                    tvTicker.setText(hotStock.getTicker());
-                    tvPrice.setText(String.format(Locale.getDefault(), "%.2f",
-                            hotStock.getPrice()));
-                }
-            }
-        });
+    public void saveProfile(View view){
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setDisplayName(etName.getText().toString())
+                .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
+                .build();
+
+        user.updateProfile(profileUpdates)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            finish();
+                            startActivity(new Intent(ProfilActivity.this, MainActivity.class));
+                        }
+                    }
+                });
     }
 }
