@@ -2,10 +2,11 @@ package aromko.de.wishlist.fragment;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,21 +16,18 @@ import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageMetadata;
-import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Map;
 
 import aromko.de.wishlist.R;
-import aromko.de.wishlist.activity.GlideApp;
 import aromko.de.wishlist.fragment.ItemListFragment.OnListFragmentInteractionListener;
 import aromko.de.wishlist.model.Wish;
 
@@ -141,26 +139,37 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
             }
         });
         if (mValues.get(position).isImageSet()) {
-            final StorageReference storageRef = STORAGE.getReference(mValues.get(position).getWishId());
-            final float[] rotation = new float[1];
-
-            GlideApp.with(holder.productImage)
-                    .load(storageRef)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .onlyRetrieveFromCache(false)
-                    .into(new SimpleTarget<Drawable>() {
-                        @Override
-                        public void onResourceReady(@NonNull final Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                            storageRef.getMetadata().addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
+            STORAGE.getReference(mValues.get(position).getWishId()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(final Uri uri) {
+                    Picasso.get()
+                            .load(String.valueOf(uri))
+                            .networkPolicy(NetworkPolicy.OFFLINE)
+                            .into(holder.productImage, new Callback() {
                                 @Override
-                                public void onSuccess(StorageMetadata storageMetadata) {
-                                    rotation[0] = Float.valueOf(storageMetadata.getCustomMetadata("rotation"));
-                                    holder.productImage.setImageDrawable(resource);
-                                    holder.productImage.setRotation(rotation[0]);
+                                public void onSuccess() {
+                                }
+
+                                @Override
+                                public void onError(Exception e) {
+                                    Picasso.get()
+                                            .load(String.valueOf(uri))
+                                            .error(R.drawable.no_image_available)
+                                            .into(holder.productImage, new Callback() {
+                                                @Override
+                                                public void onSuccess() {
+
+                                                }
+
+                                                @Override
+                                                public void onError(Exception e) {
+                                                    Log.v("Picasso","Could not fetch image" + String.valueOf(uri));
+                                                }
+                                            });
                                 }
                             });
-                        }
-                    });
+                }
+            });
         }
 
         holder.tvItemOptions.setOnClickListener(new View.OnClickListener() {
@@ -194,6 +203,13 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
         });
 
         holder.tvDescription.setText(holder.mItem.getDescription());
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     @Override

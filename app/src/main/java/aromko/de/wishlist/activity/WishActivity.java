@@ -6,14 +6,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -79,7 +76,7 @@ public class WishActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wish);
         getWindow().getDecorView().setBackgroundColor(Color.WHITE);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -154,7 +151,6 @@ public class WishActivity extends AppCompatActivity {
         dialog.cancel();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -166,27 +162,6 @@ public class WishActivity extends AppCompatActivity {
                 case REQUEST_IMAGE_FROM_STORAGE:
                     if (data != null) {
                         Uri uri = data.getData();
-                        int rotate = 0;
-                        try {
-                            InputStream inputStream = getApplicationContext().getContentResolver().openInputStream(uri);
-                            ExifInterface exif = new ExifInterface(inputStream);
-                            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-                            switch (orientation) {
-                                case ExifInterface.ORIENTATION_ROTATE_270:
-                                    rotate = 270;
-                                    break;
-                                case ExifInterface.ORIENTATION_ROTATE_180:
-                                    rotate = 180;
-                                    break;
-                                case ExifInterface.ORIENTATION_ROTATE_90:
-                                    rotate = 90;
-                                    break;
-                            }
-
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        ivProduct.setRotation(rotate);
                         ivProduct.setImageURI(uri);
                         ivProduct.setTag("imageChanged");
                     }
