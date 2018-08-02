@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -286,6 +287,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
+            startActivity(new Intent(MainActivity.this, SettingsActivity.class));
             return true;
         } else if (id == R.id.action_logout) {
             FirebaseAuth.getInstance().signOut();
@@ -348,9 +350,9 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     }
 
     public String checkIfFavoriteListIdExists() {
-        SharedPreferences sharedPreferences = this.getPreferences(MODE_PRIVATE);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String favoriteListId;
-        if (!sharedPreferences.contains("favoriteListId")) {
+        if (sharedPreferences.getString("favoriteListId", "").isEmpty()) {
             favoriteListId = listViewModel.insertList("Favoriten", true);
             sharedPreferences.edit().putString("favoriteListId", favoriteListId).apply();
         } else {
