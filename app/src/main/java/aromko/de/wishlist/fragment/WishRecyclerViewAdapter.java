@@ -86,7 +86,12 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
 
         holder.item_name.setText(holder.mItem.getTitle());
         NumberFormat format = NumberFormat.getCurrencyInstance();
-        holder.item_price.setText(format.format(holder.mItem.getPrice()));
+        if(holder.mItem.getPrice() == holder.mItem.getSalvagePrice()){
+            holder.item_price.setText(format.format(holder.mItem.getPrice()));
+        } else {
+            holder.item_price.setText(format.format(holder.mItem.getPrice()) + " (" + format.format(holder.mItem.getSalvagePrice()) + ")");
+        }
+
 
         if (holder.mItem.getMarkedAsFavorite() != null && holder.mItem.getMarkedAsFavorite().containsKey(FirebaseAuth.getInstance().getCurrentUser().getUid()) && holder.mItem.getMarkedAsFavorite().get(FirebaseAuth.getInstance().getCurrentUser().getUid()).equals(true)) {
             holder.favorite.setImageResource(R.drawable.ic_favorite);
@@ -189,7 +194,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
                                 return true;
                             case R.id.partial_payment:
                                 if(null != mListener){
-                                    showPaymentAlertDialog(holder.mItem.getWishId(), holder.mItem.getPrice());
+                                    showPaymentAlertDialog(holder.mItem.getWishId(), holder.mItem.getPrice(), holder.mItem.getWishlistId());
                                 }
                                 return true;
                             default:
@@ -215,15 +220,14 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
         holder.ivPayment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (null != mListener) {
-                    mListener.onPaymentInteraction(holder.mItem.getWishId(), holder.mItem.getPrice(),  holder.mItem.getPrice());
-                }
+                if (null != mListener)
+                    mListener.onPaymentInteraction(holder.mItem.getWishId(), holder.mItem.getPrice(), holder.mItem.getPrice(), holder.mItem.getWishlistId());
 
             }
         });
     }
 
-    public void showPaymentAlertDialog(final String wishId, final double price) {
+    public void showPaymentAlertDialog(final String wishId, final double price, final String wishlistId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -238,7 +242,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
                 double partialPrice = Double.parseDouble(txtPartialPayment.getText().toString().replace(",", "."));
                 if (partialPrice != 0) {
                     if (null != mListener) {
-                        mListener.onPaymentInteraction(wishId, price, partialPrice);
+                        mListener.onPaymentInteraction(wishId, price, partialPrice, wishlistId);
                     }
                 }
                 dialogInterface.dismiss();

@@ -12,13 +12,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import aromko.de.wishlist.model.Payment;
+import aromko.de.wishlist.model.Wish;
 
 public class PaymentViewModel {
 
     public PaymentViewModel() {
     }
 
-    public void buyItem(String wishId, final double price, final double partialPrice) {
+    public void buyItem(final String wishId, final double price, final double partialPrice, final String wishlistId) {
         FirebaseDatabase.getInstance().getReference("/payments/" + wishId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -40,6 +41,7 @@ public class PaymentViewModel {
                     currentPayment.setSalvagePrice(salvagePrice);
                     currentPayment.setPartialPayments(partialPayments);
                     dataSnapshot.getRef().setValue(currentPayment);
+                    updateSalvagePriceInWish(salvagePrice, wishId, wishlistId);
                 } else {
                     salvagePrice = price - partialPrice;
                     partialPayments.put(FirebaseAuth.getInstance().getCurrentUser().getUid(), partialPrice);
@@ -51,6 +53,23 @@ public class PaymentViewModel {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
+            }
+        });
+    }
+
+    private void updateSalvagePriceInWish(final double salvagePrice, String wishId, String wishlistId) {
+        FirebaseDatabase.getInstance().getReference("/wishes/" + wishlistId + "/" + wishId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    Wish currentWish = dataSnapshot.getValue(Wish.class);
+                    currentWish.setSalvagePrice(salvagePrice);
+                    dataSnapshot.getRef().setValue(currentWish);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
     }

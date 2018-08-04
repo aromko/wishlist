@@ -325,7 +325,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     }
 
     @Override
-    public void onPaymentInteraction(String wishId, double price, double partialPrice) {
+    public void onPaymentInteraction(String wishId, double price, double partialPrice, String wishlistId) {
     }
 
     public void addWishList(View view) {

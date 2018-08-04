@@ -14,7 +14,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -154,9 +153,9 @@ public class ItemListFragment extends Fragment {
                 }
 
                 @Override
-                public void onPaymentInteraction(String wishId, double price, double partialPrice) {
+                public void onPaymentInteraction(String wishId, double price, double partialPrice, String wishlistId) {
                     PaymentViewModel paymentViewModel = new PaymentViewModel();
-                    paymentViewModel.buyItem(wishId, price, partialPrice);
+                    paymentViewModel.buyItem(wishId, price, partialPrice, wishlistId);
                 }
             };
         }
@@ -189,6 +188,6 @@ public class ItemListFragment extends Fragment {
 
         void onUrlInteraction(String url);
 
-        void onPaymentInteraction(String wishId, double price, double partialPrice);
+        void onPaymentInteraction(String wishId, double price, double partialPrice, String wishlistId);
     }
 }

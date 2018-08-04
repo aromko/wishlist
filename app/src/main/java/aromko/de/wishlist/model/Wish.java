@@ -20,32 +20,22 @@ public class Wish {
     private long timestamp;
     private double longitude;
     private double latitude;
+    private double salvagePrice = 0.00;
 
     public Wish() {
     }
 
-    public Wish(String title, double price, String url, String description, long wishstrength, boolean isImageSet, Map<String, Boolean> markedAsFavorite, long timestamp) {
+    public Wish(String title, double price, String url, String description, long wishstrength, boolean isImageSet, long timestamp, double longitude, double latitude, double salvagePrice) {
         this.title = title;
         this.price = price;
         this.url = url;
         this.description = description;
         this.wishstrength = wishstrength;
         this.isImageSet = isImageSet;
-        this.markedAsFavorite = markedAsFavorite;
-        this.timestamp = timestamp;
-    }
-
-    public Wish(String title, double price, String url, String description, long wishstrength, boolean isImageSet, long timestamp, double longitude, double latitude) {
-        this.title = title;
-        this.price = price;
-        this.url = url;
-        this.description = description;
-        this.wishstrength = wishstrength;
-        this.isImageSet = isImageSet;
-        this.markedAsFavorite = markedAsFavorite;
         this.timestamp = timestamp;
         this.longitude = longitude;
         this.latitude = latitude;
+        this.salvagePrice = salvagePrice;
     }
 
     @Exclude
@@ -148,6 +138,14 @@ public class Wish {
         this.latitude = latitude;
     }
 
+    public double getSalvagePrice() {
+        return salvagePrice;
+    }
+
+    public void setSalvagePrice(double salvagePrice) {
+        this.salvagePrice = salvagePrice;
+    }
+
     @Override
     public String toString() {
         return "Wish{" +
@@ -161,6 +159,7 @@ public class Wish {
                 ", timestamp=" + timestamp +
                 ", longitude=" + longitude +
                 ", latitude=" + latitude +
+                ", salvagePrice=" + salvagePrice +
                 '}';
     }
 }
