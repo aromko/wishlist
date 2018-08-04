@@ -8,11 +8,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +28,7 @@ import java.util.Map;
 
 import aromko.de.wishlist.R;
 import aromko.de.wishlist.model.Wish;
+import aromko.de.wishlist.viewModel.PaymentViewModel;
 import aromko.de.wishlist.viewModel.WishViewModel;
 import aromko.de.wishlist.viewModel.WishViewModelFactory;
 
@@ -98,7 +101,6 @@ public class ItemListFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
             wishViewModel = ViewModelProviders.of(this, new WishViewModelFactory(this.getActivity().getApplication(), wishlistId)).get(WishViewModel.class);
-            //wishViewModel = new WishViewModel(wishlistId.toString());
 
             final LiveData<List<Wish>> listsLiveData = wishViewModel.getListsLiveData();
 
@@ -131,6 +133,8 @@ public class ItemListFragment extends Fragment {
                     }
                     markedAsFavorite.put(FirebaseAuth.getInstance().getCurrentUser().getUid(), isFavorite);
                     wish.setMarkedAsFavorite(markedAsFavorite);
+                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+                    favoriteListId = sharedPreferences.getString("favoriteListId", "");
                     wishViewModel.setWishAsFavorite(wish.getWishlistId(), wish.getWishId(), wish, favoriteListId);
                 }
 
@@ -148,11 +152,16 @@ public class ItemListFragment extends Fragment {
                 public void onUrlInteraction(String url) {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
                 }
+
+                @Override
+                public void onPaymentInteraction(String wishId, double price, double partialPrice) {
+                    PaymentViewModel paymentViewModel = new PaymentViewModel();
+                    paymentViewModel.buyItem(wishId, price, partialPrice);
+                }
             };
         }
         return view;
     }
-
 
     @Override
     public void onAttach(Context context) {
@@ -172,7 +181,6 @@ public class ItemListFragment extends Fragment {
     }
 
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onListFragmentInteraction(Wish item, int adapterPosition);
 
         void onFavoriteInteraction(Wish wish, Boolean isFavorite);
@@ -180,5 +188,7 @@ public class ItemListFragment extends Fragment {
         void onMapInteraction(double longitude, double latitude);
 
         void onUrlInteraction(String url);
+
+        void onPaymentInteraction(String wishId, double price, double partialPrice);
     }
 }

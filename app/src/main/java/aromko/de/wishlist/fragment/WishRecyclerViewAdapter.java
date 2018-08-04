@@ -1,16 +1,19 @@
 package aromko.de.wishlist.fragment;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
@@ -185,6 +188,9 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
                             case R.id.edit:
                                 return true;
                             case R.id.partial_payment:
+                                if(null != mListener){
+                                    showPaymentAlertDialog(holder.mItem.getWishId(), holder.mItem.getPrice());
+                                }
                                 return true;
                             default:
                                 return false;
@@ -198,13 +204,54 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
         holder.ivUrl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onUrlInteraction(holder.mItem.getUrl());
+                if (null != mListener) {
+                    mListener.onUrlInteraction(holder.mItem.getUrl());
+                }
             }
         });
 
         holder.tvDescription.setText(holder.mItem.getDescription());
+
+        holder.ivPayment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (null != mListener) {
+                    mListener.onPaymentInteraction(holder.mItem.getWishId(), holder.mItem.getPrice(),  holder.mItem.getPrice());
+                }
+
+            }
+        });
     }
 
+    public void showPaymentAlertDialog(final String wishId, final double price) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        View viewPartialPayment = inflater.inflate(R.layout.dialog_payment, null);
+
+        builder.setView(viewPartialPayment);
+        final EditText txtPartialPayment = viewPartialPayment.findViewById(R.id.txtPartialPayment);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                double partialPrice = Double.parseDouble(txtPartialPayment.getText().toString().replace(",", "."));
+                if (partialPrice != 0) {
+                    if (null != mListener) {
+                        mListener.onPaymentInteraction(wishId, price, partialPrice);
+                    }
+                }
+                dialogInterface.dismiss();
+            }
+        }).setNegativeButton("Abbrechen", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -230,6 +277,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
         public final ImageView ivMap;
         public final ImageView ivUrl;
         public final TextView tvDescription;
+        public final ImageView ivPayment;
 
         public Wish mItem;
 
@@ -247,6 +295,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
             ivMap = view.findViewById(R.id.ivMap);
             ivUrl = view.findViewById(R.id.ivUrl);
             tvDescription = view.findViewById(R.id.tvDescription);
+            ivPayment = view.findViewById(R.id.ivPayment);
         }
 
         @Override

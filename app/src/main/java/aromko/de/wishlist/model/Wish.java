@@ -11,10 +11,10 @@ public class Wish {
     @Exclude
     private String wishlistId;
     private String title;
-    private double price;
+    private double price = 0.00;
     private String url;
     private String description;
-    private long wishstrength;
+    private long wishstrength = 0;
     private boolean isImageSet;
     private Map<String, Boolean> markedAsFavorite;
     private long timestamp;

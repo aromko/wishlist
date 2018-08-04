@@ -108,7 +108,13 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         listView.setAdapter(drawListAdapter);
         drawListAdapter.setNotifyOnChange(true);
         listViewModel = ViewModelProviders.of(this).get(WishListViewModel.class);
-        favoriteListId = checkIfFavoriteListIdExists();
+        try{
+            favoriteListId = checkIfFavoriteListIdExists();
+        } catch (Exception e){
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            finish();
+        }
+
 
         final LiveData<List<WishList>> listsLiveData = listViewModel.getListsLiveData();
 
@@ -316,6 +322,10 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
 
     @Override
     public void onUrlInteraction(String url) {
+    }
+
+    @Override
+    public void onPaymentInteraction(String wishId, double price, double partialPrice) {
     }
 
     public void addWishList(View view) {
