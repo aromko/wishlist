@@ -25,14 +25,15 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/profile_image"
+            <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/civImage"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                android:src="@drawable/profile"
                 android:layout_centerHorizontal="true"
-                android:elevation="1dp"/>
+                android:elevation="1dp"
+                android:src="@mipmap/ic_launcher_round"
+                android:tag="no_image_available"
+                android:onClick="showPhotoSelectionDialog"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -128,5 +129,22 @@
         </RelativeLayout>
 
     </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/flProgressBarHolder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#7F000000"
+        android:clickable="true"
+        android:visibility="gone">
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:visibility="visible" />
+    </FrameLayout>
 
 </RelativeLayout>

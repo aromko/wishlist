@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -15,7 +14,6 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,26 +22,18 @@ import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageException;
-import com.google.firebase.storage.StorageMetadata;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-
-import java.io.ByteArrayOutputStream;
 
 import aromko.de.wishlist.R;
 import aromko.de.wishlist.model.Wish;
 import aromko.de.wishlist.utilities.PhotoHelper;
 import aromko.de.wishlist.viewModel.WishViewModel;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class WishActivity extends AppCompatActivity {
 
     static final int PLACE_PICKER_REQUEST = 3;
     private ImageButton btnAddPhoto;
-    private ImageView ivProduct;
+    private CircleImageView ivProductImage;
     private EditText txtTitle;
     private EditText txtPrice;
     private EditText txtUrl;
@@ -71,7 +61,7 @@ public class WishActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Wunsch hinzufügen");
 
         btnAddPhoto = findViewById(R.id.btnAddPhoto);
-        ivProduct = findViewById(R.id.ivProductImage);
+        ivProductImage = findViewById(R.id.civImage);
         txtTitle = findViewById(R.id.txtTitle);
         txtPrice = findViewById(R.id.txtPrice);
         txtUrl = findViewById(R.id.txtUrl);
@@ -141,57 +131,25 @@ public class WishActivity extends AppCompatActivity {
 
     public void saveWish(View view) {
         flProgressBarHolder.setVisibility(View.VISIBLE);
-        Bitmap bitmap = ((BitmapDrawable) ivProduct.getDrawable()).getBitmap();
+        Bitmap bitmap = ((BitmapDrawable) ivProductImage.getDrawable()).getBitmap();
 
         boolean isImageSet = false;
-        if (ivProduct.getTag().toString().equals("imageChanged")) {
+        if (ivProductImage.getTag().toString().equals("imageChanged")) {
             isImageSet = true;
         }
         Wish wish = new Wish(txtTitle.getText().toString(), Double.valueOf(txtPrice.getText().toString().replace(",", ".")), txtUrl.getText().toString(), txtDescription.getText().toString(), Long.valueOf(spWishstrength.getSelectedItemId()), isImageSet, System.currentTimeMillis() / 1000, longitude, latitude, Double.valueOf(txtPrice.getText().toString().replace(",", ".")));
         String wishkey = wishViewModel.insertWish(wishlistId, wish);
-        if (wishkey.isEmpty() || !ivProduct.getTag().toString().equals("imageChanged")) {
+        if (wishkey.isEmpty() || !ivProductImage.getTag().toString().equals("imageChanged")) {
             Toast.makeText(getApplicationContext(), "Wunsch wurde erfolgreich hinzugefügt.", Toast.LENGTH_LONG).show();
             flProgressBarHolder.setVisibility(View.GONE);
             finish();
         } else {
-            uploadImage(bitmap, wishkey);
+            String userId = null;
+            photoHelper.uploadImage(bitmap, wishkey, userId);
         }
     }
 
-    public void uploadImage(Bitmap bitmap, String wishkey) {
-        FirebaseStorage storage = FirebaseStorage.getInstance("gs://wishlist-app-aromko.appspot.com");
-        StorageReference storageRef = storage.getReference(wishkey);
-        StorageMetadata metadata = new StorageMetadata.Builder()
-                .setCustomMetadata("rotation", Float.valueOf(ivProduct.getRotation()).toString())
-                .build();
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] data = baos.toByteArray();
-
-        UploadTask uploadTask = storageRef.putBytes(data, metadata);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                int errorCode = ((StorageException) exception).getErrorCode();
-                String errorMessage = exception.getMessage();
-                switch (errorCode) {
-                    case -13000:
-                        errorMessage += "Unbekannter Fehler.";
-                }
-                flProgressBarHolder.setVisibility(View.GONE);
-                Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_LONG).show();
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Toast.makeText(getApplicationContext(), "Wunsch wurde erfolgreich hinzugefügt.", Toast.LENGTH_LONG).show();
-                flProgressBarHolder.setVisibility(View.GONE);
-                finish();
-            }
-        });
-
-    }
 
     public void placePicker(View view) throws GooglePlayServicesNotAvailableException, GooglePlayServicesRepairableException {
 
