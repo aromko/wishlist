@@ -3,18 +3,12 @@ package aromko.de.wishlist.activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -39,21 +33,14 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.concurrent.ExecutionException;
 
 import aromko.de.wishlist.R;
 import aromko.de.wishlist.model.Wish;
+import aromko.de.wishlist.utilities.PhotoHelper;
 import aromko.de.wishlist.viewModel.WishViewModel;
 
 public class WishActivity extends AppCompatActivity {
 
-    static final int REQUEST_IMAGE_FROM_STORAGE = 1;
-    static final int REQUEST_IMAGE_CAPTURE = 2;
     static final int PLACE_PICKER_REQUEST = 3;
     private ImageButton btnAddPhoto;
     private ImageView ivProduct;
@@ -63,13 +50,14 @@ public class WishActivity extends AppCompatActivity {
     private EditText txtDescription;
     private Spinner spWishstrength;
     private FrameLayout flProgressBarHolder;
-    private EditText tvDownloadUrl;
+
     private WishViewModel wishViewModel;
     private String wishlistId;
-    private AlertDialog dialog;
+
     private TextView tvLocation;
     private double longitude;
     private double latitude;
+    PhotoHelper photoHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +89,8 @@ public class WishActivity extends AppCompatActivity {
 
         Intent myIntent = getIntent();
         wishlistId = myIntent.getStringExtra("wishlistId");
+
+        photoHelper = new PhotoHelper(this);
     }
 
     @Override
@@ -112,66 +102,31 @@ public class WishActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void showPhotoSelectionDialog(View view) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        LayoutInflater inflater = this.getLayoutInflater();
-        View v = inflater.inflate(R.layout.dialog_photo_selection, null);
-        tvDownloadUrl = (EditText) v.findViewById(R.id.downloadurl);
-        builder.setView(v);
-        dialog = builder.create();
-        dialog.show();
+    public void showPhotoSelectionDialog(View view){
+        photoHelper.startPhotoSelectionDialog();
     }
 
-    public void addImageFromStorage(View view) {
-        dialog.cancel();
-        startActivityForResult(new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI), 1);
+    public void addImageFromStorage(View v) {
+        photoHelper.requestImageFromStorage();
     }
+
 
     public void dispatchTakePictureIntent(View view) {
-        dialog.cancel();
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-        }
+        photoHelper.requestImageFromCapture();
     }
 
     public void downloadImage(View view) {
-        ImageDownloader task = new ImageDownloader();
-        Bitmap myImage;
-
-        String url = tvDownloadUrl.getText().toString();
-        try {
-            myImage = task.execute(url).get();
-            ivProduct.setImageBitmap(myImage);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        dialog.cancel();
+        photoHelper.downloadImageFromWeb();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+        photoHelper.onActivityResult(requestCode,resultCode,data);
 
-        }
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
-                case REQUEST_IMAGE_FROM_STORAGE:
-                    if (data != null) {
-                        Uri uri = data.getData();
-                        ivProduct.setImageURI(uri);
-                        ivProduct.setTag("imageChanged");
-                    }
-                    break;
-                case REQUEST_IMAGE_CAPTURE:
-                    Bundle extras = data.getExtras();
-                    Bitmap imageBitmap = (Bitmap) extras.get("data");
-                    ivProduct.setImageBitmap(imageBitmap);
-                    ivProduct.setTag("imageChanged");
-                    break;
+
                 case PLACE_PICKER_REQUEST:
                     if (resultCode == RESULT_OK) {
                         Place place = PlacePicker.getPlace(this, data);
@@ -243,32 +198,5 @@ public class WishActivity extends AppCompatActivity {
         PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
 
         startActivityForResult(builder.build(this), PLACE_PICKER_REQUEST);
-    }
-
-    public class ImageDownloader extends AsyncTask<String, Void, Bitmap> {
-
-        @Override
-        protected Bitmap doInBackground(String... urls) {
-
-            try {
-                URL url = new URL(urls[0]);
-                try {
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                    connection.connect();
-
-                    InputStream inputStream = connection.getInputStream();
-
-                    Bitmap myBitmap = BitmapFactory.decodeStream(inputStream);
-
-                    return myBitmap;
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
     }
 }

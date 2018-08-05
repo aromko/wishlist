@@ -30,6 +30,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -42,6 +43,9 @@ import com.google.firebase.dynamiclinks.DynamicLink;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
 import com.google.firebase.dynamiclinks.ShortDynamicLink;
+import com.google.firebase.storage.FirebaseStorage;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +55,7 @@ import aromko.de.wishlist.adapter.WishlistAdapter;
 import aromko.de.wishlist.fragment.ItemListFragment;
 import aromko.de.wishlist.model.Wish;
 import aromko.de.wishlist.model.WishList;
+import aromko.de.wishlist.utilities.CircleTransform;
 import aromko.de.wishlist.viewModel.WishListViewModel;
 
 public class MainActivity extends AppCompatActivity implements ItemListFragment.OnListFragmentInteractionListener {
@@ -66,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     private String selectedWishlistId;
     private FloatingActionButton fab;
     private TextView tvInfo;
+    private ImageView ivProfilePicture;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,8 +92,9 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
-        txtUserEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txtUserEmail);
-        txtUserName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txtUserName);
+        txtUserEmail = navigationView.getHeaderView(0).findViewById(R.id.txtUserEmail);
+        txtUserName = navigationView.getHeaderView(0).findViewById(R.id.txtUserName);
+        ivProfilePicture = navigationView.getHeaderView(0).findViewById(R.id.ivProfilePicture);
 
         checkIfUserLoggedIn(navigationView);
 
@@ -266,6 +273,19 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         if (mAuth.getCurrentUser() != null) {
             txtUserEmail.setText(mAuth.getCurrentUser().getEmail());
             txtUserName.setText(mAuth.getCurrentUser().getDisplayName());
+            FirebaseStorage STORAGE = FirebaseStorage.getInstance("gs://wishlist-app-aromko.appspot.com");
+            STORAGE.getReference("-LJ9I_IkwRtt6gFkYYD4").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(final Uri uri) {
+                    Picasso.get()
+                            .load(String.valueOf(uri))
+                            .transform(new CircleTransform())
+                            .resize(200, 200)
+                            .centerCrop()
+                            .networkPolicy(NetworkPolicy.OFFLINE)
+                            .into(ivProfilePicture);
+                }
+            });
         } else {
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
             finish();
