@@ -49,6 +49,11 @@
                 android:minHeight="?attr/actionBarSize"
                 android:theme="?attr/actionBarTheme" />
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
             <ImageButton
                 android:id="@+id/imgBtnAddWishList"
                 android:layout_width="33dp"
@@ -61,6 +66,19 @@
                 android:contentDescription="Hinzufügen"
                 android:onClick="addWishList"
                 app:srcCompat="@drawable/ic_add_white" />
+
+            <ImageButton
+                android:id="@+id/imgBtnDeleteWishList"
+                android:layout_width="33dp"
+                android:layout_height="28dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignTop="@+id/imgBtnAddWishList"
+                android:layout_marginEnd="18dp"
+                android:backgroundTint="@color/colorAccent"
+                android:contentDescription="Löschen"
+                android:onClick="deleteWishlist"
+                app:srcCompat="@drawable/ic_delete_white" />
+        </RelativeLayout>
 
         </RelativeLayout>
 

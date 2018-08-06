@@ -32,6 +32,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -69,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     private FloatingActionButton fab;
     private TextView tvInfo;
     private CircleImageView civImage;
+    private ImageButton ibDeleteWishlist;
 
     PhotoHelper photoHelper;
 
@@ -78,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         setContentView(R.layout.activity_main);
 
         imgBtnAddWishList = findViewById(R.id.imgBtnAddWishList);
+        ibDeleteWishlist = findViewById(R.id.imgBtnDeleteWishList);
         tvInfo = findViewById(R.id.tvInfo);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -211,13 +214,16 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 String text = txtNewWishlist.getText().toString();
-                if (!text.isEmpty()) {
+                if (!text.isEmpty() || layoutId == R.layout.dialog_deletewishlist) {
                     switch (layoutId) {
                         case R.layout.dialog_editwishlist:
                             listViewModel.updateList(selectedWishlistId, text);
                             break;
                         case R.layout.dialog_addwishlist:
                             listViewModel.insertList(text, false);
+                            break;
+                        case R.layout.dialog_deletewishlist:
+                            listViewModel.deleteList(selectedWishlistId);
                             break;
                     }
                 }
@@ -344,7 +350,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     }
 
     public void onInviteClicked() {
-        Task<ShortDynamicLink> shortLinkTask = FirebaseDynamicLinks.getInstance().createDynamicLink()
+        FirebaseDynamicLinks.getInstance().createDynamicLink()
                 .setLink(Uri.parse("https://www.example.com/page?param=" + selectedWishlistId))
                 .setDynamicLinkDomain("aromko.page.link")
                 .setAndroidParameters(new DynamicLink.AndroidParameters.Builder().build())
@@ -380,6 +386,14 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
             favoriteListId = sharedPreferences.getString("favoriteListId", "");
         }
         return favoriteListId;
+    }
+
+    public void deleteWishlist(View view){
+        if(selectedWishlistId.equals(favoriteListId)){
+            Toast.makeText(this,"Die Favoritenliste kann nicht gelöscht werden", Toast.LENGTH_LONG).show();
+        } else {
+            showAlertDialog(-1, R.layout.dialog_deletewishlist);
+        }
     }
 
 

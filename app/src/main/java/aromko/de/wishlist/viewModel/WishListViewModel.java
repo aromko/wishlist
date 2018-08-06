@@ -6,6 +6,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -106,6 +107,22 @@ public class WishListViewModel extends ViewModel {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 WishList currentWishlist = dataSnapshot.getValue(WishList.class);
                 currentWishlist.setName(name);
+                dataSnapshot.getRef().setValue(currentWishlist);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void deleteList(String wishlistId) {
+        FirebaseDatabase.getInstance().getReference("/wishLists/" + wishlistId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                WishList currentWishlist = dataSnapshot.getValue(WishList.class);
+                currentWishlist.getAllowedUsers().remove(FirebaseAuth.getInstance().getCurrentUser().getUid());
                 dataSnapshot.getRef().setValue(currentWishlist);
             }
 
