@@ -2,6 +2,7 @@ package aromko.de.wishlist.fragment;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -31,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 import aromko.de.wishlist.R;
+import aromko.de.wishlist.activity.EditWishActivity;
 import aromko.de.wishlist.fragment.ItemListFragment.OnListFragmentInteractionListener;
 import aromko.de.wishlist.model.Wish;
 
@@ -58,7 +60,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.mItem = mValues.get(position);
 
         if (holder.mItem.getWishlistId().equals(mFavoriteListId)) {
@@ -182,7 +184,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
 
         holder.tvItemOptions.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(final View view) {
                 PopupMenu popupMenu = new PopupMenu(context, holder.tvItemOptions);
 
                 popupMenu.inflate(R.menu.item_options_menu);
@@ -191,6 +193,11 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.edit:
+
+                                Intent editWishAcitivity = new Intent(view.getContext(), EditWishActivity.class);
+                                editWishAcitivity.putExtra("wishlistId", holder.mItem.getWishlistId());
+                                editWishAcitivity.putExtra("wishId", holder.mItem.getWishId());
+                                view.getContext().startActivity(editWishAcitivity);
                                 return true;
                             case R.id.partial_payment:
                                 if(null != mListener){

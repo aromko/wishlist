@@ -1,13 +1,13 @@
 package aromko.de.wishlist.activity;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -21,7 +21,11 @@ import android.widget.Toast;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBufferResponse;
+import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import aromko.de.wishlist.R;
 import aromko.de.wishlist.model.Wish;
@@ -29,7 +33,7 @@ import aromko.de.wishlist.utilities.PhotoHelper;
 import aromko.de.wishlist.viewModel.WishViewModel;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class WishActivity extends AppCompatActivity {
+public class EditWishActivity extends AppCompatActivity {
 
     static final int PLACE_PICKER_REQUEST = 3;
     private ImageButton btnAddPhoto;
@@ -41,8 +45,9 @@ public class WishActivity extends AppCompatActivity {
     private Spinner spWishstrength;
     private FrameLayout flProgressBarHolder;
 
-    private WishViewModel wishViewModel;
+    private WishViewModel wishViewModel = new WishViewModel();
     private String wishlistId;
+    private String wishId;
 
     private TextView tvLocation;
     private double longitude;
@@ -53,13 +58,13 @@ public class WishActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_wish);
-        getWindow().getDecorView().setBackgroundColor(Color.WHITE);
+        setContentView(R.layout.activity_edit_wish);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle("Wunsch hinzufügen");
+        getSupportActionBar().setTitle("Wunsch bearbeiten");
 
         btnAddPhoto = findViewById(R.id.btnAddPhoto);
         ivProductImage = findViewById(R.id.civImage);
@@ -76,12 +81,46 @@ public class WishActivity extends AppCompatActivity {
         adapter.setDropDownViewResource(R.layout.spinner_item);
         spWishstrength.setAdapter(adapter);
 
-        wishViewModel = ViewModelProviders.of(this).get(WishViewModel.class);
+        photoHelper = new PhotoHelper(this);
 
         Intent myIntent = getIntent();
         wishlistId = myIntent.getStringExtra("wishlistId");
+        wishId = myIntent.getStringExtra("wishId");
+        photoHelper.requestProductPicture(wishId);
+        
+        wishViewModel.selectWish(wishlistId, wishId, new WishViewModel.FirebaseCallback() {
+            @Override
+            public void onCallback(Wish wish) {
 
-        photoHelper = new PhotoHelper(this);
+               txtTitle.setText(wish.getTitle());
+               txtPrice.setText(String.valueOf(wish.getPrice()).replace(".", ","));
+               txtUrl.setText(wish.getUrl());
+               txtDescription.setText(wish.getUrl());
+               spWishstrength.setSelection((int) wish.getWishstrength());
+
+               longitude = wish.getLongitude();
+               latitude = wish.getLatitude();
+               if(wish.getPlaceId() != null) {
+                   Places.getGeoDataClient(getApplicationContext()).getPlaceById(wish.getPlaceId()).addOnCompleteListener(new OnCompleteListener<PlaceBufferResponse>() {
+                        @Override
+                        public void onComplete(@NonNull Task<PlaceBufferResponse> task) {
+                            if (task.isSuccessful()) {
+                                PlaceBufferResponse places = task.getResult();
+                                Place myPlace = places.get(0);
+                                tvLocation.setText(myPlace.getName() + "\n" + myPlace.getAddress());
+                                places.release();
+                            } else {
+                                //TODO: TOAST
+                                Log.e("AAAAAA", "Place not found.");
+                            }
+                        }
+                   });
+               }
+
+
+            }
+        });
+
     }
 
     @Override
@@ -124,7 +163,6 @@ public class WishActivity extends AppCompatActivity {
                         tvLocation.setText(place.getName() + "\n" + place.getAddress());
                         longitude = place.getLatLng().longitude;
                         latitude = place.getLatLng().latitude;
-                        placeId = place.getId();
                     }
                     break;
             }
@@ -159,4 +197,5 @@ public class WishActivity extends AppCompatActivity {
 
         startActivityForResult(builder.build(this), PLACE_PICKER_REQUEST);
     }
+
 }

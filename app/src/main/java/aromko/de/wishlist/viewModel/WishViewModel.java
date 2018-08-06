@@ -128,4 +128,25 @@ public class WishViewModel extends ViewModel {
             }
         });
     }
+
+    public void selectWish(String wishlistId, String wishId, final FirebaseCallback firebaseCallback) {
+        FirebaseDatabase.getInstance().getReference("/wishes/" + wishlistId + "/" + wishId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Wish wish = dataSnapshot.getValue(Wish.class);
+                firebaseCallback.onCallback(wish);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public interface FirebaseCallback {
+        void onCallback(Wish wish);
+    }
+
+
 }

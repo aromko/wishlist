@@ -2,20 +2,22 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="aromko.de.wishlist">
 
-    <uses-feature android:name="android.hardware.camera" android:required="true" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
 
     <application
         android:name=".database.FirebasePersistence"
         android:allowBackup="true"
+        android:fullBackupContent="false"
         android:icon="@mipmap/appicon"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/appicon"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:fullBackupContent="false">
+        android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyD-KB0cNj0mGvmhNQ2FyFXIXDRKeHDV5Ck"/>
+            android:value="AIzaSyD-KB0cNj0mGvmhNQ2FyFXIXDRKeHDV5Ck" />
 
         <activity
             android:name=".activity.LoginActivity"
@@ -28,14 +30,21 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:host="aromko.de.wishlist" android:scheme="http"/>
-                <data android:host="aromko.de.wishlist" android:scheme="https"/>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="aromko.de.wishlist"
+                    android:scheme="http" />
+                <data
+                    android:host="aromko.de.wishlist"
+                    android:scheme="https" />
             </intent-filter>
         </activity>
         <activity
@@ -47,11 +56,17 @@
             android:name=".activity.WishActivity"
             android:label="@string/title_activity_wish"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.SettingsActivity"
             android:label="@string/title_activity_wish"
             android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.EditWishActivity"
+            android:label="@string/title_activity_edit_wish"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
+
 </manifest>

@@ -174,6 +174,19 @@ public class PhotoHelper {
         });
     }
 
+    public void requestProductPicture(String wishid) {
+        FirebaseStorage STORAGE = FirebaseStorage.getInstance("gs://wishlist-app-aromko.appspot.com");
+        STORAGE.getReference(wishid).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(final Uri uri) {
+                Picasso.get()
+                        .load(String.valueOf(uri))
+                        .networkPolicy(NetworkPolicy.NO_CACHE)
+                        .into((CircleImageView) mContext.findViewById(R.id.civImage));
+            }
+        });
+    }
+
     public class ImageDownloader extends AsyncTask<String, Void, Bitmap> {
 
         @Override

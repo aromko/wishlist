@@ -20,12 +20,13 @@ public class Wish {
     private long timestamp;
     private double longitude;
     private double latitude;
+    private String placeId;
     private double salvagePrice = 0.00;
 
     public Wish() {
     }
 
-    public Wish(String title, double price, String url, String description, long wishstrength, boolean isImageSet, long timestamp, double longitude, double latitude, double salvagePrice) {
+    public Wish(String title, double price, String url, String description, long wishstrength, boolean isImageSet, long timestamp, double longitude, double latitude, double salvagePrice, String placeId) {
         this.title = title;
         this.price = price;
         this.url = url;
@@ -36,6 +37,7 @@ public class Wish {
         this.longitude = longitude;
         this.latitude = latitude;
         this.salvagePrice = salvagePrice;
+        this.placeId = placeId;
     }
 
     @Exclude
@@ -146,6 +148,14 @@ public class Wish {
         this.salvagePrice = salvagePrice;
     }
 
+    public String getPlaceId() {
+        return placeId;
+    }
+
+    public void setPlaceId(String placeId) {
+        this.placeId = placeId;
+    }
+
     @Override
     public String toString() {
         return "Wish{" +
@@ -160,6 +170,7 @@ public class Wish {
                 ", longitude=" + longitude +
                 ", latitude=" + latitude +
                 ", salvagePrice=" + salvagePrice +
+                ", placeId=" + placeId +
                 '}';
     }
 }
