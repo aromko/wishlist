@@ -39,6 +39,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.dynamiclinks.DynamicLink;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
@@ -60,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
 
     private String favoriteListId = "";
     private FirebaseAuth mAuth;
+    private FirebaseUser mUser;
     private TextView txtUserEmail;
     private TextView txtUserName;
     private ListView listView;
@@ -275,13 +277,15 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
 
     public void checkIfUserLoggedIn(NavigationView navigationView) {
         mAuth = FirebaseAuth.getInstance();
-        if (mAuth.getCurrentUser() != null) {
-            txtUserEmail.setText(mAuth.getCurrentUser().getEmail());
-            txtUserName.setText(mAuth.getCurrentUser().getDisplayName());
+        mUser = mAuth.getCurrentUser();
+        if (mUser != null) {
+            txtUserEmail.setText(mUser.getEmail());
+            txtUserName.setText(mUser.getDisplayName());
             loadProfilePicture(mAuth);
         } else {
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
             finish();
+            return;
         }
     }
 
@@ -313,9 +317,10 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
             startActivity(new Intent(MainActivity.this, SettingsActivity.class));
             return true;
         } else if (id == R.id.action_logout) {
-            FirebaseAuth.getInstance().signOut();
-            finish();
+            mAuth.signOut();
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            finish();
+            return true;
         } else if (id == R.id.action_invitePeople) {
             onInviteClicked();
         } else if (id == R.id.action_profile) {
