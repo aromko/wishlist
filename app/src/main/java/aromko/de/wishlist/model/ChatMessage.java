@@ -5,15 +5,15 @@ import com.google.firebase.database.Exclude;
 public class ChatMessage {
     @Exclude
     private String wishId;
-    @Exclude
-    private String uId;
+    private String name;
     private String text;
     private long timestamp;
 
     public ChatMessage() {
     }
 
-    public ChatMessage(String text, long timestamp) {
+    public ChatMessage(String name, String text, long timestamp) {
+        this.name = name;
         this.text = text;
         this.timestamp = timestamp;
     }
@@ -24,6 +24,14 @@ public class ChatMessage {
 
     public void setWishId(String wishId) {
         this.wishId = wishId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getText() {
@@ -42,19 +50,11 @@ public class ChatMessage {
         this.timestamp = timestamp;
     }
 
-    public String getuId() {
-        return uId;
-    }
-
-    public void setuId(String uId) {
-        this.uId = uId;
-    }
-
     @Override
     public String toString() {
         return "ChatMessage{" +
                 "wishId='" + wishId + '\'' +
-                ", uId='" + uId + '\'' +
+                ", name='" + name + '\'' +
                 ", text='" + text + '\'' +
                 ", timestamp=" + timestamp +
                 '}';

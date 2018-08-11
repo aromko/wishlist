@@ -31,8 +31,8 @@ public class ChatMessageViewModel extends ViewModel {
         liveData = new FirebaseQueryLiveData(lists_ref);
     };
 
-    public ChatMessageViewModel(Application mApplication, final String wishId, final String uId) {
-        message_path = "/messages/" + wishId + "/" + uId;
+    public ChatMessageViewModel(Application mApplication, final String wishId) {
+        message_path = "/messages/" + wishId;
         lists_ref = FirebaseDatabase.getInstance().getReference(message_path);
         liveData = new FirebaseQueryLiveData(lists_ref);
         listsLiveData.addSource(liveData, new Observer<DataSnapshot>() {
@@ -46,7 +46,6 @@ public class ChatMessageViewModel extends ViewModel {
                             for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                 ChatMessage chatMessage = snapshot.getValue(ChatMessage.class);
                                 chatMessage.setWishId(wishId);
-                                chatMessage.setuId(uId);
                                 lists.add(chatMessage);
                             }
                             listsLiveData.postValue(lists);
@@ -65,10 +64,9 @@ public class ChatMessageViewModel extends ViewModel {
         return listsLiveData;
     }
 
-    public void insertMessage(String wishId, String uId, String messageText) {
-        Log.i("XXXXX", message_path);
+    public void insertMessage(String displayName, String messageText) {
         String key = FirebaseDatabase.getInstance().getReference(message_path).push().getKey();
-        ChatMessage chatMessage =  new ChatMessage(messageText, System.currentTimeMillis() / 1000);
+        ChatMessage chatMessage =  new ChatMessage(displayName, messageText, System.currentTimeMillis() / 1000);
         FirebaseDatabase.getInstance().getReference(message_path + "/" + key).setValue(chatMessage);
     }
 }

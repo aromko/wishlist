@@ -79,7 +79,7 @@ public class ChatActivity extends AppCompatActivity {
 
         mLinearLayoutManager = new LinearLayoutManager(this);
 
-        chatMessageViewModel = ViewModelProviders.of(this, new ChatMessageViewModelFactory(this.getApplication(), wishId, mFirebaseUser.getUid())).get(ChatMessageViewModel.class);
+        chatMessageViewModel = ViewModelProviders.of(this, new ChatMessageViewModelFactory(this.getApplication(), wishId)).get(ChatMessageViewModel.class);
 
         final LiveData<List<ChatMessage>> listsLiveData = chatMessageViewModel.getListsLiveData();
 
@@ -121,7 +121,7 @@ public class ChatActivity extends AppCompatActivity {
 
 
     public void insertChatMessage(View view) {
-        chatMessageViewModel.insertMessage(wishId, mFirebaseUser.getUid(), mMessageText.getText().toString());
+        chatMessageViewModel.insertMessage(mFirebaseUser.getDisplayName(), mMessageText.getText().toString());
         mMessageText.setText("");
     }
 

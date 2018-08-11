@@ -50,7 +50,7 @@ public class ChatMessageViewHolderAdapter extends RecyclerView.Adapter<ChatMessa
             holder.messageTextView.setText(chatMessage.getText());
             holder.messageTextView.setVisibility(TextView.VISIBLE);
             holder.messageImageView.setVisibility(ImageView.GONE);
-            holder.messengerTextView.setText(mUsername + " " + date);
+            holder.messengerTextView.setText(chatMessage.getName() + " " + date);
         }
     }
 
