@@ -350,6 +350,10 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     public void onPaymentInteraction(String wishId, double price, double partialPrice, String wishlistId) {
     }
 
+    @Override
+    public void onChatInteraction(String wishId) {
+    }
+
     public void addWishList(View view) {
         showAlertDialog(-1, R.layout.dialog_addwishlist);
     }

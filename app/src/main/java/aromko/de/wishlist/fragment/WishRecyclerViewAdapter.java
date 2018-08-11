@@ -148,6 +148,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
                 }
             }
         });
+
         if (mValues.get(position).isImageSet()) {
             STORAGE.getReference(mValues.get(position).getWishId()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                 @Override
@@ -232,6 +233,15 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
 
             }
         });
+
+        holder.ivChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (null != mListener) {
+                    mListener.onChatInteraction(holder.mItem.getWishId());
+                }
+            }
+        });
     }
 
     public void showPaymentAlertDialog(final String wishId, final double price, final String wishlistId) {
@@ -289,6 +299,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
         public final ImageView ivUrl;
         public final TextView tvDescription;
         public final ImageView ivPayment;
+        public final ImageView ivChat;
 
         public Wish mItem;
 
@@ -307,6 +318,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
             ivUrl = view.findViewById(R.id.ivUrl);
             tvDescription = view.findViewById(R.id.tvDescription);
             ivPayment = view.findViewById(R.id.ivPayment);
+            ivChat = view.findViewById(R.id.ivChat);
         }
 
         @Override

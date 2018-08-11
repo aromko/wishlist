@@ -3,23 +3,20 @@ package aromko.de.wishlist.activity;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.LayoutInflater;
+import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -28,23 +25,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import aromko.de.wishlist.R;
+import aromko.de.wishlist.adapter.ChatMessageViewHolderAdapter;
 import aromko.de.wishlist.model.ChatMessage;
-import aromko.de.wishlist.model.Wish;
 import aromko.de.wishlist.viewModel.ChatMessageViewModel;
-import de.hdodenhof.circleimageview.CircleImageView;
+import aromko.de.wishlist.viewModel.ChatMessageViewModelFactory;
 
 public class ChatActivity extends AppCompatActivity {
 
-    private Button mSendButton;
     private RecyclerView mMessageRecyclerView;
     private LinearLayoutManager mLinearLayoutManager;
     private ProgressBar mProgressBar;
-    private EditText mMessageEditText;
-    private ImageView mAddMessageImageView;
+    private EditText mMessageText;
+    private Button mSendButton;
 
     private String mUsername;
     private ChatMessageViewModel chatMessageViewModel;
     private ArrayList<ChatMessage> listItems = new ArrayList<ChatMessage>();
+    private String wishId;
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
@@ -53,6 +50,14 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle("Nachrichten");
+
+        Intent myIntent = getIntent();
+        wishId = myIntent.getStringExtra("wishId");
 
         mUsername = "anonym";
 
@@ -69,11 +74,12 @@ public class ChatActivity extends AppCompatActivity {
 
         mProgressBar = findViewById(R.id.progressBar);
         mMessageRecyclerView = findViewById(R.id.messageRecyclerView);
+        mMessageText =  findViewById(R.id.messageEditText);
+        mSendButton =  findViewById(R.id.sendButton);
+
         mLinearLayoutManager = new LinearLayoutManager(this);
-        mLinearLayoutManager.setStackFromEnd(true);
 
-
-        chatMessageViewModel = ViewModelProviders.of(this).get(ChatMessageViewModel.class);
+        chatMessageViewModel = ViewModelProviders.of(this, new ChatMessageViewModelFactory(this.getApplication(), wishId, mFirebaseUser.getUid())).get(ChatMessageViewModel.class);
 
         final LiveData<List<ChatMessage>> listsLiveData = chatMessageViewModel.getListsLiveData();
 
@@ -86,64 +92,45 @@ public class ChatActivity extends AppCompatActivity {
                 for (ChatMessage chatMessage : chatMessages) {
                     listItems.add(chatMessage);
                 }
-                mMessageRecyclerView.setAdapter(new ChatMessageViewHolder(listItems));
+                mMessageRecyclerView.setAdapter(new ChatMessageViewHolderAdapter(listItems, mUsername));
+                mProgressBar.setVisibility(View.INVISIBLE);
             }
         });
 
+        mMessageText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(s.toString().isEmpty()){
+                    mSendButton.setEnabled(false);
+                } else {
+                    mSendButton.setEnabled(true);
+                }
+            }
+        });
     }
 
-    public class ChatMessageViewHolder extends RecyclerView.Adapter<ChatMessageViewHolder.ViewHolder> {
 
-        private final List<ChatMessage> mValues;
-        private Context context;
+    public void insertChatMessage(View view) {
+        chatMessageViewModel.insertMessage(wishId, mFirebaseUser.getUid(), mMessageText.getText().toString());
+        mMessageText.setText("");
+    }
 
-        public ChatMessageViewHolder(List<ChatMessage> mValues) {
-            this.mValues = mValues;
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
         }
 
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-            View view = LayoutInflater.from(viewGroup.getContext())
-                    .inflate(R.layout.item_chat, viewGroup, false);
-            context = viewGroup.getContext();
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
-            holder.mItem = mValues.get(position);
-
-            mProgressBar.setVisibility(ProgressBar.INVISIBLE);
-            ChatMessage chatMessage = holder.mItem;
-            if (chatMessage.getText() != null) {
-                holder.messageTextView.setText(chatMessage.getText());
-                holder.messageTextView.setVisibility(TextView.VISIBLE);
-                holder.messageImageView.setVisibility(ImageView.GONE);
-            }
-        }
-        @Override
-        public int getItemCount() {
-            return mValues.size();
-        }
-
-        public class ViewHolder extends RecyclerView.ViewHolder {
-            public final View mView;
-            TextView messageTextView;
-            ImageView messageImageView;
-            TextView messengerTextView;
-            CircleImageView messengerImageView;
-
-            public ChatMessage mItem;
-
-            public ViewHolder(View view) {
-                super(view);
-                mView = view;
-                messageTextView = view.findViewById(R.id.messageTextView);
-                messageImageView = view.findViewById(R.id.messageImageView);
-                messengerTextView = view.findViewById(R.id.messengerTextView);
-                messengerImageView = view.findViewById(R.id.messengerImageView);
-            }
-        }
+        return super.onOptionsItemSelected(item);
     }
 }

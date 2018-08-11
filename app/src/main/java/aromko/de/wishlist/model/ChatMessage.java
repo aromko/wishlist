@@ -1,70 +1,62 @@
 package aromko.de.wishlist.model;
 
+import com.google.firebase.database.Exclude;
+
 public class ChatMessage {
-    private String id;
+    @Exclude
+    private String wishId;
+    @Exclude
+    private String uId;
     private String text;
-    private String name;
-    private String photoUrl;
-    private String imageUrl;
+    private long timestamp;
 
     public ChatMessage() {
     }
 
-    public ChatMessage(String text, String name, String photoUrl, String imageUrl) {
+    public ChatMessage(String text, long timestamp) {
         this.text = text;
-        this.name = name;
-        this.photoUrl = photoUrl;
-        this.imageUrl = imageUrl;
+        this.timestamp = timestamp;
     }
 
-    public String getId() {
-        return id;
+    public String getWishId() {
+        return wishId;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPhotoUrl() {
-        return photoUrl;
+    public void setWishId(String wishId) {
+        this.wishId = wishId;
     }
 
     public String getText() {
         return text;
     }
 
-    public void setPhotoUrl(String photoUrl) {
-        this.photoUrl = photoUrl;
+    public void setText(String text) {
+        this.text = text;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public long getTimestamp() {
+        return timestamp;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public String getuId() {
+        return uId;
+    }
+
+    public void setuId(String uId) {
+        this.uId = uId;
     }
 
     @Override
     public String toString() {
         return "ChatMessage{" +
-                "id='" + id + '\'' +
+                "wishId='" + wishId + '\'' +
+                ", uId='" + uId + '\'' +
                 ", text='" + text + '\'' +
-                ", name='" + name + '\'' +
-                ", photoUrl='" + photoUrl + '\'' +
-                ", imageUrl='" + imageUrl + '\'' +
+                ", timestamp=" + timestamp +
                 '}';
     }
 }

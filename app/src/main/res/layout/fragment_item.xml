@@ -172,6 +172,14 @@
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="86dp"
                 app:srcCompat="@drawable/ic_payment" />
+
+            <ImageView
+                android:id="@+id/ivChat"
+                android:layout_width="29dp"
+                android:layout_height="27dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="44dp"
+                app:srcCompat="@drawable/ic_chat" />
         </RelativeLayout>
 
     </android.support.constraint.ConstraintLayout>

@@ -1,39 +1,40 @@
 package aromko.de.wishlist.viewModel;
 
+import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import aromko.de.wishlist.database.FirebaseQueryLiveData;
 import aromko.de.wishlist.model.ChatMessage;
-import aromko.de.wishlist.model.Wish;
-import aromko.de.wishlist.model.WishList;
 import aromko.de.wishlist.tasks.AppExecutors;
 
 public class ChatMessageViewModel extends ViewModel {
 
-    private static final DatabaseReference LISTS_REF =
-            FirebaseDatabase.getInstance().getReference("/messages");
-
-    private final FirebaseQueryLiveData liveData = new FirebaseQueryLiveData(LISTS_REF);
+    private static DatabaseReference lists_ref;
+    private static String message_path;
+    private final FirebaseQueryLiveData liveData;
     private final MediatorLiveData<List<ChatMessage>> listsLiveData = new MediatorLiveData<>();
 
     public ChatMessageViewModel() {
+        liveData = new FirebaseQueryLiveData(lists_ref);
+    };
+
+    public ChatMessageViewModel(Application mApplication, final String wishId, final String uId) {
+        message_path = "/messages/" + wishId + "/" + uId;
+        lists_ref = FirebaseDatabase.getInstance().getReference(message_path);
+        liveData = new FirebaseQueryLiveData(lists_ref);
         listsLiveData.addSource(liveData, new Observer<DataSnapshot>() {
             @Override
             public void onChanged(@Nullable final DataSnapshot dataSnapshot) {
@@ -44,6 +45,8 @@ public class ChatMessageViewModel extends ViewModel {
                         public void run() {
                             for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                 ChatMessage chatMessage = snapshot.getValue(ChatMessage.class);
+                                chatMessage.setWishId(wishId);
+                                chatMessage.setuId(uId);
                                 lists.add(chatMessage);
                             }
                             listsLiveData.postValue(lists);
@@ -60,5 +63,12 @@ public class ChatMessageViewModel extends ViewModel {
     @NonNull
     public LiveData<List<ChatMessage>> getListsLiveData() {
         return listsLiveData;
+    }
+
+    public void insertMessage(String wishId, String uId, String messageText) {
+        Log.i("XXXXX", message_path);
+        String key = FirebaseDatabase.getInstance().getReference(message_path).push().getKey();
+        ChatMessage chatMessage =  new ChatMessage(messageText, System.currentTimeMillis() / 1000);
+        FirebaseDatabase.getInstance().getReference(message_path + "/" + key).setValue(chatMessage);
     }
 }

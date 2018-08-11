@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import aromko.de.wishlist.R;
+import aromko.de.wishlist.activity.ChatActivity;
 import aromko.de.wishlist.model.Wish;
 import aromko.de.wishlist.viewModel.PaymentViewModel;
 import aromko.de.wishlist.viewModel.WishViewModel;
@@ -157,6 +158,13 @@ public class ItemListFragment extends Fragment {
                     PaymentViewModel paymentViewModel = new PaymentViewModel();
                     paymentViewModel.buyItem(wishId, price, partialPrice, wishlistId);
                 }
+
+                @Override
+                public void onChatInteraction(String wishId) {
+                    Intent chatActivity = new Intent(getContext(), ChatActivity.class);
+                    chatActivity.putExtra("wishId", wishId);
+                    startActivity(chatActivity);
+                }
             };
         }
         return view;
@@ -189,5 +197,7 @@ public class ItemListFragment extends Fragment {
         void onUrlInteraction(String url);
 
         void onPaymentInteraction(String wishId, double price, double partialPrice, String wishlistId);
+
+        void onChatInteraction(String wishId);
     }
 }

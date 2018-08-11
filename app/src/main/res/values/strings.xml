@@ -25,4 +25,5 @@
     <string name="action_logout">Logout</string>
     <string name="action_profile">Profil</string>
     <string name="title_activity_edit_wish">EditWishActivity</string>
+    <string name="title_activity_chat">ChatActivity</string>
 </resources>
