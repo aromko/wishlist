@@ -1,0 +1,13 @@
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <header
+        android:fragment="aromko.de.wishlist.activity.SettingsActivity$GeneralPreferenceFragment"
+        android:icon="@drawable/ic_info"
+        android:title="@string/pref_header_general" />
+
+    <header
+        android:fragment="aromko.de.wishlist.activity.SettingsActivity$NotificationPreferenceFragment"
+        android:icon="@drawable/ic_notifications"
+        android:title="@string/pref_header_notifications" />
+
+</preference-headers>

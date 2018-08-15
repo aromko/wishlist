@@ -1,0 +1,19 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="notifications_new_message_lists"
+        android:title="Wunschlistenbenachrichtigungen" />
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:dependency="notifications_new_message_lists"
+        android:key="notifications_new_message_favorites"
+        android:title="Favoritenbenachrichtigungen" />
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="notifications_new_message_chats"
+        android:title="Kommentarbenachrichtigungen" />
+
+</PreferenceScreen>
