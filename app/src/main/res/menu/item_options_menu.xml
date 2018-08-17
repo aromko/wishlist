@@ -5,6 +5,7 @@
         android:id="@+id/edit"
         android:title="Editieren"/>
     <item android:id="@+id/partial_payment"
-        android:icon="@drawable/ic_menu_content_paste"
         android:title="Anteilig bezahlen" />
+    <item android:id="@+id/delete_wish"
+        android:title="Wunsch löschen" />
 </menu>

@@ -38,9 +38,9 @@ import aromko.de.wishlist.model.Wish;
 
 public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerViewAdapter.ViewHolder> {
 
+    private final static FirebaseStorage STORAGE = FirebaseStorage.getInstance("gs://wishlist-app-aromko.appspot.com");
     private final List<Wish> mValues;
     private final OnListFragmentInteractionListener mListener;
-    private final static FirebaseStorage STORAGE = FirebaseStorage.getInstance("gs://wishlist-app-aromko.appspot.com");
     private Context context;
     private String mFavoriteListId = "";
 
@@ -88,7 +88,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
 
         holder.item_name.setText(holder.mItem.getTitle());
         NumberFormat format = NumberFormat.getCurrencyInstance();
-        if(holder.mItem.getPrice() == holder.mItem.getSalvagePrice()){
+        if (holder.mItem.getPrice() == holder.mItem.getSalvagePrice()) {
             holder.item_price.setText(format.format(holder.mItem.getPrice()));
         } else {
             holder.item_price.setText(format.format(holder.mItem.getPrice()) + " (" + format.format(holder.mItem.getSalvagePrice()) + ")");
@@ -174,7 +174,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
 
                                                 @Override
                                                 public void onError(Exception e) {
-                                                    Log.v("Picasso","Could not fetch image" + String.valueOf(uri));
+                                                    Log.v("Picasso", "Could not fetch image" + String.valueOf(uri));
                                                 }
                                             });
                                 }
@@ -194,15 +194,19 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.edit:
-
                                 Intent editWishAcitivity = new Intent(view.getContext(), EditWishActivity.class);
                                 editWishAcitivity.putExtra("wishlistId", holder.mItem.getWishlistId());
                                 editWishAcitivity.putExtra("wishId", holder.mItem.getWishId());
                                 view.getContext().startActivity(editWishAcitivity);
                                 return true;
                             case R.id.partial_payment:
-                                if(null != mListener){
+                                if (null != mListener) {
                                     showPaymentAlertDialog(holder.mItem.getWishId(), holder.mItem.getPrice(), holder.mItem.getWishlistId());
+                                }
+                                return true;
+                            case R.id.delete_wish:
+                                if (null != mListener) {
+                                    showDeleteWishAlertDialog(holder.mItem.getWishId(), holder.mItem.getWishlistId());
                                 }
                                 return true;
                             default:
@@ -273,6 +277,35 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
+    public void showDeleteWishAlertDialog(final String wishId, final String wishlistId) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        View viewDeleteWish = inflater.inflate(R.layout.dialog_deletewish, null);
+
+        builder.setView(viewDeleteWish);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                if (null != mListener) {
+                    mListener.onDeleteWishInteraction(wishId, wishlistId);
+                }
+
+                dialogInterface.dismiss();
+            }
+        }).setNegativeButton("Abbrechen", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);

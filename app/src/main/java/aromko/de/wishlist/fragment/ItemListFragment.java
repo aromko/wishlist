@@ -165,6 +165,13 @@ public class ItemListFragment extends Fragment {
                     chatActivity.putExtra("wishId", wishId);
                     startActivity(chatActivity);
                 }
+
+                @Override
+                public void onDeleteWishInteraction(String wishId, String wishlistId) {
+                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+                    favoriteListId = sharedPreferences.getString("favoriteListId", "");
+                    wishViewModel.deleteWish(wishId, wishlistId, favoriteListId);
+                }
             };
         }
         return view;
@@ -199,5 +206,7 @@ public class ItemListFragment extends Fragment {
         void onPaymentInteraction(String wishId, double price, double partialPrice, String wishlistId);
 
         void onChatInteraction(String wishId);
+
+        void onDeleteWishInteraction(String wishId, String wishlistId);
     }
 }

@@ -59,6 +59,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements ItemListFragment.OnListFragmentInteractionListener {
 
+    PhotoHelper photoHelper;
     private String favoriteListId = "";
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
@@ -73,8 +74,6 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     private TextView tvInfo;
     private CircleImageView civImage;
     private ImageButton ibDeleteWishlist;
-
-    PhotoHelper photoHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,9 +119,9 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         listView.setAdapter(drawListAdapter);
         drawListAdapter.setNotifyOnChange(true);
         listViewModel = ViewModelProviders.of(this).get(WishListViewModel.class);
-        try{
+        try {
             favoriteListId = checkIfFavoriteListIdExists();
-        } catch (Exception e){
+        } catch (Exception e) {
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
             finish();
         }
@@ -263,7 +262,8 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         }
 
         listView.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-        MainActivity.this.setTitle(listView.getItemAtPosition(position).toString());
+        WishList selectedWishlist = (WishList) listView.getItemAtPosition(position);
+        MainActivity.this.setTitle(selectedWishlist.getName());
     }
 
     public void selectFavoritesOnStartup() {
@@ -354,6 +354,10 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     public void onChatInteraction(String wishId) {
     }
 
+    @Override
+    public void onDeleteWishInteraction(String wishId, String wishlistId) {
+    }
+
     public void addWishList(View view) {
         showAlertDialog(-1, R.layout.dialog_addwishlist);
     }
@@ -397,9 +401,9 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         return favoriteListId;
     }
 
-    public void deleteWishlist(View view){
-        if(selectedWishlistId.equals(favoriteListId)){
-            Toast.makeText(this,"Die Favoritenliste kann nicht gelöscht werden", Toast.LENGTH_LONG).show();
+    public void deleteWishlist(View view) {
+        if (selectedWishlistId.equals(favoriteListId)) {
+            Toast.makeText(this, "Die Favoritenliste kann nicht gelöscht werden", Toast.LENGTH_LONG).show();
         } else {
             showAlertDialog(-1, R.layout.dialog_deletewishlist);
         }
