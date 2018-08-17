@@ -74,8 +74,8 @@ public class ChatActivity extends AppCompatActivity {
 
         mProgressBar = findViewById(R.id.progressBar);
         mMessageRecyclerView = findViewById(R.id.messageRecyclerView);
-        mMessageText =  findViewById(R.id.messageEditText);
-        mSendButton =  findViewById(R.id.sendButton);
+        mMessageText = findViewById(R.id.messageEditText);
+        mSendButton = findViewById(R.id.sendButton);
 
         mLinearLayoutManager = new LinearLayoutManager(this);
 
@@ -110,7 +110,7 @@ public class ChatActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(s.toString().isEmpty()){
+                if (s.toString().isEmpty()) {
                     mSendButton.setEnabled(false);
                 } else {
                     mSendButton.setEnabled(true);

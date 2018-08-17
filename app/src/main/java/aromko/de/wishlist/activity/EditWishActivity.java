@@ -36,6 +36,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class EditWishActivity extends AppCompatActivity {
 
     static final int PLACE_PICKER_REQUEST = 3;
+    PhotoHelper photoHelper;
     private ImageButton btnAddPhoto;
     private CircleImageView ivProductImage;
     private EditText txtTitle;
@@ -44,16 +45,13 @@ public class EditWishActivity extends AppCompatActivity {
     private EditText txtDescription;
     private Spinner spWishstrength;
     private FrameLayout flProgressBarHolder;
-
     private WishViewModel wishViewModel = new WishViewModel();
     private String wishlistId;
     private String wishId;
-
     private TextView tvLocation;
     private double longitude;
     private double latitude;
     private String placeId;
-    PhotoHelper photoHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,21 +85,21 @@ public class EditWishActivity extends AppCompatActivity {
         wishlistId = myIntent.getStringExtra("wishlistId");
         wishId = myIntent.getStringExtra("wishId");
         photoHelper.requestProductPicture(wishId);
-        
+
         wishViewModel.selectWish(wishlistId, wishId, new WishViewModel.FirebaseCallback() {
             @Override
             public void onCallback(Wish wish) {
 
-               txtTitle.setText(wish.getTitle());
-               txtPrice.setText(String.valueOf(wish.getPrice()).replace(".", ","));
-               txtUrl.setText(wish.getUrl());
-               txtDescription.setText(wish.getUrl());
-               spWishstrength.setSelection((int) wish.getWishstrength());
+                txtTitle.setText(wish.getTitle());
+                txtPrice.setText(String.valueOf(wish.getPrice()).replace(".", ","));
+                txtUrl.setText(wish.getUrl());
+                txtDescription.setText(wish.getUrl());
+                spWishstrength.setSelection((int) wish.getWishstrength());
 
-               longitude = wish.getLongitude();
-               latitude = wish.getLatitude();
-               if(wish.getPlaceId() != null) {
-                   Places.getGeoDataClient(getApplicationContext()).getPlaceById(wish.getPlaceId()).addOnCompleteListener(new OnCompleteListener<PlaceBufferResponse>() {
+                longitude = wish.getLongitude();
+                latitude = wish.getLatitude();
+                if (wish.getPlaceId() != null) {
+                    Places.getGeoDataClient(getApplicationContext()).getPlaceById(wish.getPlaceId()).addOnCompleteListener(new OnCompleteListener<PlaceBufferResponse>() {
                         @Override
                         public void onComplete(@NonNull Task<PlaceBufferResponse> task) {
                             if (task.isSuccessful()) {
@@ -114,8 +112,8 @@ public class EditWishActivity extends AppCompatActivity {
                                 Log.e("AAAAAA", "Place not found.");
                             }
                         }
-                   });
-               }
+                    });
+                }
 
 
             }
@@ -132,7 +130,7 @@ public class EditWishActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void showPhotoSelectionDialog(View view){
+    public void showPhotoSelectionDialog(View view) {
         photoHelper.startPhotoSelectionDialog();
     }
 
@@ -152,7 +150,7 @@ public class EditWishActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        photoHelper.onActivityResult(requestCode,resultCode,data);
+        photoHelper.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
@@ -188,7 +186,6 @@ public class EditWishActivity extends AppCompatActivity {
             photoHelper.uploadImage(bitmap, wishkey, userId);
         }
     }
-
 
 
     public void placePicker(View view) throws GooglePlayServicesNotAvailableException, GooglePlayServicesRepairableException {

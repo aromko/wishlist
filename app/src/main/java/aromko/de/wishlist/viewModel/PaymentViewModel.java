@@ -25,13 +25,13 @@ public class PaymentViewModel {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Map<String, Double> partialPayments = new HashMap<>();
                 double salvagePrice = 0.00;
-                if(dataSnapshot.exists()){
+                if (dataSnapshot.exists()) {
                     Payment currentPayment = dataSnapshot.getValue(Payment.class);
                     if (currentPayment.getPartialPayments() != null) {
                         partialPayments.putAll(currentPayment.getPartialPayments());
                     }
 
-                    if(partialPayments.containsKey(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                    if (partialPayments.containsKey(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                         salvagePrice = currentPayment.getSalvagePrice() + partialPayments.get(FirebaseAuth.getInstance().getCurrentUser().getUid()) - partialPrice;
                     } else {
                         salvagePrice = currentPayment.getSalvagePrice() - partialPrice;
@@ -61,7 +61,7 @@ public class PaymentViewModel {
         FirebaseDatabase.getInstance().getReference("/wishes/" + wishlistId + "/" + wishId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()) {
+                if (dataSnapshot.exists()) {
                     Wish currentWish = dataSnapshot.getValue(Wish.class);
                     currentWish.setSalvagePrice(salvagePrice);
                     dataSnapshot.getRef().setValue(currentWish);

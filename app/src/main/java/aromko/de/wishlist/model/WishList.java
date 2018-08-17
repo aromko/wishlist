@@ -80,8 +80,12 @@ public class WishList {
 
     @Override
     public String toString() {
-        return name;
+        return "WishList{" +
+                "name='" + name + '\'' +
+                ", timestamp=" + timestamp +
+                ", allowedUsers=" + allowedUsers +
+                ", wishCounter=" + wishCounter +
+                ", isFavoriteList=" + isFavoriteList +
+                '}';
     }
-
-
 }

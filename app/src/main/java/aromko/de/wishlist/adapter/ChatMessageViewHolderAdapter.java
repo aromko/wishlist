@@ -68,12 +68,11 @@ public class ChatMessageViewHolderAdapter extends RecyclerView.Adapter<ChatMessa
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
+        public ChatMessage mItem;
         TextView messageTextView;
         ImageView messageImageView;
         TextView messengerTextView;
         CircleImageView messengerImageView;
-
-        public ChatMessage mItem;
 
         public ViewHolder(View view) {
             super(view);

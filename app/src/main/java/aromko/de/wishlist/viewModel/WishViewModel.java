@@ -144,6 +144,45 @@ public class WishViewModel extends ViewModel {
         });
     }
 
+    public void deleteWish(String wishId, String wishlistId, final String favoriteListId) {
+        final int counter = 1;
+        FirebaseDatabase.getInstance().getReference("/wishes/" + wishlistId + "/" + wishId).removeValue();
+        FirebaseDatabase.getInstance().getReference("/wishLists/" + wishlistId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                WishList wishList = dataSnapshot.getValue(WishList.class);
+                wishList.setWishCounter(wishList.getWishCounter() - counter);
+                if (wishList.getWishCounter() < 0) {
+                    wishList.setWishCounter(0);
+                }
+                dataSnapshot.getRef().setValue(wishList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        FirebaseDatabase.getInstance().getReference("/wishes/" + favoriteListId + "/" + wishId).removeValue();
+        FirebaseDatabase.getInstance().getReference("/wishLists/" + favoriteListId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                WishList wishList = dataSnapshot.getValue(WishList.class);
+                wishList.setWishCounter(wishList.getWishCounter() - counter);
+                if (wishList.getWishCounter() < 0) {
+                    wishList.setWishCounter(0);
+                }
+                dataSnapshot.getRef().setValue(wishList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     public interface FirebaseCallback {
         void onCallback(Wish wish);
     }

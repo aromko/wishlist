@@ -5,7 +5,7 @@ import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
-public class CircleTransform implements com.squareup.picasso.Transformation{
+public class CircleTransform implements com.squareup.picasso.Transformation {
     @Override
     public Bitmap transform(Bitmap source) {
         int size = Math.min(source.getWidth(), source.getHeight());
@@ -26,7 +26,7 @@ public class CircleTransform implements com.squareup.picasso.Transformation{
         paint.setShader(shader);
         paint.setAntiAlias(true);
 
-        float r = size/2f;
+        float r = size / 2f;
         canvas.drawCircle(r, r, r, paint);
 
         squaredBitmap.recycle();

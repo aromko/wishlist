@@ -41,14 +41,13 @@ import static android.app.Activity.RESULT_OK;
 
 public class PhotoHelper {
 
+    static final int REQUEST_IMAGE_FROM_STORAGE = 1;
+    static final int REQUEST_IMAGE_CAPTURE = 2;
     private AlertDialog dialog;
     private EditText etDownloadUrl;
     private CircleImageView civImage;
     private FrameLayout flProgressBarHolder;
     private Activity mContext;
-
-    static final int REQUEST_IMAGE_FROM_STORAGE = 1;
-    static final int REQUEST_IMAGE_CAPTURE = 2;
 
     public PhotoHelper(Activity mContext) {
         this.mContext = mContext;
@@ -120,7 +119,7 @@ public class PhotoHelper {
 
     public void uploadImage(Bitmap bitmap, String wishkey, String userId) {
         String reference = wishkey;
-        if(userId != null){
+        if (userId != null) {
             reference = userId;
         }
 

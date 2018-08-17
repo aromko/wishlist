@@ -32,6 +32,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class WishActivity extends AppCompatActivity {
 
     static final int PLACE_PICKER_REQUEST = 3;
+    PhotoHelper photoHelper;
     private ImageButton btnAddPhoto;
     private CircleImageView ivProductImage;
     private EditText txtTitle;
@@ -40,15 +41,12 @@ public class WishActivity extends AppCompatActivity {
     private EditText txtDescription;
     private Spinner spWishstrength;
     private FrameLayout flProgressBarHolder;
-
     private WishViewModel wishViewModel;
     private String wishlistId;
-
     private TextView tvLocation;
     private double longitude;
     private double latitude;
     private String placeId;
-    PhotoHelper photoHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +91,7 @@ public class WishActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void showPhotoSelectionDialog(View view){
+    public void showPhotoSelectionDialog(View view) {
         photoHelper.startPhotoSelectionDialog();
     }
 
@@ -113,7 +111,7 @@ public class WishActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        photoHelper.onActivityResult(requestCode,resultCode,data);
+        photoHelper.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
@@ -150,7 +148,6 @@ public class WishActivity extends AppCompatActivity {
             photoHelper.uploadImage(bitmap, wishkey, userId);
         }
     }
-
 
 
     public void placePicker(View view) throws GooglePlayServicesNotAvailableException, GooglePlayServicesRepairableException {

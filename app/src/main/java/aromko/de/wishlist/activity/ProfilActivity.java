@@ -26,13 +26,11 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ProfilActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = "ProfilActivity";
-
+    PhotoHelper photoHelper;
     private EditText etName;
     private EditText etEmail;
     private CircleImageView ivProfileImage;
     private FrameLayout flProgressBarHolder;
-
-    PhotoHelper photoHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +64,7 @@ public class ProfilActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void saveProfile(View view){
+    public void saveProfile(View view) {
         flProgressBarHolder.setVisibility(View.VISIBLE);
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
@@ -90,7 +88,7 @@ public class ProfilActivity extends AppCompatActivity {
                 });
     }
 
-    public void showPhotoSelectionDialog(View view){
+    public void showPhotoSelectionDialog(View view) {
         photoHelper.startPhotoSelectionDialog();
     }
 
@@ -110,6 +108,6 @@ public class ProfilActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        photoHelper.onActivityResult(requestCode,resultCode,data);
+        photoHelper.onActivityResult(requestCode, resultCode, data);
     }
 }

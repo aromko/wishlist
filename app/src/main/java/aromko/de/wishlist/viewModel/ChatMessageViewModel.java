@@ -28,7 +28,9 @@ public class ChatMessageViewModel extends ViewModel {
 
     public ChatMessageViewModel() {
         liveData = new FirebaseQueryLiveData(lists_ref);
-    };
+    }
+
+    ;
 
     public ChatMessageViewModel(Application mApplication, final String wishId) {
         message_path = "/messages/" + wishId;
@@ -65,7 +67,7 @@ public class ChatMessageViewModel extends ViewModel {
 
     public void insertMessage(String displayName, String messageText) {
         String key = FirebaseDatabase.getInstance().getReference(message_path).push().getKey();
-        ChatMessage chatMessage =  new ChatMessage(displayName, messageText, System.currentTimeMillis() / 1000);
+        ChatMessage chatMessage = new ChatMessage(displayName, messageText, System.currentTimeMillis() / 1000);
         FirebaseDatabase.getInstance().getReference(message_path + "/" + key).setValue(chatMessage);
     }
 }
