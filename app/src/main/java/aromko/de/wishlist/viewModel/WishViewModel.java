@@ -5,6 +5,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModel;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -174,6 +175,22 @@ public class WishViewModel extends ViewModel {
                     wishList.setWishCounter(0);
                 }
                 dataSnapshot.getRef().setValue(wishList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void updatePhotoUrl(String wishlistId, String wishkey, final Uri uri) {
+        FirebaseDatabase.getInstance().getReference("/wishes/" + wishlistId + "/" + wishkey).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Wish wish = dataSnapshot.getValue(Wish.class);
+                wish.setPhotoUrl(uri.toString());
+                dataSnapshot.getRef().setValue(wish);
             }
 
             @Override

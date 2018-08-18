@@ -20,7 +20,6 @@ import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.squareup.picasso.Callback;
@@ -150,37 +149,32 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
         });
 
         if (mValues.get(position).isImageSet()) {
-            STORAGE.getReference(mValues.get(position).getWishId()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                @Override
-                public void onSuccess(final Uri uri) {
-                    Picasso.get()
-                            .load(String.valueOf(uri))
-                            .networkPolicy(NetworkPolicy.OFFLINE)
-                            .into(holder.productImage, new Callback() {
-                                @Override
-                                public void onSuccess() {
-                                }
+            Picasso.get()
+                    .load(Uri.parse(mValues.get(position).getPhotoUrl()))
+                    .networkPolicy(NetworkPolicy.OFFLINE)
+                    .into(holder.productImage, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                        }
 
-                                @Override
-                                public void onError(Exception e) {
-                                    Picasso.get()
-                                            .load(String.valueOf(uri))
-                                            .error(R.drawable.no_image_available)
-                                            .into(holder.productImage, new Callback() {
-                                                @Override
-                                                public void onSuccess() {
+                        @Override
+                        public void onError(Exception e) {
+                            Picasso.get()
+                                    .load(Uri.parse(mValues.get(position).getPhotoUrl()))
+                                    .error(R.drawable.no_image_available)
+                                    .into(holder.productImage, new Callback() {
+                                        @Override
+                                        public void onSuccess() {
 
-                                                }
+                                        }
 
-                                                @Override
-                                                public void onError(Exception e) {
-                                                    Log.v("Picasso", "Could not fetch image" + String.valueOf(uri));
-                                                }
-                                            });
-                                }
-                            });
-                }
-            });
+                                        @Override
+                                        public void onError(Exception e) {
+                                            Log.v("Picasso", "Could not fetch image" + mValues.get(position).getPhotoUrl());
+                                        }
+                                    });
+                        }
+                    });
         }
 
         holder.tvItemOptions.setOnClickListener(new View.OnClickListener() {

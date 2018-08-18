@@ -35,6 +35,7 @@ import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
 import aromko.de.wishlist.R;
+import aromko.de.wishlist.viewModel.WishViewModel;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.app.Activity.RESULT_OK;
@@ -117,14 +118,14 @@ public class PhotoHelper {
         }
     }
 
-    public void uploadImage(Bitmap bitmap, String wishkey, String userId) {
+    public void uploadImage(Bitmap bitmap, final String wishkey, String userId, final WishViewModel wishViewModel, final String wishlistId) {
         String reference = wishkey;
         if (userId != null) {
             reference = userId;
         }
 
         FirebaseStorage storage = FirebaseStorage.getInstance("gs://wishlist-app-aromko.appspot.com");
-        StorageReference storageRef = storage.getReference(reference);
+        final StorageReference storageRef = storage.getReference(reference);
         StorageMetadata metadata = new StorageMetadata.Builder()
                 .setCustomMetadata("rotation", Float.valueOf(civImage.getRotation()).toString())
                 .build();
@@ -151,6 +152,14 @@ public class PhotoHelper {
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Toast.makeText(mContext.getApplicationContext(), "Speichern erfolgreich.", Toast.LENGTH_LONG).show();
                 flProgressBarHolder.setVisibility(View.GONE);
+                if (wishViewModel != null) {
+                    storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            wishViewModel.updatePhotoUrl(wishlistId, wishkey, uri);
+                        }
+                    });
+                }
                 mContext.finish();
             }
         });
@@ -173,17 +182,12 @@ public class PhotoHelper {
         });
     }
 
-    public void requestProductPicture(String wishid) {
-        FirebaseStorage STORAGE = FirebaseStorage.getInstance("gs://wishlist-app-aromko.appspot.com");
-        STORAGE.getReference(wishid).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(final Uri uri) {
-                Picasso.get()
-                        .load(String.valueOf(uri))
-                        .networkPolicy(NetworkPolicy.NO_CACHE)
-                        .into((CircleImageView) mContext.findViewById(R.id.civImage));
-            }
-        });
+    public void requestProductPicture(String photoUrl) {
+        Picasso.get()
+                .load(Uri.parse(photoUrl))
+                .networkPolicy(NetworkPolicy.NO_CACHE)
+                .into((CircleImageView) mContext.findViewById(R.id.civImage));
+
     }
 
     public class ImageDownloader extends AsyncTask<String, Void, Bitmap> {

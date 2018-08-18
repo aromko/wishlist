@@ -78,7 +78,7 @@ public class ProfilActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             Bitmap bitmap = ((BitmapDrawable) ivProfileImage.getDrawable()).getBitmap();
-                            photoHelper.uploadImage(bitmap, "", user.getUid());
+                            photoHelper.uploadImage(bitmap, "", user.getUid(), null, null);
                             /*
                             finish();
                             startActivity(new Intent(ProfilActivity.this, MainActivity.class));

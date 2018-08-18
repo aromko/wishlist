@@ -137,7 +137,7 @@ public class WishActivity extends AppCompatActivity {
         if (ivProductImage.getTag().toString().equals("imageChanged")) {
             isImageSet = true;
         }
-        Wish wish = new Wish(txtTitle.getText().toString(), Double.valueOf(txtPrice.getText().toString().replace(",", ".")), txtUrl.getText().toString(), txtDescription.getText().toString(), Long.valueOf(spWishstrength.getSelectedItemId()), isImageSet, System.currentTimeMillis() / 1000, longitude, latitude, Double.valueOf(txtPrice.getText().toString().replace(",", ".")), placeId);
+        Wish wish = new Wish(txtTitle.getText().toString(), Double.valueOf(txtPrice.getText().toString().replace(",", ".")), txtUrl.getText().toString(), txtDescription.getText().toString(), Long.valueOf(spWishstrength.getSelectedItemId()), isImageSet, System.currentTimeMillis() / 1000, longitude, latitude, Double.valueOf(txtPrice.getText().toString().replace(",", ".")), placeId, "");
         String wishkey = wishViewModel.insertWish(wishlistId, wish);
         if (wishkey.isEmpty() || !ivProductImage.getTag().toString().equals("imageChanged")) {
             Toast.makeText(getApplicationContext(), "Wunsch wurde erfolgreich hinzugefügt.", Toast.LENGTH_LONG).show();
@@ -145,7 +145,7 @@ public class WishActivity extends AppCompatActivity {
             finish();
         } else {
             String userId = null;
-            photoHelper.uploadImage(bitmap, wishkey, userId);
+            photoHelper.uploadImage(bitmap, wishkey, userId, wishViewModel, wishlistId);
         }
     }
 
