@@ -69,17 +69,26 @@ public class WishViewModel extends ViewModel {
         return listsLiveData;
     }
 
-    public void updateWish(String wishlistId, Wish wish) {
+    public void updateWish(String wishlistId, String wishId, final Wish wish) {
+        FirebaseDatabase.getInstance().getReference("/wishes/" + wishlistId + "/" + wishId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Wish savedWish = dataSnapshot.getValue(Wish.class);
+                wish.setPhotoUrl(savedWish.getPhotoUrl());
+                wish.setMarkedAsFavorite(savedWish.getMarkedAsFavorite());
+                dataSnapshot.getRef().setValue(wish);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public String insertWish(String wishlistId, Wish wish) {
         String key = FirebaseDatabase.getInstance().getReference("/wishes").push().getKey();
-        //Map<String, Object> postValuesinsert = list.toMap();
 
-        //Map<String, Object> childUpdates = new HashMap<>();
-        //childUpdates.put(key, postValues);
-
-        //mDatabase.getReference("/lists").updateChildren(childUpdates);
         FirebaseDatabase.getInstance().getReference("/wishes/" + wishlistId + "/" + key).setValue(wish);
 
         FirebaseDatabase.getInstance().getReference("/wishLists/" + wishlistId).addListenerForSingleValueEvent(new ValueEventListener() {

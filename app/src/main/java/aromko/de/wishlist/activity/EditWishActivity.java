@@ -52,6 +52,7 @@ public class EditWishActivity extends AppCompatActivity {
     private double longitude;
     private double latitude;
     private String placeId;
+    private boolean isImageSet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +96,10 @@ public class EditWishActivity extends AppCompatActivity {
                 txtUrl.setText(wish.getUrl());
                 txtDescription.setText(wish.getUrl());
                 spWishstrength.setSelection((int) wish.getWishstrength());
-                photoHelper.requestProductPicture(wish.getPhotoUrl());
+                isImageSet = wish.isImageSet();
+                if (isImageSet && wish.getPhotoUrl() != null) {
+                    photoHelper.requestProductPicture(wish.getPhotoUrl());
+                }
 
                 longitude = wish.getLongitude();
                 latitude = wish.getLatitude();
@@ -172,19 +176,15 @@ public class EditWishActivity extends AppCompatActivity {
         flProgressBarHolder.setVisibility(View.VISIBLE);
         Bitmap bitmap = ((BitmapDrawable) ivProductImage.getDrawable()).getBitmap();
 
-        boolean isImageSet = false;
-        if (ivProductImage.getTag().toString().equals("imageChanged")) {
-            isImageSet = true;
-        }
         Wish wish = new Wish(txtTitle.getText().toString(), Double.valueOf(txtPrice.getText().toString().replace(",", ".")), txtUrl.getText().toString(), txtDescription.getText().toString(), Long.valueOf(spWishstrength.getSelectedItemId()), isImageSet, System.currentTimeMillis() / 1000, longitude, latitude, Double.valueOf(txtPrice.getText().toString().replace(",", ".")), placeId, "");
-        String wishkey = wishViewModel.insertWish(wishlistId, wish);
-        if (wishkey.isEmpty() || !ivProductImage.getTag().toString().equals("imageChanged")) {
-            Toast.makeText(getApplicationContext(), "Wunsch wurde erfolgreich hinzugefügt.", Toast.LENGTH_LONG).show();
+        wishViewModel.updateWish(wishlistId, wishId, wish);
+        if (!ivProductImage.getTag().toString().equals("imageChanged")) {
+            Toast.makeText(getApplicationContext(), "Wunsch wurde erfolgreich geändert.", Toast.LENGTH_LONG).show();
             flProgressBarHolder.setVisibility(View.GONE);
             finish();
         } else {
             String userId = null;
-            photoHelper.uploadImage(bitmap, wishkey, userId, wishViewModel, wishlistId);
+            photoHelper.uploadImage(bitmap, wishId, userId, wishViewModel, wishlistId);
         }
     }
 

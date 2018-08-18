@@ -20,7 +20,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageException;
-import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.NetworkPolicy;
@@ -126,15 +125,12 @@ public class PhotoHelper {
 
         FirebaseStorage storage = FirebaseStorage.getInstance("gs://wishlist-app-aromko.appspot.com");
         final StorageReference storageRef = storage.getReference(reference);
-        StorageMetadata metadata = new StorageMetadata.Builder()
-                .setCustomMetadata("rotation", Float.valueOf(civImage.getRotation()).toString())
-                .build();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] data = baos.toByteArray();
 
-        UploadTask uploadTask = storageRef.putBytes(data, metadata);
+        UploadTask uploadTask = storageRef.putBytes(data);
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
