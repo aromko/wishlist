@@ -1,4 +1,4 @@
-package aromko.de.wishlist.fragment;
+package aromko.de.wishlist.adapter;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,7 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.storage.FirebaseStorage;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -35,11 +33,10 @@ import aromko.de.wishlist.model.Wish;
 
 public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerViewAdapter.ViewHolder> {
 
-    private final static FirebaseStorage STORAGE = FirebaseStorage.getInstance("gs://wishlist-app-aromko.appspot.com");
     private final List<Wish> mValues;
     private final OnListFragmentInteractionListener mListener;
     private Context context;
-    private String mFavoriteListId = "";
+    private String mFavoriteListId;
 
     public WishRecyclerViewAdapter(List<Wish> items, OnListFragmentInteractionListener listener, String favoriteListId) {
         mValues = items;
@@ -156,17 +153,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
                             Picasso.get()
                                     .load(Uri.parse(mValues.get(position).getPhotoUrl()))
                                     .error(R.drawable.no_image_available)
-                                    .into(holder.productImage, new Callback() {
-                                        @Override
-                                        public void onSuccess() {
-
-                                        }
-
-                                        @Override
-                                        public void onError(Exception e) {
-                                            Log.v("Picasso", "Could not fetch image" + mValues.get(position).getPhotoUrl());
-                                        }
-                                    });
+                                    .into(holder.productImage);
                         }
                     });
         }

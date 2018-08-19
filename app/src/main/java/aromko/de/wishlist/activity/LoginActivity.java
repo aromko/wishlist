@@ -26,9 +26,10 @@ import aromko.de.wishlist.R;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static final String TAG = "LoginActivity";
+
+    public static final String GOOGLE_REQUEST_ID_TOKEN = "1002207596437-e45j57olbmk7kpq3q3dpv89c92c7n8sj.apps.googleusercontent.com";
     private static final int RC_SIGN_IN = 9001;
-    private FirebaseAuth mAuth;
+    private FirebaseAuth fFirebaseAuth;
     private GoogleSignInClient mGoogleSignInClient;
 
     @Override
@@ -40,19 +41,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         signInButton.setSize(SignInButton.SIZE_STANDARD);
         findViewById(R.id.sign_in_button).setOnClickListener(this);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken("1002207596437-e45j57olbmk7kpq3q3dpv89c92c7n8sj.apps.googleusercontent.com")
+                .requestIdToken(GOOGLE_REQUEST_ID_TOKEN)
                 .requestEmail()
                 .build();
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-        mAuth = FirebaseAuth.getInstance();
+        fFirebaseAuth = FirebaseAuth.getInstance();
     }
 
     @Override
     public void onStart() {
         super.onStart();
 
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        FirebaseUser currentUser = fFirebaseAuth.getCurrentUser();
         if (currentUser == null) {
             mGoogleSignInClient.signOut();
         }
@@ -75,18 +76,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        mAuth.signInWithCredential(credential)
+        fFirebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // Sign in success
-                            if (mAuth.getCurrentUser() != null) {
+                            if (fFirebaseAuth.getCurrentUser() != null) {
                                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
                                 finish();
                             }
                         } else {
-                            // If sign in fails, display a message to the user.
                             Snackbar.make(findViewById(R.id.main_layout), R.string.txtAithenticationFailed, Snackbar.LENGTH_SHORT).show();
                         }
                     }

@@ -27,22 +27,17 @@ import java.util.Map;
 
 import aromko.de.wishlist.R;
 import aromko.de.wishlist.activity.ChatActivity;
+import aromko.de.wishlist.adapter.WishRecyclerViewAdapter;
 import aromko.de.wishlist.model.Wish;
 import aromko.de.wishlist.viewModel.PaymentViewModel;
 import aromko.de.wishlist.viewModel.WishViewModel;
 import aromko.de.wishlist.viewModel.WishViewModelFactory;
 
-/**
- * A fragment representing a list of Items.
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
- * interface.
- */
 public class ItemListFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
+    public static final String GOOGLE_NAVIGATION_Q = "google.navigation:q=";
+    public static final String COM_GOOGLE_ANDROID_APPS_MAPS = "com.google.android.apps.maps";
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
 
@@ -51,21 +46,7 @@ public class ItemListFragment extends Fragment {
 
     private String favoriteListId = "";
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
     public ItemListFragment() {
-    }
-
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static ItemListFragment newInstance(int columnCount) {
-        ItemListFragment fragment = new ItemListFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -138,9 +119,9 @@ public class ItemListFragment extends Fragment {
 
                 @Override
                 public void onMapInteraction(double longitude, double latitude) {
-                    Uri gmmIntentUri = Uri.parse("google.navigation:q=" + String.valueOf(latitude) + "," + String.valueOf(longitude));
+                    Uri gmmIntentUri = Uri.parse(GOOGLE_NAVIGATION_Q + String.valueOf(latitude) + "," + String.valueOf(longitude));
                     Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                    mapIntent.setPackage("com.google.android.apps.maps");
+                    mapIntent.setPackage(COM_GOOGLE_ANDROID_APPS_MAPS);
                     if (mapIntent.resolveActivity(getActivity().getPackageManager()) != null) {
                         startActivity(mapIntent);
                     }

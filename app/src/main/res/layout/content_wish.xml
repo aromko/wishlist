@@ -40,7 +40,7 @@
 
 
                 <EditText
-                    android:id="@+id/txtTitle"
+                    android:id="@+id/etTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -60,7 +60,7 @@
                 tools:layout_editor_absoluteX="0dp">
 
                 <EditText
-                    android:id="@+id/txtPrice"
+                    android:id="@+id/etPrice"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:digits="0123456789,"
@@ -81,7 +81,7 @@
                 tools:layout_editor_absoluteX="0dp">
 
                 <EditText
-                    android:id="@+id/txtUrl"
+                    android:id="@+id/etUrl"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -101,7 +101,7 @@
                 tools:layout_editor_absoluteX="0dp">
 
                 <EditText
-                    android:id="@+id/txtDescription"
+                    android:id="@+id/etDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -134,7 +134,7 @@
                 android:backgroundTint="@android:color/white"
                 android:onClick="showPhotoSelectionDialog"
                 app:layout_constraintTop_toBottomOf="@+id/spWishstrength"
-                app:srcCompat="@drawable/ic_add_a_photo"
+                app:srcCompat="@drawable/ic_add_photo"
                 tools:layout_editor_absoluteX="0dp" />
 
             <de.hdodenhof.circleimageview.CircleImageView

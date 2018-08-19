@@ -21,10 +21,12 @@ import java.util.List;
 
 import aromko.de.wishlist.database.FirebaseQueryLiveData;
 import aromko.de.wishlist.model.Wish;
-import aromko.de.wishlist.model.WishList;
+import aromko.de.wishlist.model.Wishlist;
 import aromko.de.wishlist.tasks.AppExecutors;
 
 public class WishViewModel extends ViewModel {
+    private static final String DB_PATH_WISHES = "wishes";
+    private static final String DB_PATH_WISHLISTS = "wishLists";
     private static DatabaseReference wishes_ref;
     private final FirebaseQueryLiveData liveData;
     private final MediatorLiveData<List<Wish>> listsLiveData = new MediatorLiveData<>();
@@ -37,7 +39,7 @@ public class WishViewModel extends ViewModel {
 
     public WishViewModel(Application mApplication, final String wishlistId) {
 
-        wishes_ref = FirebaseDatabase.getInstance().getReference("/wishes/" + wishlistId);
+        wishes_ref = FirebaseDatabase.getInstance().getReference("/" + DB_PATH_WISHES + "/" + wishlistId);
         liveData = new FirebaseQueryLiveData(wishes_ref);
         listsLiveData.addSource(liveData, new Observer<DataSnapshot>() {
             @Override
@@ -70,7 +72,7 @@ public class WishViewModel extends ViewModel {
     }
 
     public void updateWish(String wishlistId, String wishId, final Wish wish) {
-        FirebaseDatabase.getInstance().getReference("/wishes/" + wishlistId + "/" + wishId).addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("/" + DB_PATH_WISHES + "/" + wishlistId + "/" + wishId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Wish savedWish = dataSnapshot.getValue(Wish.class);
@@ -87,14 +89,14 @@ public class WishViewModel extends ViewModel {
     }
 
     public String insertWish(String wishlistId, Wish wish) {
-        String key = FirebaseDatabase.getInstance().getReference("/wishes").push().getKey();
+        String wishId = FirebaseDatabase.getInstance().getReference("/" + DB_PATH_WISHES).push().getKey();
 
-        FirebaseDatabase.getInstance().getReference("/wishes/" + wishlistId + "/" + key).setValue(wish);
+        FirebaseDatabase.getInstance().getReference("/" + DB_PATH_WISHES + "/" + wishlistId + "/" + wishId).setValue(wish);
 
-        FirebaseDatabase.getInstance().getReference("/wishLists/" + wishlistId).addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("/" + DB_PATH_WISHLISTS + "/" + wishlistId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                WishList currentWishlist = dataSnapshot.getValue(WishList.class);
+                Wishlist currentWishlist = dataSnapshot.getValue(Wishlist.class);
                 int counter = 1;
                 counter += currentWishlist.getWishCounter();
                 currentWishlist.setWishCounter(counter);
@@ -106,30 +108,31 @@ public class WishViewModel extends ViewModel {
 
             }
         });
-        return key;
+        return wishId;
     }
 
     public void setWishAsFavorite(String wishlistId, String wishId, Wish wish, String favoriteListId) {
-        FirebaseDatabase.getInstance().getReference("/wishes/" + wishlistId + "/" + wishId).setValue(wish);
+        FirebaseDatabase.getInstance().getReference("/" + DB_PATH_WISHES + "/" + wishlistId + "/" + wishId).setValue(wish);
         int counter = 0;
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("/" + DB_PATH_WISHES + "/" + favoriteListId + "/" + wishId);
         if (wish.getMarkedAsFavorite() != null && wish.getMarkedAsFavorite().get(FirebaseAuth.getInstance().getCurrentUser().getUid()).equals(true)) {
-            FirebaseDatabase.getInstance().getReference("/wishes/" + favoriteListId + "/" + wishId).setValue(wish);
+            databaseReference.setValue(wish);
             counter = 1;
         } else {
-            FirebaseDatabase.getInstance().getReference("/wishes/" + favoriteListId + "/" + wishId).removeValue();
+            databaseReference.removeValue();
             counter = -1;
         }
 
         final int finalCounter = counter;
-        FirebaseDatabase.getInstance().getReference("/wishLists/" + favoriteListId).addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("/" + DB_PATH_WISHLISTS + "/" + favoriteListId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                WishList wishList = dataSnapshot.getValue(WishList.class);
-                wishList.setWishCounter(wishList.getWishCounter() + finalCounter);
-                if (wishList.getWishCounter() < 0) {
-                    wishList.setWishCounter(0);
+                Wishlist wishlist = dataSnapshot.getValue(Wishlist.class);
+                wishlist.setWishCounter(wishlist.getWishCounter() + finalCounter);
+                if (wishlist.getWishCounter() < 0) {
+                    wishlist.setWishCounter(0);
                 }
-                dataSnapshot.getRef().setValue(wishList);
+                dataSnapshot.getRef().setValue(wishlist);
             }
 
             @Override
@@ -140,7 +143,7 @@ public class WishViewModel extends ViewModel {
     }
 
     public void selectWish(String wishlistId, String wishId, final FirebaseCallback firebaseCallback) {
-        FirebaseDatabase.getInstance().getReference("/wishes/" + wishlistId + "/" + wishId).addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("/" + DB_PATH_WISHES + "/" + wishlistId + "/" + wishId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Wish wish = dataSnapshot.getValue(Wish.class);
@@ -156,16 +159,16 @@ public class WishViewModel extends ViewModel {
 
     public void deleteWish(String wishId, String wishlistId, final String favoriteListId) {
         final int counter = 1;
-        FirebaseDatabase.getInstance().getReference("/wishes/" + wishlistId + "/" + wishId).removeValue();
-        FirebaseDatabase.getInstance().getReference("/wishLists/" + wishlistId).addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("/" + DB_PATH_WISHES + "/" + wishlistId + "/" + wishId).removeValue();
+        FirebaseDatabase.getInstance().getReference("/" + DB_PATH_WISHLISTS + "/" + wishlistId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                WishList wishList = dataSnapshot.getValue(WishList.class);
-                wishList.setWishCounter(wishList.getWishCounter() - counter);
-                if (wishList.getWishCounter() < 0) {
-                    wishList.setWishCounter(0);
+                Wishlist wishlist = dataSnapshot.getValue(Wishlist.class);
+                wishlist.setWishCounter(wishlist.getWishCounter() - counter);
+                if (wishlist.getWishCounter() < 0) {
+                    wishlist.setWishCounter(0);
                 }
-                dataSnapshot.getRef().setValue(wishList);
+                dataSnapshot.getRef().setValue(wishlist);
             }
 
             @Override
@@ -174,16 +177,16 @@ public class WishViewModel extends ViewModel {
             }
         });
 
-        FirebaseDatabase.getInstance().getReference("/wishes/" + favoriteListId + "/" + wishId).removeValue();
-        FirebaseDatabase.getInstance().getReference("/wishLists/" + favoriteListId).addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("/" + DB_PATH_WISHES + "/" + favoriteListId + "/" + wishId).removeValue();
+        FirebaseDatabase.getInstance().getReference("/" + DB_PATH_WISHLISTS + "/" + favoriteListId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                WishList wishList = dataSnapshot.getValue(WishList.class);
-                wishList.setWishCounter(wishList.getWishCounter() - counter);
-                if (wishList.getWishCounter() < 0) {
-                    wishList.setWishCounter(0);
+                Wishlist wishlist = dataSnapshot.getValue(Wishlist.class);
+                wishlist.setWishCounter(wishlist.getWishCounter() - counter);
+                if (wishlist.getWishCounter() < 0) {
+                    wishlist.setWishCounter(0);
                 }
-                dataSnapshot.getRef().setValue(wishList);
+                dataSnapshot.getRef().setValue(wishlist);
             }
 
             @Override
@@ -194,7 +197,7 @@ public class WishViewModel extends ViewModel {
     }
 
     public void updatePhotoUrl(String wishlistId, String wishkey, final Uri uri) {
-        FirebaseDatabase.getInstance().getReference("/wishes/" + wishlistId + "/" + wishkey).addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("/" + DB_PATH_WISHES + "/" + wishlistId + "/" + wishkey).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Wish wish = dataSnapshot.getValue(Wish.class);

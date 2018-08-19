@@ -55,7 +55,7 @@
             android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/imgBtnAddWishList"
+                android:id="@+id/ibAddWishList"
                 android:layout_width="33dp"
                 android:layout_height="28dp"
                 android:layout_alignParentBottom="true"
@@ -68,11 +68,11 @@
                 app:srcCompat="@drawable/ic_add_white" />
 
             <ImageButton
-                android:id="@+id/imgBtnDeleteWishList"
+                android:id="@+id/ibDeleteWishList"
                 android:layout_width="33dp"
                 android:layout_height="28dp"
                 android:layout_alignParentEnd="true"
-                android:layout_alignTop="@+id/imgBtnAddWishList"
+                android:layout_alignTop="@+id/ibAddWishList"
                 android:layout_marginEnd="18dp"
                 android:backgroundTint="@color/colorAccent"
                 android:contentDescription="@string/txtDelete"

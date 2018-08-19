@@ -26,7 +26,7 @@
         android:layout_marginTop="65dp">
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/messageRecyclerView"
+            android:id="@+id/rvMessageRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/linearLayout" />
@@ -41,14 +41,14 @@
             android:orientation="horizontal">
 
             <EditText
-                android:id="@+id/messageEditText"
+                android:id="@+id/etMessageText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1" />
 
             <Button
-                android:id="@+id/sendButton"
+                android:id="@+id/btnSendButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
@@ -61,7 +61,7 @@
         </LinearLayout>
 
         <ProgressBar
-            android:id="@+id/progressBar"
+            android:id="@+id/pbProgressBar"
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

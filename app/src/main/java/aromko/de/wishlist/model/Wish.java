@@ -11,7 +11,7 @@ public class Wish {
     @Exclude
     private String wishlistId;
     private String title;
-    private double price = 0.00;
+    private double price;
     private String url;
     private String description;
     private long wishstrength = 0;
@@ -20,7 +20,7 @@ public class Wish {
     private long timestamp;
     private double longitude;
     private double latitude;
-    private double salvagePrice = 0.00;
+    private double salvagePrice;
     private String placeId;
     private String photoUrl;
 

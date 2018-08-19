@@ -4,7 +4,7 @@ import com.google.firebase.database.Exclude;
 
 import java.util.Map;
 
-public class WishList {
+public class Wishlist {
 
     @Exclude
     private String key;
@@ -14,15 +14,15 @@ public class WishList {
     private int wishCounter;
     private boolean isFavoriteList;
 
-    public WishList() {
+    public Wishlist() {
     }
 
-    public WishList(String name, long timestamp) {
+    public Wishlist(String name, long timestamp) {
         this.name = name;
         this.timestamp = timestamp;
     }
 
-    public WishList(String name, long timestamp, Map<String, Object> allowedUsers, int wishCounter, boolean isFavoriteList) {
+    public Wishlist(String name, long timestamp, Map<String, Object> allowedUsers, int wishCounter, boolean isFavoriteList) {
         this.name = name;
         this.timestamp = timestamp;
         this.allowedUsers = allowedUsers;
@@ -80,7 +80,7 @@ public class WishList {
 
     @Override
     public String toString() {
-        return "WishList{" +
+        return "Wishlist{" +
                 "name='" + name + '\'' +
                 ", timestamp=" + timestamp +
                 ", allowedUsers=" + allowedUsers +

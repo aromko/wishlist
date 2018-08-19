@@ -25,7 +25,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfilActivity extends AppCompatActivity {
 
-    private static final String LOG_TAG = "ProfilActivity";
     PhotoHelper photoHelper;
     private EditText etName;
     private EditText etEmail;
@@ -47,12 +46,12 @@ public class ProfilActivity extends AppCompatActivity {
         ivProfileImage = findViewById(R.id.civImage);
         flProgressBarHolder = findViewById(R.id.flProgressBarHolder);
 
-        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        etName.setText(user.getDisplayName());
-        etEmail.setText(user.getEmail());
+        final FirebaseUser fFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        etName.setText(fFirebaseUser.getDisplayName());
+        etEmail.setText(fFirebaseUser.getEmail());
 
         photoHelper = new PhotoHelper(this);
-        photoHelper.requestProfilePicture(user.getUid());
+        photoHelper.requestProfilePicture(fFirebaseUser.getUid());
     }
 
     @Override

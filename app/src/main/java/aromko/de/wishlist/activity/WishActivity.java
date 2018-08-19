@@ -35,10 +35,10 @@ public class WishActivity extends AppCompatActivity {
     PhotoHelper photoHelper;
     private ImageButton btnAddPhoto;
     private CircleImageView ivProductImage;
-    private EditText txtTitle;
-    private EditText txtPrice;
-    private EditText txtUrl;
-    private EditText txtDescription;
+    private EditText etTitle;
+    private EditText etPrice;
+    private EditText etUrl;
+    private EditText etDescription;
     private Spinner spWishstrength;
     private FrameLayout flProgressBarHolder;
     private WishViewModel wishViewModel;
@@ -61,10 +61,10 @@ public class WishActivity extends AppCompatActivity {
 
         btnAddPhoto = findViewById(R.id.btnAddPhoto);
         ivProductImage = findViewById(R.id.civImage);
-        txtTitle = findViewById(R.id.txtTitle);
-        txtPrice = findViewById(R.id.txtPrice);
-        txtUrl = findViewById(R.id.txtUrl);
-        txtDescription = findViewById(R.id.txtDescription);
+        etTitle = findViewById(R.id.etTitle);
+        etPrice = findViewById(R.id.etPrice);
+        etUrl = findViewById(R.id.etUrl);
+        etDescription = findViewById(R.id.etDescription);
         flProgressBarHolder = findViewById(R.id.flProgressBarHolder);
         spWishstrength = findViewById(R.id.spWishstrength);
         tvLocation = findViewById(R.id.tvLocation);
@@ -137,7 +137,11 @@ public class WishActivity extends AppCompatActivity {
         if (ivProductImage.getTag().toString().equals(R.string.txtImageChanged)) {
             isImageSet = true;
         }
-        Wish wish = new Wish(txtTitle.getText().toString(), Double.valueOf(txtPrice.getText().toString().replace(",", ".")), txtUrl.getText().toString(), txtDescription.getText().toString(), Long.valueOf(spWishstrength.getSelectedItemId()), isImageSet, System.currentTimeMillis() / 1000, longitude, latitude, Double.valueOf(txtPrice.getText().toString().replace(",", ".")), placeId, "");
+        double price = 0.00;
+        if (!etPrice.getText().toString().isEmpty()) {
+            price = Double.valueOf(etPrice.getText().toString().replace(",", "."));
+        }
+        Wish wish = new Wish(etTitle.getText().toString(), price, etUrl.getText().toString(), etDescription.getText().toString(), Long.valueOf(spWishstrength.getSelectedItemId()), isImageSet, System.currentTimeMillis() / 1000, longitude, latitude, price, placeId, "");
         String wishkey = wishViewModel.insertWish(wishlistId, wish);
         if (wishkey.isEmpty() || !ivProductImage.getTag().toString().equals(R.string.txtImageChanged)) {
             Toast.makeText(getApplicationContext(), R.string.txtWishSuccessfulAdded, Toast.LENGTH_LONG).show();

@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -41,8 +42,9 @@ import static android.app.Activity.RESULT_OK;
 
 public class PhotoHelper {
 
-    static final int REQUEST_IMAGE_FROM_STORAGE = 1;
-    static final int REQUEST_IMAGE_CAPTURE = 2;
+    private static final String FIREBASE_STORAGE_BUCKET = "gs://wishlist-app-aromko.appspot.com";
+    private static final int REQUEST_IMAGE_FROM_STORAGE = 1;
+    private static final int REQUEST_IMAGE_CAPTURE = 2;
     private AlertDialog dialog;
     private EditText etDownloadUrl;
     private CircleImageView civImage;
@@ -123,7 +125,7 @@ public class PhotoHelper {
             reference = userId;
         }
 
-        FirebaseStorage storage = FirebaseStorage.getInstance("gs://wishlist-app-aromko.appspot.com");
+        FirebaseStorage storage = FirebaseStorage.getInstance(FIREBASE_STORAGE_BUCKET);
         final StorageReference storageRef = storage.getReference(reference);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -134,14 +136,8 @@ public class PhotoHelper {
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                int errorCode = ((StorageException) exception).getErrorCode();
-                String errorMessage = exception.getMessage();
-                switch (errorCode) {
-                    case -13000:
-                        errorMessage += mContext.getString(R.string.txtUnknownError);
-                }
                 flProgressBarHolder.setVisibility(View.GONE);
-                Toast.makeText(mContext.getApplicationContext(), errorMessage, Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext.getApplicationContext(), handleFirebaseStorageExceptions(exception), Toast.LENGTH_LONG).show();
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -163,7 +159,7 @@ public class PhotoHelper {
     }
 
     public void requestProfilePicture(String uId) {
-        FirebaseStorage STORAGE = FirebaseStorage.getInstance("gs://wishlist-app-aromko.appspot.com");
+        FirebaseStorage STORAGE = FirebaseStorage.getInstance(FIREBASE_STORAGE_BUCKET);
         STORAGE.getReference(uId).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(final Uri uri) {
@@ -175,7 +171,43 @@ public class PhotoHelper {
                         .networkPolicy(NetworkPolicy.NO_CACHE)
                         .into((ImageView) mContext.findViewById(R.id.civImage));
             }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.e("requestProfilePicture", handleFirebaseStorageExceptions(exception));
+            }
         });
+    }
+
+    private String handleFirebaseStorageExceptions(@NonNull Exception exception) {
+        int errorCode = ((StorageException) exception).getErrorCode();
+        String errorMessage = exception.getMessage();
+
+        switch (errorCode) {
+            case StorageException.ERROR_UNKNOWN:
+                errorMessage += " " + mContext.getString(R.string.txtUnknownError);
+                break;
+            case StorageException.ERROR_BUCKET_NOT_FOUND:
+                break;
+            case StorageException.ERROR_CANCELED:
+                break;
+            case StorageException.ERROR_INVALID_CHECKSUM:
+                break;
+            case StorageException.ERROR_NOT_AUTHENTICATED:
+                break;
+            case StorageException.ERROR_NOT_AUTHORIZED:
+                break;
+            case StorageException.ERROR_OBJECT_NOT_FOUND:
+                errorMessage += " " + mContext.getString(R.string.txtObjectNotFound);
+                break;
+            case StorageException.ERROR_PROJECT_NOT_FOUND:
+                break;
+            case StorageException.ERROR_QUOTA_EXCEEDED:
+                break;
+            case StorageException.ERROR_RETRY_LIMIT_EXCEEDED:
+                break;
+        }
+        return errorMessage;
     }
 
     public void requestProductPicture(String photoUrl) {

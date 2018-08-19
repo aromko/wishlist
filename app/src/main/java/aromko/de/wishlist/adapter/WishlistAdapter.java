@@ -10,13 +10,13 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import aromko.de.wishlist.R;
-import aromko.de.wishlist.model.WishList;
+import aromko.de.wishlist.model.Wishlist;
 
-public class WishlistAdapter extends ArrayAdapter<WishList> {
+public class WishlistAdapter extends ArrayAdapter<Wishlist> {
     private final Context context;
-    private final ArrayList<WishList> wishlistArrayList;
+    private final ArrayList<Wishlist> wishlistArrayList;
 
-    public WishlistAdapter(Context context, ArrayList<WishList> wishlistArrayList) {
+    public WishlistAdapter(Context context, ArrayList<Wishlist> wishlistArrayList) {
 
         super(context, R.layout.wishlist_item, wishlistArrayList);
 

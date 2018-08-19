@@ -38,10 +38,10 @@ public class EditWishActivity extends AppCompatActivity {
     PhotoHelper photoHelper;
     private ImageButton btnAddPhoto;
     private CircleImageView ivProductImage;
-    private EditText txtTitle;
-    private EditText txtPrice;
-    private EditText txtUrl;
-    private EditText txtDescription;
+    private EditText etTitle;
+    private EditText etPrice;
+    private EditText etUrl;
+    private EditText etDescription;
     private Spinner spWishstrength;
     private FrameLayout flProgressBarHolder;
     private WishViewModel wishViewModel = new WishViewModel();
@@ -66,10 +66,10 @@ public class EditWishActivity extends AppCompatActivity {
 
         btnAddPhoto = findViewById(R.id.btnAddPhoto);
         ivProductImage = findViewById(R.id.civImage);
-        txtTitle = findViewById(R.id.txtTitle);
-        txtPrice = findViewById(R.id.txtPrice);
-        txtUrl = findViewById(R.id.txtUrl);
-        txtDescription = findViewById(R.id.txtDescription);
+        etTitle = findViewById(R.id.etTitle);
+        etPrice = findViewById(R.id.etPrice);
+        etUrl = findViewById(R.id.etUrl);
+        etDescription = findViewById(R.id.etDescription);
         flProgressBarHolder = findViewById(R.id.flProgressBarHolder);
         spWishstrength = findViewById(R.id.spWishstrength);
         tvLocation = findViewById(R.id.tvLocation);
@@ -85,15 +85,14 @@ public class EditWishActivity extends AppCompatActivity {
         wishlistId = myIntent.getStringExtra("wishlistId");
         wishId = myIntent.getStringExtra("wishId");
 
-
         wishViewModel.selectWish(wishlistId, wishId, new WishViewModel.FirebaseCallback() {
             @Override
             public void onCallback(Wish wish) {
 
-                txtTitle.setText(wish.getTitle());
-                txtPrice.setText(String.valueOf(wish.getPrice()).replace(".", ","));
-                txtUrl.setText(wish.getUrl());
-                txtDescription.setText(wish.getUrl());
+                etTitle.setText(wish.getTitle());
+                etPrice.setText(String.valueOf(wish.getPrice()).replace(".", ","));
+                etUrl.setText(wish.getUrl());
+                etDescription.setText(wish.getUrl());
                 spWishstrength.setSelection((int) wish.getWishstrength());
                 isImageSet = wish.isImageSet();
                 if (isImageSet && wish.getPhotoUrl() != null) {
@@ -117,8 +116,6 @@ public class EditWishActivity extends AppCompatActivity {
                         }
                     });
                 }
-
-
             }
         });
 
@@ -174,7 +171,11 @@ public class EditWishActivity extends AppCompatActivity {
         flProgressBarHolder.setVisibility(View.VISIBLE);
         Bitmap bitmap = ((BitmapDrawable) ivProductImage.getDrawable()).getBitmap();
 
-        Wish wish = new Wish(txtTitle.getText().toString(), Double.valueOf(txtPrice.getText().toString().replace(",", ".")), txtUrl.getText().toString(), txtDescription.getText().toString(), Long.valueOf(spWishstrength.getSelectedItemId()), isImageSet, System.currentTimeMillis() / 1000, longitude, latitude, Double.valueOf(txtPrice.getText().toString().replace(",", ".")), placeId, "");
+        double price = 0.00;
+        if (!etPrice.getText().toString().isEmpty()) {
+            price = Double.valueOf(etPrice.getText().toString().replace(",", "."));
+        }
+        Wish wish = new Wish(etTitle.getText().toString(), price, etUrl.getText().toString(), etDescription.getText().toString(), Long.valueOf(spWishstrength.getSelectedItemId()), isImageSet, System.currentTimeMillis() / 1000, longitude, latitude, price, placeId, "");
         wishViewModel.updateWish(wishlistId, wishId, wish);
         if (!ivProductImage.getTag().toString().equals(getString(R.string.txtImageChanged))) {
             Toast.makeText(getApplicationContext(), R.string.txtSuccessfulChangedWish, Toast.LENGTH_LONG).show();
@@ -193,5 +194,4 @@ public class EditWishActivity extends AppCompatActivity {
 
         startActivityForResult(builder.build(this), PLACE_PICKER_REQUEST);
     }
-
 }

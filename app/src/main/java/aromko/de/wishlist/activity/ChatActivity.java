@@ -32,19 +32,19 @@ import aromko.de.wishlist.viewModel.ChatMessageViewModelFactory;
 
 public class ChatActivity extends AppCompatActivity {
 
-    private RecyclerView mMessageRecyclerView;
-    private LinearLayoutManager mLinearLayoutManager;
-    private ProgressBar mProgressBar;
-    private EditText mMessageText;
-    private Button mSendButton;
+    private RecyclerView rvMessageRecyclerView;
+    private LinearLayoutManager linearLayoutManager;
+    private ProgressBar pbProgressBar;
+    private EditText etMessageText;
+    private Button btnSendButton;
 
-    private String mUsername;
+    private String username;
     private ChatMessageViewModel chatMessageViewModel;
     private ArrayList<ChatMessage> listItems = new ArrayList<ChatMessage>();
     private String wishId;
 
-    private FirebaseAuth mFirebaseAuth;
-    private FirebaseUser mFirebaseUser;
+    private FirebaseAuth fFirebaseAuth;
+    private FirebaseUser fFirebaseUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,25 +59,25 @@ public class ChatActivity extends AppCompatActivity {
         Intent myIntent = getIntent();
         wishId = myIntent.getStringExtra("wishId");
 
-        mUsername = String.valueOf(R.string.txtNameAnonym);
+        username = String.valueOf(R.string.txtNameAnonym);
 
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+        fFirebaseAuth = FirebaseAuth.getInstance();
+        fFirebaseUser = fFirebaseAuth.getCurrentUser();
 
-        if (mFirebaseUser == null) {
+        if (fFirebaseUser == null) {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
             return;
         } else {
-            mUsername = mFirebaseUser.getDisplayName();
+            username = fFirebaseUser.getDisplayName();
         }
 
-        mProgressBar = findViewById(R.id.progressBar);
-        mMessageRecyclerView = findViewById(R.id.messageRecyclerView);
-        mMessageText = findViewById(R.id.messageEditText);
-        mSendButton = findViewById(R.id.sendButton);
+        pbProgressBar = findViewById(R.id.pbProgressBar);
+        rvMessageRecyclerView = findViewById(R.id.rvMessageRecyclerView);
+        etMessageText = findViewById(R.id.etMessageText);
+        btnSendButton = findViewById(R.id.btnSendButton);
 
-        mLinearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager = new LinearLayoutManager(this);
 
         chatMessageViewModel = ViewModelProviders.of(this, new ChatMessageViewModelFactory(this.getApplication(), wishId)).get(ChatMessageViewModel.class);
 
@@ -86,18 +86,18 @@ public class ChatActivity extends AppCompatActivity {
         listsLiveData.observe(this, new Observer<List<ChatMessage>>() {
             @Override
             public void onChanged(@Nullable List<ChatMessage> chatMessages) {
-                mMessageRecyclerView.setLayoutManager(mLinearLayoutManager);
+                rvMessageRecyclerView.setLayoutManager(linearLayoutManager);
                 listItems.clear();
 
                 for (ChatMessage chatMessage : chatMessages) {
                     listItems.add(chatMessage);
                 }
-                mMessageRecyclerView.setAdapter(new ChatMessageViewHolderAdapter(listItems, mUsername));
-                mProgressBar.setVisibility(View.INVISIBLE);
+                rvMessageRecyclerView.setAdapter(new ChatMessageViewHolderAdapter(listItems, username));
+                pbProgressBar.setVisibility(View.INVISIBLE);
             }
         });
 
-        mMessageText.addTextChangedListener(new TextWatcher() {
+        etMessageText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -111,9 +111,9 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.toString().isEmpty()) {
-                    mSendButton.setEnabled(false);
+                    btnSendButton.setEnabled(false);
                 } else {
-                    mSendButton.setEnabled(true);
+                    btnSendButton.setEnabled(true);
                 }
             }
         });
@@ -121,8 +121,8 @@ public class ChatActivity extends AppCompatActivity {
 
 
     public void insertChatMessage(View view) {
-        chatMessageViewModel.insertMessage(mFirebaseUser.getDisplayName(), mMessageText.getText().toString());
-        mMessageText.setText("");
+        chatMessageViewModel.insertMessage(fFirebaseUser.getDisplayName(), etMessageText.getText().toString());
+        etMessageText.setText("");
     }
 
     @Override

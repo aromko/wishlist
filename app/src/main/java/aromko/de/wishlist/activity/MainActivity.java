@@ -52,23 +52,26 @@ import aromko.de.wishlist.R;
 import aromko.de.wishlist.adapter.WishlistAdapter;
 import aromko.de.wishlist.fragment.ItemListFragment;
 import aromko.de.wishlist.model.Wish;
-import aromko.de.wishlist.model.WishList;
+import aromko.de.wishlist.model.Wishlist;
 import aromko.de.wishlist.utilities.PhotoHelper;
-import aromko.de.wishlist.viewModel.WishListViewModel;
+import aromko.de.wishlist.viewModel.WishlistViewModel;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements ItemListFragment.OnListFragmentInteractionListener {
 
+    public static final String AROMKO_PAGE_LINK = "aromko.page.link";
+    public static final String EXAMPLE_LINK = "https://www.example.com/page?param=";
+    public static final String TEXT_PLAIN = "text/plain";
     PhotoHelper photoHelper;
     private String favoriteListId = "";
-    private FirebaseAuth mAuth;
-    private FirebaseUser mUser;
-    private TextView txtUserEmail;
-    private TextView txtUserName;
+    private FirebaseAuth fFirebaseAuth;
+    private FirebaseUser fFirebaseUser;
+    private TextView etUserEmail;
+    private TextView etUserName;
     private ListView listView;
-    private ArrayList<WishList> listItems = new ArrayList<WishList>();
-    private ImageButton imgBtnAddWishList;
-    private WishListViewModel listViewModel;
+    private ArrayList<Wishlist> listItems = new ArrayList<Wishlist>();
+    private ImageButton ibAddWishList;
+    private WishlistViewModel listViewModel;
     private String selectedWishlistId;
     private FloatingActionButton fab;
     private TextView tvInfo;
@@ -80,27 +83,28 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        imgBtnAddWishList = findViewById(R.id.imgBtnAddWishList);
-        ibDeleteWishlist = findViewById(R.id.imgBtnDeleteWishList);
+        ibAddWishList = findViewById(R.id.ibAddWishList);
+        ibDeleteWishlist = findViewById(R.id.ibDeleteWishList);
         tvInfo = findViewById(R.id.tvInfo);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        final DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
 
-        txtUserEmail = navigationView.getHeaderView(0).findViewById(R.id.txtUserEmail);
-        txtUserName = navigationView.getHeaderView(0).findViewById(R.id.txtUserName);
+        etUserEmail = navigationView.getHeaderView(0).findViewById(R.id.etUserEmail);
+        etUserName = navigationView.getHeaderView(0).findViewById(R.id.etUserName);
         civImage = navigationView.getHeaderView(0).findViewById(R.id.civImage);
 
         photoHelper = new PhotoHelper(this);
-        checkIfUserLoggedIn(navigationView);
+
+        checkIfUserLoggedIn();
 
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -118,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         final WishlistAdapter drawListAdapter = new WishlistAdapter(this, listItems);
         listView.setAdapter(drawListAdapter);
         drawListAdapter.setNotifyOnChange(true);
-        listViewModel = ViewModelProviders.of(this).get(WishListViewModel.class);
+        listViewModel = ViewModelProviders.of(this).get(WishlistViewModel.class);
         try {
             favoriteListId = checkIfFavoriteListIdExists();
         } catch (Exception e) {
@@ -126,19 +130,44 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
             finish();
         }
 
-
-        final LiveData<List<WishList>> listsLiveData = listViewModel.getListsLiveData();
-
-        listsLiveData.observe(this, new Observer<List<WishList>>() {
+        final LiveData<List<Wishlist>> listsLiveData = listViewModel.getListsLiveData();
+        listsLiveData.observe(this, new Observer<List<Wishlist>>() {
             @Override
-            public void onChanged(@Nullable List<WishList> lists) {
+            public void onChanged(@Nullable List<Wishlist> lists) {
                 drawListAdapter.clear();
-                for (WishList list : lists) {
+                for (Wishlist list : lists) {
                     drawListAdapter.add(list);
                 }
             }
         });
 
+        addListeners();
+
+        processFirebaseDynamicLink();
+    }
+
+    private void processFirebaseDynamicLink() {
+        FirebaseDynamicLinks.getInstance().getDynamicLink(getIntent())
+                .addOnSuccessListener(this, new OnSuccessListener<PendingDynamicLinkData>() {
+                    @Override
+                    public void onSuccess(PendingDynamicLinkData data) {
+                        if (data != null) {
+                            Uri deepLink = data.getLink();
+                            listViewModel.addUserToWishlist(deepLink.getQueryParameter("param"));
+                        } else {
+                            return;
+                        }
+                    }
+                })
+                .addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getApplicationContext(), R.string.txtNoInvitationFound, Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
+    private void addListeners() {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -153,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
                 }
                 openFragment(position);
 
-                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                DrawerLayout drawer = findViewById(R.id.drawer_layout);
                 drawer.closeDrawer(GravityCompat.START);
             }
         });
@@ -179,25 +208,6 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
                 return true;
             }
         });
-
-        FirebaseDynamicLinks.getInstance().getDynamicLink(getIntent())
-                .addOnSuccessListener(this, new OnSuccessListener<PendingDynamicLinkData>() {
-                    @Override
-                    public void onSuccess(PendingDynamicLinkData data) {
-                        if (data != null) {
-                            Uri deepLink = data.getLink();
-                            listViewModel.addUserToWishlist(deepLink.getQueryParameter("param"));
-                        } else {
-                            return;
-                        }
-                    }
-                })
-                .addOnFailureListener(this, new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getApplicationContext(), R.string.txtNoInvitationFound, Toast.LENGTH_LONG).show();
-                    }
-                });
     }
 
     public void showAlertDialog(int position, final int layoutId) {
@@ -262,12 +272,12 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         }
 
         listView.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-        WishList selectedWishlist = (WishList) listView.getItemAtPosition(position);
+        Wishlist selectedWishlist = (Wishlist) listView.getItemAtPosition(position);
         MainActivity.this.setTitle(selectedWishlist.getName());
     }
 
     public void selectFavoritesOnStartup() {
-        for (WishList favoriteWishlist : listItems) {
+        for (Wishlist favoriteWishlist : listItems) {
             if (favoriteWishlist.isFavoriteList()) {
                 openFragment(listItems.indexOf(favoriteWishlist));
                 break;
@@ -275,13 +285,13 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         }
     }
 
-    public void checkIfUserLoggedIn(NavigationView navigationView) {
-        mAuth = FirebaseAuth.getInstance();
-        mUser = mAuth.getCurrentUser();
-        if (mUser != null) {
-            txtUserEmail.setText(mUser.getEmail());
-            txtUserName.setText(mUser.getDisplayName());
-            loadProfilePicture(mAuth);
+    public void checkIfUserLoggedIn() {
+        fFirebaseAuth = FirebaseAuth.getInstance();
+        fFirebaseUser = fFirebaseAuth.getCurrentUser();
+        if (fFirebaseUser != null) {
+            etUserEmail.setText(fFirebaseUser.getEmail());
+            etUserName.setText(fFirebaseUser.getDisplayName());
+            loadProfilePicture(fFirebaseAuth);
         } else {
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
             finish();
@@ -316,7 +326,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
             startActivity(new Intent(MainActivity.this, SettingsActivity.class));
             return true;
         } else if (id == R.id.action_logout) {
-            mAuth.signOut();
+            fFirebaseAuth.signOut();
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
             finish();
             return true;
@@ -363,8 +373,8 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
 
     public void onInviteClicked() {
         FirebaseDynamicLinks.getInstance().createDynamicLink()
-                .setLink(Uri.parse("https://www.example.com/page?param=" + selectedWishlistId))
-                .setDynamicLinkDomain("aromko.page.link")
+                .setLink(Uri.parse(EXAMPLE_LINK + selectedWishlistId))
+                .setDynamicLinkDomain(AROMKO_PAGE_LINK)
                 .setAndroidParameters(new DynamicLink.AndroidParameters.Builder().build())
                 .buildShortDynamicLink()
                 .addOnCompleteListener(this, new OnCompleteListener<ShortDynamicLink>() {
@@ -372,17 +382,15 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
                     public void onComplete(@NonNull Task<ShortDynamicLink> task) {
                         if (task.isSuccessful()) {
                             Uri shortLink = task.getResult().getShortLink();
-                            Uri flowchartLink = task.getResult().getPreviewLink();
                             Intent sendIntent = new Intent();
                             String msg = getString(R.string.txtInvitationMessage) + shortLink.toString();
                             sendIntent.setAction(Intent.ACTION_SEND);
                             sendIntent.putExtra(Intent.EXTRA_TEXT, msg);
-                            sendIntent.setType("text/plain");
+                            sendIntent.setType(TEXT_PLAIN);
                             startActivityForResult(sendIntent, 0);
                             Log.i("SHORTLINK", shortLink.toString());
                         } else {
-                            // Error
-                            // ...
+                            Toast.makeText(getApplicationContext(), R.string.txtInvitationLinkCouldNotBeCreated, Toast.LENGTH_LONG).show();
                         }
                     }
                 });

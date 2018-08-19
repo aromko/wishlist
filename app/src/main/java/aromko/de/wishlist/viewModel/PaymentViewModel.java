@@ -3,6 +3,7 @@ package aromko.de.wishlist.viewModel;
 import android.support.annotation.NonNull;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -16,11 +17,17 @@ import aromko.de.wishlist.model.Wish;
 
 public class PaymentViewModel {
 
+    private static final String DB_PATH_PAYMENTS = "/payments/";
+    private static final String DB_PATH_WISHES = "/wishes/";
+
+    private FirebaseUser fFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+
     public PaymentViewModel() {
     }
 
     public void buyItem(final String wishId, final double price, final double partialPrice, final String wishlistId) {
-        FirebaseDatabase.getInstance().getReference("/payments/" + wishId).addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference(DB_PATH_PAYMENTS + wishId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Map<String, Double> partialPayments = new HashMap<>();
@@ -31,20 +38,20 @@ public class PaymentViewModel {
                         partialPayments.putAll(currentPayment.getPartialPayments());
                     }
 
-                    if (partialPayments.containsKey(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-                        salvagePrice = currentPayment.getSalvagePrice() + partialPayments.get(FirebaseAuth.getInstance().getCurrentUser().getUid()) - partialPrice;
+                    if (partialPayments.containsKey(fFirebaseUser.getUid())) {
+                        salvagePrice = currentPayment.getSalvagePrice() + partialPayments.get(fFirebaseUser.getUid()) - partialPrice;
                     } else {
                         salvagePrice = currentPayment.getSalvagePrice() - partialPrice;
                     }
 
-                    partialPayments.put(FirebaseAuth.getInstance().getCurrentUser().getUid(), partialPrice);
+                    partialPayments.put(fFirebaseUser.getUid(), partialPrice);
                     currentPayment.setSalvagePrice(salvagePrice);
                     currentPayment.setPartialPayments(partialPayments);
                     dataSnapshot.getRef().setValue(currentPayment);
                     updateSalvagePriceInWish(salvagePrice, wishId, wishlistId);
                 } else {
                     salvagePrice = price - partialPrice;
-                    partialPayments.put(FirebaseAuth.getInstance().getCurrentUser().getUid(), partialPrice);
+                    partialPayments.put(fFirebaseUser.getUid(), partialPrice);
                     Payment payment = new Payment(price, salvagePrice, partialPayments);
                     dataSnapshot.getRef().setValue(payment);
                 }
@@ -58,7 +65,7 @@ public class PaymentViewModel {
     }
 
     private void updateSalvagePriceInWish(final double salvagePrice, String wishId, String wishlistId) {
-        FirebaseDatabase.getInstance().getReference("/wishes/" + wishlistId + "/" + wishId).addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference(DB_PATH_WISHES + wishlistId + "/" + wishId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {

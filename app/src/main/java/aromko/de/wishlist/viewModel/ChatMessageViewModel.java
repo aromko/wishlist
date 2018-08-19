@@ -21,8 +21,9 @@ import aromko.de.wishlist.tasks.AppExecutors;
 
 public class ChatMessageViewModel extends ViewModel {
 
+    private static final String DB_PATH_MESSAGES = "/messages/";
     private static DatabaseReference lists_ref;
-    private static String message_path;
+    private static String message_record_path;
     private final FirebaseQueryLiveData liveData;
     private final MediatorLiveData<List<ChatMessage>> listsLiveData = new MediatorLiveData<>();
 
@@ -33,8 +34,8 @@ public class ChatMessageViewModel extends ViewModel {
     ;
 
     public ChatMessageViewModel(Application mApplication, final String wishId) {
-        message_path = "/messages/" + wishId;
-        lists_ref = FirebaseDatabase.getInstance().getReference(message_path);
+        message_record_path = DB_PATH_MESSAGES + wishId;
+        lists_ref = FirebaseDatabase.getInstance().getReference(message_record_path);
         liveData = new FirebaseQueryLiveData(lists_ref);
         listsLiveData.addSource(liveData, new Observer<DataSnapshot>() {
             @Override
@@ -66,8 +67,8 @@ public class ChatMessageViewModel extends ViewModel {
     }
 
     public void insertMessage(String displayName, String messageText) {
-        String key = FirebaseDatabase.getInstance().getReference(message_path).push().getKey();
+        String chatMessageId = FirebaseDatabase.getInstance().getReference(message_record_path).push().getKey();
         ChatMessage chatMessage = new ChatMessage(displayName, messageText, System.currentTimeMillis() / 1000);
-        FirebaseDatabase.getInstance().getReference(message_path + "/" + key).setValue(chatMessage);
+        FirebaseDatabase.getInstance().getReference(message_record_path + "/" + chatMessageId).setValue(chatMessage);
     }
 }

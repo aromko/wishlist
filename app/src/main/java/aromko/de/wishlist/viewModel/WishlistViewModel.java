@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -20,32 +21,34 @@ import java.util.List;
 import java.util.Map;
 
 import aromko.de.wishlist.database.FirebaseQueryLiveData;
-import aromko.de.wishlist.model.WishList;
+import aromko.de.wishlist.model.Wishlist;
 import aromko.de.wishlist.tasks.AppExecutors;
 
-public class WishListViewModel extends ViewModel {
+public class WishlistViewModel extends ViewModel {
 
-    private static final DatabaseReference LISTS_REF =
-            FirebaseDatabase.getInstance().getReference("/wishLists");
+    private static final String DB_PATH_WISHLISTS = "wishLists";
+    private static final DatabaseReference LISTS_REF = FirebaseDatabase.getInstance().getReference("/" + DB_PATH_WISHLISTS);
 
     private final FirebaseQueryLiveData liveData = new FirebaseQueryLiveData(LISTS_REF);
-    private final MediatorLiveData<List<WishList>> listsLiveData = new MediatorLiveData<>();
+    private final MediatorLiveData<List<Wishlist>> listsLiveData = new MediatorLiveData<>();
 
-    public WishListViewModel() {
+    private FirebaseUser fFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+    public WishlistViewModel() {
         listsLiveData.addSource(liveData, new Observer<DataSnapshot>() {
             @Override
             public void onChanged(@Nullable final DataSnapshot dataSnapshot) {
                 if (dataSnapshot != null) {
-                    final List<WishList> lists = new ArrayList<>();
+                    final List<Wishlist> lists = new ArrayList<>();
                     new AppExecutors().mainThread().execute(new Runnable() {
                         @Override
                         public void run() {
                             for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                WishList wishList = snapshot.getValue(WishList.class);
-                                wishList.setKey(snapshot.getKey().toString());
-                                String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                                if (wishList.getAllowedUsers() != null && wishList.getAllowedUsers().containsKey(currentUid) && wishList.getAllowedUsers().get(currentUid).equals(true)) {
-                                    lists.add(wishList);
+                                Wishlist wishlist = snapshot.getValue(Wishlist.class);
+                                wishlist.setKey(snapshot.getKey().toString());
+                                String currentUid = fFirebaseUser.getUid();
+                                if (wishlist.getAllowedUsers() != null && wishlist.getAllowedUsers().containsKey(currentUid) && wishlist.getAllowedUsers().get(currentUid).equals(true)) {
+                                    lists.add(wishlist);
                                 }
                             }
                             listsLiveData.postValue(lists);
@@ -60,35 +63,29 @@ public class WishListViewModel extends ViewModel {
     }
 
     public String insertList(String text, boolean isFavortieList) {
-        String key = FirebaseDatabase.getInstance().getReference("/wishLists").push().getKey();
+        String wishlistId = FirebaseDatabase.getInstance().getReference("/" + DB_PATH_WISHLISTS).push().getKey();
         Map<String, Object> allowedUser = new HashMap<>();
-        allowedUser.put(FirebaseAuth.getInstance().getCurrentUser().getUid(), true);
-        WishList wishList = new WishList(text, System.currentTimeMillis() / 1000, allowedUser, 0, isFavortieList);
-        //Map<String, Object> postValues = list.toMap();
-
-        //Map<String, Object> childUpdates = new HashMap<>();
-        //childUpdates.put(key, postValues);
-
-        //mDatabase.getReference("/lists").updateChildren(childUpdates);
-        FirebaseDatabase.getInstance().getReference("/wishLists/" + key).setValue(wishList);
-        return key;
+        allowedUser.put(fFirebaseUser.getUid(), true);
+        Wishlist wishlist = new Wishlist(text, System.currentTimeMillis() / 1000, allowedUser, 0, isFavortieList);
+        FirebaseDatabase.getInstance().getReference("/" + DB_PATH_WISHLISTS + "/" + wishlistId).setValue(wishlist);
+        return wishlistId;
     }
 
     @NonNull
-    public LiveData<List<WishList>> getListsLiveData() {
+    public LiveData<List<Wishlist>> getListsLiveData() {
         return listsLiveData;
     }
 
     public void addUserToWishlist(String wishlistId) {
-        FirebaseDatabase.getInstance().getReference("/wishLists/" + wishlistId).addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("/" + DB_PATH_WISHLISTS + "/" + wishlistId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                WishList currentWishlist = dataSnapshot.getValue(WishList.class);
+                Wishlist currentWishlist = dataSnapshot.getValue(Wishlist.class);
                 Map<String, Object> allowedUsers = new HashMap<>();
                 if (currentWishlist.getAllowedUsers() != null) {
                     allowedUsers.putAll(currentWishlist.getAllowedUsers());
                 }
-                allowedUsers.put(FirebaseAuth.getInstance().getCurrentUser().getUid(), true);
+                allowedUsers.put(fFirebaseUser.getUid(), true);
                 currentWishlist.setAllowedUsers(allowedUsers);
                 dataSnapshot.getRef().setValue(currentWishlist);
             }
@@ -101,10 +98,10 @@ public class WishListViewModel extends ViewModel {
     }
 
     public void updateList(String wishlistId, final String name) {
-        FirebaseDatabase.getInstance().getReference("/wishLists/" + wishlistId).addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("/" + DB_PATH_WISHLISTS + "/" + wishlistId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                WishList currentWishlist = dataSnapshot.getValue(WishList.class);
+                Wishlist currentWishlist = dataSnapshot.getValue(Wishlist.class);
                 currentWishlist.setName(name);
                 dataSnapshot.getRef().setValue(currentWishlist);
             }
@@ -117,11 +114,11 @@ public class WishListViewModel extends ViewModel {
     }
 
     public void deleteList(String wishlistId) {
-        FirebaseDatabase.getInstance().getReference("/wishLists/" + wishlistId).addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("/" + DB_PATH_WISHLISTS + "/" + wishlistId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                WishList currentWishlist = dataSnapshot.getValue(WishList.class);
-                currentWishlist.getAllowedUsers().remove(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                Wishlist currentWishlist = dataSnapshot.getValue(Wishlist.class);
+                currentWishlist.getAllowedUsers().remove(fFirebaseUser.getUid());
                 dataSnapshot.getRef().setValue(currentWishlist);
             }
 
