@@ -54,12 +54,12 @@ public class ChatActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle("Nachrichten");
+        getSupportActionBar().setTitle(R.string.txtMessages);
 
         Intent myIntent = getIntent();
         wishId = myIntent.getStringExtra("wishId");
 
-        mUsername = "anonym";
+        mUsername = String.valueOf(R.string.txtNameAnonym);
 
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();

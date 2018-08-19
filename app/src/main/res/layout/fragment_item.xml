@@ -154,31 +154,26 @@
                 android:layout_width="29dp"
                 android:layout_height="27dp"
                 android:layout_alignParentStart="true"
-                android:layout_marginStart="43dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="81dp"
                 app:srcCompat="@drawable/ic_map" />
 
             <ImageView
                 android:id="@+id/ivUrl"
                 android:layout_width="29dp"
                 android:layout_height="27dp"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="81dp"
-                app:srcCompat="@drawable/ic_open_in_browser" />
-
-            <ImageView
-                android:id="@+id/ivPayment"
-                android:layout_width="29dp"
-                android:layout_height="27dp"
                 android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
                 android:layout_marginEnd="86dp"
-                app:srcCompat="@drawable/ic_payment" />
+                app:srcCompat="@drawable/ic_open_in_browser" />
 
             <ImageView
                 android:id="@+id/ivChat"
                 android:layout_width="29dp"
                 android:layout_height="27dp"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="44dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="42dp"
                 app:srcCompat="@drawable/ic_chat" />
         </RelativeLayout>
 

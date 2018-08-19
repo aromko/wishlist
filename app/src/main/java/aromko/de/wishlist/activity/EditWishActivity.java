@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -63,7 +62,7 @@ public class EditWishActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle("Wunsch bearbeiten");
+        getSupportActionBar().setTitle(R.string.txtEditWish);
 
         btnAddPhoto = findViewById(R.id.btnAddPhoto);
         ivProductImage = findViewById(R.id.civImage);
@@ -113,8 +112,7 @@ public class EditWishActivity extends AppCompatActivity {
                                 tvLocation.setText(myPlace.getName() + "\n" + myPlace.getAddress());
                                 places.release();
                             } else {
-                                //TODO: TOAST
-                                Log.e("AAAAAA", "Place not found.");
+                                Toast.makeText(getApplicationContext(), R.string.txtNoPlaceFound, Toast.LENGTH_LONG).show();
                             }
                         }
                     });
@@ -178,8 +176,8 @@ public class EditWishActivity extends AppCompatActivity {
 
         Wish wish = new Wish(txtTitle.getText().toString(), Double.valueOf(txtPrice.getText().toString().replace(",", ".")), txtUrl.getText().toString(), txtDescription.getText().toString(), Long.valueOf(spWishstrength.getSelectedItemId()), isImageSet, System.currentTimeMillis() / 1000, longitude, latitude, Double.valueOf(txtPrice.getText().toString().replace(",", ".")), placeId, "");
         wishViewModel.updateWish(wishlistId, wishId, wish);
-        if (!ivProductImage.getTag().toString().equals("imageChanged")) {
-            Toast.makeText(getApplicationContext(), "Wunsch wurde erfolgreich geändert.", Toast.LENGTH_LONG).show();
+        if (!ivProductImage.getTag().toString().equals(getString(R.string.txtImageChanged))) {
+            Toast.makeText(getApplicationContext(), R.string.txtSuccessfulChangedWish, Toast.LENGTH_LONG).show();
             flProgressBarHolder.setVisibility(View.GONE);
             finish();
         } else {

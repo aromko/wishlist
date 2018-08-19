@@ -3,9 +3,6 @@ package aromko.de.wishlist.fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
@@ -54,7 +52,6 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_item, parent, false);
         context = parent.getContext();
-        SharedPreferences sharedPreferences = context.getSharedPreferences("", Context.MODE_PRIVATE);
         return new ViewHolder(view);
     }
 
@@ -64,14 +61,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
 
         if (holder.mItem.getWishlistId().equals(mFavoriteListId)) {
             holder.favorite.setVisibility(View.INVISIBLE);
-        }
-
-        if (holder.mItem.getLatitude() == 0 && holder.mItem.getLongitude() == 0) {
-            holder.ivMap.setVisibility(View.INVISIBLE);
-        }
-
-        if (holder.mItem.getUrl().isEmpty()) {
-            holder.ivUrl.setVisibility(View.INVISIBLE);
+            holder.tvItemOptions.setVisibility(View.INVISIBLE);
         }
 
         int counter = 0;
@@ -96,9 +86,9 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
 
         if (holder.mItem.getMarkedAsFavorite() != null && holder.mItem.getMarkedAsFavorite().containsKey(FirebaseAuth.getInstance().getCurrentUser().getUid()) && holder.mItem.getMarkedAsFavorite().get(FirebaseAuth.getInstance().getCurrentUser().getUid()).equals(true)) {
             holder.favorite.setImageResource(R.drawable.ic_favorite);
-            holder.favorite.setTag("isFavorite");
+            holder.favorite.setTag(context.getString(R.string.txtIsFavorite));
         } else {
-            holder.favorite.setTag("isNoFavorite");
+            holder.favorite.setTag(context.getString(R.string.txtIsNoFavorite));
         }
 
         switch ((int) holder.mItem.getWishstrength()) {
@@ -125,12 +115,12 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
             public void onClick(View view) {
                 boolean isFavorite = true;
 
-                if (holder.favorite.getTag() == "isNoFavorite") {
+                if (holder.favorite.getTag() == context.getString(R.string.txtIsNoFavorite)) {
                     holder.favorite.setImageResource(R.drawable.ic_favorite);
-                    holder.favorite.setTag("isFavorite");
+                    holder.favorite.setTag(context.getString(R.string.txtIsFavorite));
                 } else {
                     holder.favorite.setImageResource(R.drawable.ic_favorite_border);
-                    holder.favorite.setTag("isNoFavorite");
+                    holder.favorite.setTag(context.getString(R.string.txtIsNoFavorite));
                     isFavorite = false;
                 }
                 if (null != mListener) {
@@ -143,7 +133,11 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
-                    mListener.onMapInteraction(holder.mItem.getLongitude(), holder.mItem.getLatitude());
+                    if (holder.mItem.getLongitude() != 0 && holder.mItem.getLatitude() != 0) {
+                        mListener.onMapInteraction(holder.mItem.getLongitude(), holder.mItem.getLatitude());
+                    } else {
+                        Toast.makeText(context, R.string.txtNoPlaceFound, Toast.LENGTH_LONG).show();
+                    }
                 }
             }
         });
@@ -183,6 +177,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
                 PopupMenu popupMenu = new PopupMenu(context, holder.tvItemOptions);
 
                 popupMenu.inflate(R.menu.item_options_menu);
+
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
@@ -192,6 +187,11 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
                                 editWishAcitivity.putExtra("wishlistId", holder.mItem.getWishlistId());
                                 editWishAcitivity.putExtra("wishId", holder.mItem.getWishId());
                                 view.getContext().startActivity(editWishAcitivity);
+                                return true;
+                            case R.id.payment:
+                                if (null != mListener) {
+                                    mListener.onPaymentInteraction(holder.mItem.getWishId(), holder.mItem.getPrice(), holder.mItem.getPrice(), holder.mItem.getWishlistId());
+                                }
                                 return true;
                             case R.id.partial_payment:
                                 if (null != mListener) {
@@ -209,6 +209,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
                     }
                 });
                 popupMenu.show();
+
             }
         });
 
@@ -216,21 +217,16 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
-                    mListener.onUrlInteraction(holder.mItem.getUrl());
+                    if (holder.mItem.getUrl() != null) {
+                        mListener.onUrlInteraction(holder.mItem.getUrl());
+                    } else {
+                        Toast.makeText(context, R.string.txtNoUrlFound, Toast.LENGTH_LONG).show();
+                    }
                 }
             }
         });
 
         holder.tvDescription.setText(holder.mItem.getDescription());
-
-        holder.ivPayment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (null != mListener)
-                    mListener.onPaymentInteraction(holder.mItem.getWishId(), holder.mItem.getPrice(), holder.mItem.getPrice(), holder.mItem.getWishlistId());
-
-            }
-        });
 
         holder.ivChat.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -251,7 +247,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
         builder.setView(viewPartialPayment);
         final EditText txtPartialPayment = viewPartialPayment.findViewById(R.id.txtPartialPayment);
 
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.txtOk, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 double partialPrice = Double.parseDouble(txtPartialPayment.getText().toString().replace(",", "."));
@@ -262,7 +258,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
                 }
                 dialogInterface.dismiss();
             }
-        }).setNegativeButton("Abbrechen", new DialogInterface.OnClickListener() {
+        }).setNegativeButton(R.string.txtCancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.cancel();
@@ -280,7 +276,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
 
         builder.setView(viewDeleteWish);
 
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.txtOk, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
@@ -290,7 +286,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
 
                 dialogInterface.dismiss();
             }
-        }).setNegativeButton("Abbrechen", new DialogInterface.OnClickListener() {
+        }).setNegativeButton(R.string.txtCancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.cancel();
@@ -298,13 +294,6 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
         });
         AlertDialog dialog = builder.create();
         dialog.show();
-    }
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     @Override
@@ -325,7 +314,6 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
         public final ImageView ivMap;
         public final ImageView ivUrl;
         public final TextView tvDescription;
-        public final ImageView ivPayment;
         public final ImageView ivChat;
 
         public Wish mItem;
@@ -344,7 +332,6 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
             ivMap = view.findViewById(R.id.ivMap);
             ivUrl = view.findViewById(R.id.ivUrl);
             tvDescription = view.findViewById(R.id.tvDescription);
-            ivPayment = view.findViewById(R.id.ivPayment);
             ivChat = view.findViewById(R.id.ivChat);
         }
 

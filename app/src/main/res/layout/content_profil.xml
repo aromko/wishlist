@@ -64,7 +64,7 @@
                         <android.support.design.widget.TextInputLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Name"
+                            android:hint="@string/txtName"
                             android:layout_marginTop="45dp">
 
                             <EditText
@@ -91,7 +91,7 @@
                         <android.support.design.widget.TextInputLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="E-Mail"
+                            android:hint="@string/txtEmail"
                             android:layout_marginTop="100dp">
 
                             <EditText
@@ -118,7 +118,7 @@
                             android:layout_marginTop="160dp"
                             android:backgroundTint="@color/colorPrimary"
                             android:onClick="saveProfile"
-                            android:text="Speichern"
+                            android:text="@string/txtSave"
                             android:textColor="@color/cardview_light_background" />
                     </LinearLayout>
 

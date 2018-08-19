@@ -104,14 +104,14 @@ public class PhotoHelper {
                     if (data != null) {
                         Uri uri = data.getData();
                         civImage.setImageURI(uri);
-                        civImage.setTag("imageChanged");
+                        civImage.setTag(R.string.txtImageChanged);
                     }
                     break;
                 case REQUEST_IMAGE_CAPTURE:
                     Bundle extras = data.getExtras();
                     Bitmap imageBitmap = (Bitmap) extras.get("data");
                     civImage.setImageBitmap(imageBitmap);
-                    civImage.setTag("imageChanged");
+                    civImage.setTag(R.string.txtImageChanged);
                     break;
             }
         }
@@ -138,7 +138,7 @@ public class PhotoHelper {
                 String errorMessage = exception.getMessage();
                 switch (errorCode) {
                     case -13000:
-                        errorMessage += "Unbekannter Fehler.";
+                        errorMessage += mContext.getString(R.string.txtUnknownError);
                 }
                 flProgressBarHolder.setVisibility(View.GONE);
                 Toast.makeText(mContext.getApplicationContext(), errorMessage, Toast.LENGTH_LONG).show();
@@ -146,7 +146,7 @@ public class PhotoHelper {
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Toast.makeText(mContext.getApplicationContext(), "Speichern erfolgreich.", Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext.getApplicationContext(), R.string.txtSuccessfulSave, Toast.LENGTH_LONG).show();
                 flProgressBarHolder.setVisibility(View.GONE);
                 if (wishViewModel != null) {
                     storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {

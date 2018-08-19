@@ -62,15 +62,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
-                // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
-                Toast.makeText(getApplicationContext(), "Google sign in failed.", Toast.LENGTH_LONG);
+                Toast.makeText(getApplicationContext(), R.string.txtGoogleSignInFauked, Toast.LENGTH_LONG);
             }
         }
     }
@@ -89,7 +87,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             }
                         } else {
                             // If sign in fails, display a message to the user.
-                            Snackbar.make(findViewById(R.id.main_layout), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(findViewById(R.id.main_layout), R.string.txtAithenticationFailed, Snackbar.LENGTH_SHORT).show();
                         }
                     }
                 });

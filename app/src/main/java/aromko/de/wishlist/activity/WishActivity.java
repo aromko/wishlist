@@ -57,7 +57,7 @@ public class WishActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle("Wunsch hinzufügen");
+        getSupportActionBar().setTitle(R.string.txtAddWish);
 
         btnAddPhoto = findViewById(R.id.btnAddPhoto);
         ivProductImage = findViewById(R.id.civImage);
@@ -134,13 +134,13 @@ public class WishActivity extends AppCompatActivity {
         Bitmap bitmap = ((BitmapDrawable) ivProductImage.getDrawable()).getBitmap();
 
         boolean isImageSet = false;
-        if (ivProductImage.getTag().toString().equals("imageChanged")) {
+        if (ivProductImage.getTag().toString().equals(R.string.txtImageChanged)) {
             isImageSet = true;
         }
         Wish wish = new Wish(txtTitle.getText().toString(), Double.valueOf(txtPrice.getText().toString().replace(",", ".")), txtUrl.getText().toString(), txtDescription.getText().toString(), Long.valueOf(spWishstrength.getSelectedItemId()), isImageSet, System.currentTimeMillis() / 1000, longitude, latitude, Double.valueOf(txtPrice.getText().toString().replace(",", ".")), placeId, "");
         String wishkey = wishViewModel.insertWish(wishlistId, wish);
-        if (wishkey.isEmpty() || !ivProductImage.getTag().toString().equals("imageChanged")) {
-            Toast.makeText(getApplicationContext(), "Wunsch wurde erfolgreich hinzugefügt.", Toast.LENGTH_LONG).show();
+        if (wishkey.isEmpty() || !ivProductImage.getTag().toString().equals(R.string.txtImageChanged)) {
+            Toast.makeText(getApplicationContext(), R.string.txtWishSuccessfulAdded, Toast.LENGTH_LONG).show();
             flProgressBarHolder.setVisibility(View.GONE);
             finish();
         } else {

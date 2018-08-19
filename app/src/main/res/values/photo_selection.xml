@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string-array name="photo_selection_array">
-        <item>Foto aufnehmen</item>
-        <item>Definitiv ein Muss</item>
-        <item>Am liebsten sofort</item>
-    </string-array>
-</resources>

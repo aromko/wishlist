@@ -76,7 +76,7 @@ public class ItemListFragment extends Fragment {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
 
-        SharedPreferences sharedPreferences = this.getActivity().getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         favoriteListId = sharedPreferences.getString("favoriteListId", "");
     }
 
@@ -133,8 +133,6 @@ public class ItemListFragment extends Fragment {
                     }
                     markedAsFavorite.put(FirebaseAuth.getInstance().getCurrentUser().getUid(), isFavorite);
                     wish.setMarkedAsFavorite(markedAsFavorite);
-                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-                    favoriteListId = sharedPreferences.getString("favoriteListId", "");
                     wishViewModel.setWishAsFavorite(wish.getWishlistId(), wish.getWishId(), wish, favoriteListId);
                 }
 
@@ -168,8 +166,6 @@ public class ItemListFragment extends Fragment {
 
                 @Override
                 public void onDeleteWishInteraction(String wishId, String wishlistId) {
-                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-                    favoriteListId = sharedPreferences.getString("favoriteListId", "");
                     wishViewModel.deleteWish(wishId, wishlistId, favoriteListId);
                 }
             };

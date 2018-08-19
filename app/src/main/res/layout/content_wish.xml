@@ -30,7 +30,7 @@
                 android:id="@+id/textInputLayout2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="Titel"
+                android:hint="@string/txtTitle"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.115"
@@ -55,7 +55,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="10dp"
-                android:hint="Preis in €"
+                android:hint="@string/txtPriceInEuro"
                 app:layout_constraintTop_toBottomOf="@+id/textInputLayout2"
                 tools:layout_editor_absoluteX="0dp">
 
@@ -76,7 +76,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="10dp"
-                android:hint="Url"
+                android:hint="@string/txtUrl"
                 app:layout_constraintTop_toBottomOf="@+id/textInputLayout3"
                 tools:layout_editor_absoluteX="0dp">
 
@@ -96,7 +96,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="10dp"
-                android:hint="Beschreibung"
+                android:hint="@string/txtDescription"
                 app:layout_constraintTop_toBottomOf="@+id/textInputLayout4"
                 tools:layout_editor_absoluteX="0dp">
 
@@ -115,7 +115,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="2dp"
-                android:text="Wunschstärke"
+                android:text="@string/txtWishstrength"
                 android:textSize="18dp" />
 
             <Spinner
@@ -163,7 +163,7 @@
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="2dp"
                 android:ems="10"
-                android:text="Wähle einen Ort."
+                android:text="@string/txtChooseAPlace"
                 android:textSize="18dp" />
 
         </LinearLayout>
@@ -176,7 +176,7 @@
         android:layout_marginTop="4dp"
         android:backgroundTint="@color/colorPrimary"
         android:onClick="saveWish"
-        android:text="Speichern"
+        android:text="@string/txtSave"
         android:textColor="@color/cardview_light_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"

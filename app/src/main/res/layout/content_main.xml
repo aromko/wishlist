@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="8dp"
-            android:text="Keine Wünsche gefunden. \nNeue Wünsche können mit dem '+' erstellt werden."
+            android:text="@string/txtNoWishFound"
             android:textAlignment="center"
             android:textSize="18dp" />
     </FrameLayout>

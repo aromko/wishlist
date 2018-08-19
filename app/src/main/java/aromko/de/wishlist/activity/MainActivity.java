@@ -195,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
                 .addOnFailureListener(this, new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.w("SSSSSSSSSSSSSSSS", "getDynamicLink:onFailure", e);
+                        Toast.makeText(getApplicationContext(), R.string.txtNoInvitationFound, Toast.LENGTH_LONG).show();
                     }
                 });
     }
@@ -211,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         if (position != -1) {
             txtNewWishlist.setText(listItems.get(position).getName());
         }
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.txtOk, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 String text = txtNewWishlist.getText().toString();
@@ -230,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
                 }
                 dialogInterface.dismiss();
             }
-        }).setNegativeButton("Abbrechen", new DialogInterface.OnClickListener() {
+        }).setNegativeButton(R.string.txtCancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.cancel();
@@ -305,7 +305,6 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
@@ -375,7 +374,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
                             Uri shortLink = task.getResult().getShortLink();
                             Uri flowchartLink = task.getResult().getPreviewLink();
                             Intent sendIntent = new Intent();
-                            String msg = "Hey, ich möchte meine Liste mit dir teilen. Klicke auf den Link, um ihr beizutreten: " + shortLink.toString();
+                            String msg = getString(R.string.txtInvitationMessage) + shortLink.toString();
                             sendIntent.setAction(Intent.ACTION_SEND);
                             sendIntent.putExtra(Intent.EXTRA_TEXT, msg);
                             sendIntent.setType("text/plain");
@@ -403,7 +402,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
 
     public void deleteWishlist(View view) {
         if (selectedWishlistId.equals(favoriteListId)) {
-            Toast.makeText(this, "Die Favoritenliste kann nicht gelöscht werden", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.txtFavoritelistCantBeDeleted, Toast.LENGTH_LONG).show();
         } else {
             showAlertDialog(-1, R.layout.dialog_deletewishlist);
         }

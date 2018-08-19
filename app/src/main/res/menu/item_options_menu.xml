@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/edit"
-        android:title="Editieren"/>
+    <item android:id="@+id/payment"
+        android:title="@string/txtPayment" />
     <item android:id="@+id/partial_payment"
-        android:title="Anteilig bezahlen" />
+        android:title="@string/txtPartialPayment" />
+    <item android:id="@+id/edit"
+        android:title="@string/txtEdit"/>
     <item android:id="@+id/delete_wish"
-        android:title="Wunsch löschen" />
+        android:title="@string/txtDelete" />
 </menu>

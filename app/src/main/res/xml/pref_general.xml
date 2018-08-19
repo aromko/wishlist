@@ -2,8 +2,8 @@
 
     <EditTextPreference
         android:key="favoriteListId"
-        android:title="Favoriten Id"
-        android:summary="nicht änderbar"
+        android:title="@string/txtFavoriteId"
+        android:summary="@string/txtNotEditable"
         android:enabled="false"
         android:selectable="false"
         android:persistent="false"

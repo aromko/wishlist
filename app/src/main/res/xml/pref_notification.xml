@@ -3,17 +3,17 @@
     <SwitchPreference
         android:defaultValue="false"
         android:key="notifications_new_message_lists"
-        android:title="Wunschlistenbenachrichtigungen" />
+        android:title="@string/txtWishlistNotifications" />
 
     <SwitchPreference
         android:defaultValue="false"
         android:dependency="notifications_new_message_lists"
         android:key="notifications_new_message_favorites"
-        android:title="Favoritenbenachrichtigungen" />
+        android:title="@string/txtFavoriteNotifications" />
 
     <SwitchPreference
         android:defaultValue="false"
         android:key="notifications_new_message_chats"
-        android:title="Kommentarbenachrichtigungen" />
+        android:title="@string/txtChatNotifications" />
 
 </PreferenceScreen>

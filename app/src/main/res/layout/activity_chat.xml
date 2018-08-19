@@ -55,7 +55,7 @@
                 android:backgroundTint="@color/colorPrimary"
                 android:enabled="false"
                 android:onClick="insertChatMessage"
-                android:text="Senden"
+                android:text="@string/txtSend"
                 android:textColor="#FFFFFF" />
 
         </LinearLayout>

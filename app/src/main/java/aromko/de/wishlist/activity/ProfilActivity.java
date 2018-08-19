@@ -40,7 +40,7 @@ public class ProfilActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle("Profil bearbeiten");
+        getSupportActionBar().setTitle(R.string.txtEditProfile);
 
         etName = findViewById(R.id.etName);
         etEmail = findViewById(R.id.etEmail);
@@ -79,10 +79,6 @@ public class ProfilActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             Bitmap bitmap = ((BitmapDrawable) ivProfileImage.getDrawable()).getBitmap();
                             photoHelper.uploadImage(bitmap, "", user.getUid(), null, null);
-                            /*
-                            finish();
-                            startActivity(new Intent(ProfilActivity.this, MainActivity.class));
-                            */
                         }
                     }
                 });

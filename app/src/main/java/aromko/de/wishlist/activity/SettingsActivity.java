@@ -61,7 +61,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             setHasOptionsMenu(true);
             SharedPreferences sp = getPreferenceScreen().getSharedPreferences();
             EditTextPreference editTextPref = (EditTextPreference) findPreference("favoriteListId");
-            editTextPref.setSummary(sp.getString("favoriteListId", "Some Default Text"));
+            editTextPref.setSummary(sp.getString("favoriteListId", ""));
         }
 
         @Override
