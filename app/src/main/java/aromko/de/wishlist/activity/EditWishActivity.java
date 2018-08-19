@@ -92,7 +92,7 @@ public class EditWishActivity extends AppCompatActivity {
                 etTitle.setText(wish.getTitle());
                 etPrice.setText(String.valueOf(wish.getPrice()).replace(".", ","));
                 etUrl.setText(wish.getUrl());
-                etDescription.setText(wish.getUrl());
+                etDescription.setText(wish.getDescription());
                 spWishstrength.setSelection((int) wish.getWishstrength());
                 isImageSet = wish.isImageSet();
                 if (isImageSet && wish.getPhotoUrl() != null) {
@@ -169,7 +169,10 @@ public class EditWishActivity extends AppCompatActivity {
 
     public void saveWish(View view) {
         flProgressBarHolder.setVisibility(View.VISIBLE);
-        Bitmap bitmap = ((BitmapDrawable) ivProductImage.getDrawable()).getBitmap();
+        Bitmap bitmap = null;
+        if(ivProductImage.getDrawable() != null){
+            bitmap = ((BitmapDrawable) ivProductImage.getDrawable()).getBitmap();
+        }
 
         double price = 0.00;
         if (!etPrice.getText().toString().isEmpty()) {
@@ -183,7 +186,9 @@ public class EditWishActivity extends AppCompatActivity {
             finish();
         } else {
             String userId = null;
-            photoHelper.uploadImage(bitmap, wishId, userId, wishViewModel, wishlistId);
+            if(bitmap != null){
+                photoHelper.uploadImage(bitmap, wishId, userId, wishViewModel, wishlistId);
+            }
         }
     }
 
