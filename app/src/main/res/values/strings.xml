@@ -43,7 +43,7 @@
     <string name="txtChatNotifications">Kommentarbenachrichtigungen</string>
     <string name="txtMessages">Nachrichten</string>
     <string name="txtEditWish">Wunsch bearbeiten</string>
-    <string name="txtNoPlaceFound">Keinen Ort gefunden.</string>
+    <string name="txtNoPlaceFound">Es wurde kein Standort angegeben.</string>
     <string name="txtImageChanged">imageChanged</string>
     <string name="txtSuccessfulChangedWish">Wunsch wurde erfolgreich geändert.</string>
     <string name="txtGoogleSignInFauked">Google Anmeldung fehlgeschlagen.</string>

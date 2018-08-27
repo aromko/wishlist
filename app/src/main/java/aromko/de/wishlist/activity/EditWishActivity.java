@@ -170,7 +170,7 @@ public class EditWishActivity extends AppCompatActivity {
     public void saveWish(View view) {
         flProgressBarHolder.setVisibility(View.VISIBLE);
         Bitmap bitmap = null;
-        if(ivProductImage.getDrawable() != null){
+        if (ivProductImage.getDrawable() != null) {
             bitmap = ((BitmapDrawable) ivProductImage.getDrawable()).getBitmap();
         }
 
@@ -186,7 +186,7 @@ public class EditWishActivity extends AppCompatActivity {
             finish();
         } else {
             String userId = null;
-            if(bitmap != null){
+            if (bitmap != null) {
                 photoHelper.uploadImage(bitmap, wishId, userId, wishViewModel, wishlistId);
             }
         }

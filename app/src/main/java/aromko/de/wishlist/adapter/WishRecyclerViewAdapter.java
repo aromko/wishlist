@@ -204,7 +204,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
-                    if (holder.mItem.getUrl() != null) {
+                    if (holder.mItem.getUrl() != null && !holder.mItem.getUrl().isEmpty()) {
                         mListener.onUrlInteraction(holder.mItem.getUrl());
                     } else {
                         Toast.makeText(context, R.string.txtNoUrlFound, Toast.LENGTH_LONG).show();

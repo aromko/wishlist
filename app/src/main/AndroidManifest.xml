@@ -69,7 +69,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.SettingsActivity"
-            android:label="@string/title_activity_settings"></activity>
+            android:label="@string/txtSettings"></activity>
     </application>
 
 </manifest>
