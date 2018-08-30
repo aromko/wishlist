@@ -71,4 +71,5 @@
     <string name="txtInvitationLinkCouldNotBeCreated">Einladungslink konnte nicht generiert werden.</string>
     <string name="txtObjectNotFound">Objekt wurde nicht gefunden.</string>
     <string name="txtLogin">Anmelden</string>
+    <string name="txtNoImageSourceFound">Es konnte kein Bildinhalt gefunden werden. Bitte geben Sie URLs mit der Endung .jpg, .gif, .png oder .jpeg an.</string>
 </resources>

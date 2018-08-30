@@ -86,7 +86,12 @@ public class PhotoHelper {
         String url = etDownloadUrl.getText().toString();
         try {
             myImage = task.execute(url).get();
-            civImage.setImageBitmap(myImage);
+            if (myImage != null) {
+                civImage.setImageBitmap(myImage);
+            } else {
+                civImage.setImageBitmap(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.no_image_available));
+                Toast.makeText(mContext, R.string.txtNoImageSourceFound, Toast.LENGTH_LONG).show();
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
