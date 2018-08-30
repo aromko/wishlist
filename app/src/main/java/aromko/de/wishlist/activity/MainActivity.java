@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     public static final String AROMKO_PAGE_LINK = "aromko.page.link";
     public static final String EXAMPLE_LINK = "https://www.example.com/page?param=";
     public static final String TEXT_PLAIN = "text/plain";
+    private static final String HIDE_INVITE_PEOPLE = "hide_invite_people";
     PhotoHelper photoHelper;
     private String favoriteListId = "";
     private FirebaseAuth fFirebaseAuth;
@@ -77,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     private TextView tvInfo;
     private CircleImageView civImage;
     private ImageButton ibDeleteWishlist;
+    private String hideMenuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -253,11 +255,14 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     public void openFragment(int position) {
         listView.setSelection(position);
         selectedWishlistId = listItems.get(position).getKey();
+        hideMenuItem = "";
         if (selectedWishlistId.equals(favoriteListId)) {
             fab.hide();
+            hideMenuItem = HIDE_INVITE_PEOPLE;
         } else {
             fab.show();
         }
+        invalidateOptionsMenu();
 
         Fragment fragment = null;
         Bundle bundle = new Bundle();
@@ -316,6 +321,9 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
+        if (hideMenuItem == HIDE_INVITE_PEOPLE) {
+            menu.findItem(R.id.action_invitePeople).setVisible(false);
+        }
         return true;
     }
 

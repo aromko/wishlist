@@ -70,4 +70,5 @@
     <string name="navigation_drawer_close">Navigation schließen</string>
     <string name="txtInvitationLinkCouldNotBeCreated">Einladungslink konnte nicht generiert werden.</string>
     <string name="txtObjectNotFound">Objekt wurde nicht gefunden.</string>
+    <string name="txtLogin">Anmelden</string>
 </resources>
