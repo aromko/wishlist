@@ -111,14 +111,14 @@ public class PhotoHelper {
                     if (data != null) {
                         Uri uri = data.getData();
                         civImage.setImageURI(uri);
-                        civImage.setTag(R.string.txtImageChanged);
+                        civImage.setTag(mContext.getString(R.string.txtImageChanged));
                     }
                     break;
                 case REQUEST_IMAGE_CAPTURE:
                     Bundle extras = data.getExtras();
                     Bitmap imageBitmap = (Bitmap) extras.get("data");
                     civImage.setImageBitmap(imageBitmap);
-                    civImage.setTag(R.string.txtImageChanged);
+                    civImage.setTag(mContext.getString(R.string.txtImageChanged));
                     break;
             }
         }
@@ -165,6 +165,7 @@ public class PhotoHelper {
 
     public void requestProfilePicture(String uId) {
         FirebaseStorage STORAGE = FirebaseStorage.getInstance(FIREBASE_STORAGE_BUCKET);
+
         STORAGE.getReference(uId).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(final Uri uri) {

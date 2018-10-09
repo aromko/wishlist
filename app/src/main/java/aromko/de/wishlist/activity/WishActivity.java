@@ -47,6 +47,7 @@ public class WishActivity extends AppCompatActivity {
     private double longitude;
     private double latitude;
     private String placeId;
+    private String sharedText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +79,10 @@ public class WishActivity extends AppCompatActivity {
 
         Intent myIntent = getIntent();
         wishlistId = myIntent.getStringExtra("wishlistId");
+        sharedText = myIntent.getStringExtra("sharedText");
+        if (sharedText != null) {
+            etTitle.setText(sharedText);
+        }
 
         photoHelper = new PhotoHelper(this);
     }
@@ -134,7 +139,7 @@ public class WishActivity extends AppCompatActivity {
         Bitmap bitmap = ((BitmapDrawable) ivProductImage.getDrawable()).getBitmap();
 
         boolean isImageSet = false;
-        if (ivProductImage.getTag().toString().equals(R.string.txtImageChanged)) {
+        if (ivProductImage.getTag().toString().equals(getString(R.string.txtImageChanged))) {
             isImageSet = true;
         }
         double price = 0.00;
@@ -143,7 +148,7 @@ public class WishActivity extends AppCompatActivity {
         }
         Wish wish = new Wish(etTitle.getText().toString(), price, etUrl.getText().toString(), etDescription.getText().toString(), Long.valueOf(spWishstrength.getSelectedItemId()), isImageSet, System.currentTimeMillis() / 1000, longitude, latitude, price, placeId, "");
         String wishkey = wishViewModel.insertWish(wishlistId, wish);
-        if (wishkey.isEmpty() || !ivProductImage.getTag().toString().equals(R.string.txtImageChanged)) {
+        if (wishkey.isEmpty() || !ivProductImage.getTag().toString().equals(getString(R.string.txtImageChanged))) {
             Toast.makeText(getApplicationContext(), R.string.txtWishSuccessfulAdded, Toast.LENGTH_LONG).show();
             flProgressBarHolder.setVisibility(View.GONE);
             finish();

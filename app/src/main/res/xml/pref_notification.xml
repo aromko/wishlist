@@ -7,7 +7,6 @@
 
     <SwitchPreference
         android:defaultValue="false"
-        android:dependency="notifications_new_message_lists"
         android:key="notifications_new_message_favorites"
         android:title="@string/txtFavoriteNotifications" />
 

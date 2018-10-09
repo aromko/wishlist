@@ -46,30 +46,35 @@
                     android:host="aromko.de.wishlist"
                     android:scheme="https" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".activity.ProfilActivity"
-            android:label="@string/title_activity_profil"
+            android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.WishActivity"
-            android:label="@string/title_activity_wish"
+            android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.EditWishActivity"
-            android:label="@string/title_activity_edit_wish"
+            android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.ChatActivity"
-            android:label="@string/title_activity_chat"
+            android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.SettingsActivity"
-            android:label="@string/txtSettings"></activity>
+            android:label="@string/txtSettings" />
     </application>
 
 </manifest>

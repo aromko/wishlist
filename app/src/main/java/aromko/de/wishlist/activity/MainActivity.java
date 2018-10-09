@@ -22,7 +22,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -79,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     private CircleImageView civImage;
     private ImageButton ibDeleteWishlist;
     private String hideMenuItem;
+    private String sharedText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +114,8 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
             public void onClick(View view) {
                 Intent wishActivity = new Intent(MainActivity.this, WishActivity.class);
                 wishActivity.putExtra("wishlistId", selectedWishlistId);
+                wishActivity.putExtra("sharedText", sharedText);
+                sharedText = null;
                 startActivity(wishActivity);
             }
         });
@@ -146,6 +148,23 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         addListeners();
 
         processFirebaseDynamicLink();
+
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        String type = intent.getType();
+
+        if (Intent.ACTION_SEND.equals(action) && type != null) {
+            if ("text/plain".equals(type)) {
+                handleSendText(intent);
+            }
+        }
+    }
+
+    private void handleSendText(Intent intent) {
+        sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
+        if (sharedText != null) {
+            Toast.makeText(getApplicationContext(), R.string.txtTextFromIntent, Toast.LENGTH_LONG).show();
+        }
     }
 
     private void processFirebaseDynamicLink() {
@@ -396,7 +415,6 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
                             sendIntent.putExtra(Intent.EXTRA_TEXT, msg);
                             sendIntent.setType(TEXT_PLAIN);
                             startActivityForResult(sendIntent, 0);
-                            Log.i("SHORTLINK", shortLink.toString());
                         } else {
                             Toast.makeText(getApplicationContext(), R.string.txtInvitationLinkCouldNotBeCreated, Toast.LENGTH_LONG).show();
                         }

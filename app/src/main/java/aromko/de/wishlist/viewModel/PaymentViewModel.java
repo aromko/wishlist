@@ -37,24 +37,28 @@ public class PaymentViewModel {
                     if (currentPayment.getPartialPayments() != null) {
                         partialPayments.putAll(currentPayment.getPartialPayments());
                     }
-
                     if (partialPayments.containsKey(fFirebaseUser.getUid())) {
                         salvagePrice = currentPayment.getSalvagePrice() + partialPayments.get(fFirebaseUser.getUid()) - partialPrice;
                     } else {
                         salvagePrice = currentPayment.getSalvagePrice() - partialPrice;
                     }
-
+                    if (salvagePrice <= 0.00) {
+                        salvagePrice = 0.00;
+                    }
                     partialPayments.put(fFirebaseUser.getUid(), partialPrice);
                     currentPayment.setSalvagePrice(salvagePrice);
                     currentPayment.setPartialPayments(partialPayments);
                     dataSnapshot.getRef().setValue(currentPayment);
-                    updateSalvagePriceInWish(salvagePrice, wishId, wishlistId);
                 } else {
                     salvagePrice = price - partialPrice;
+                    if (salvagePrice <= 0.00) {
+                        salvagePrice = 0.00;
+                    }
                     partialPayments.put(fFirebaseUser.getUid(), partialPrice);
                     Payment payment = new Payment(price, salvagePrice, partialPayments);
                     dataSnapshot.getRef().setValue(payment);
                 }
+                updateSalvagePriceInWish(salvagePrice, wishId, wishlistId);
             }
 
             @Override
