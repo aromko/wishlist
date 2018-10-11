@@ -169,12 +169,13 @@ public class PhotoHelper {
         STORAGE.getReference(uId).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(final Uri uri) {
+
                 Picasso.get()
                         .load(String.valueOf(uri))
                         .transform(new CircleTransform())
                         .resize(200, 200)
                         .centerCrop()
-                        .networkPolicy(NetworkPolicy.NO_CACHE)
+                        .networkPolicy(NetworkPolicy.OFFLINE)
                         .into((ImageView) mContext.findViewById(R.id.civImage));
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -219,7 +220,7 @@ public class PhotoHelper {
     public void requestProductPicture(String photoUrl) {
         Picasso.get()
                 .load(Uri.parse(photoUrl))
-                .networkPolicy(NetworkPolicy.NO_CACHE)
+                .networkPolicy(NetworkPolicy.OFFLINE)
                 .into((CircleImageView) mContext.findViewById(R.id.civImage));
 
     }
