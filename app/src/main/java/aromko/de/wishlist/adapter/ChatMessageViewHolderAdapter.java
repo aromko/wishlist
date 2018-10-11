@@ -1,8 +1,6 @@
 package aromko.de.wishlist.adapter;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +12,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import aromko.de.wishlist.R;
 import aromko.de.wishlist.model.ChatMessage;
 import de.hdodenhof.circleimageview.CircleImageView;

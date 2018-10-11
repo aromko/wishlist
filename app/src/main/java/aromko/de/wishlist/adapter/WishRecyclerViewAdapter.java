@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,6 +24,8 @@ import java.text.NumberFormat;
 import java.util.List;
 import java.util.Map;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.RecyclerView;
 import aromko.de.wishlist.R;
 import aromko.de.wishlist.activity.EditWishActivity;
 import aromko.de.wishlist.fragment.ItemListFragment.OnListFragmentInteractionListener;

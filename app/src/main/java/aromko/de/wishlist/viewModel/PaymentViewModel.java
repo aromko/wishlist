@@ -1,7 +1,5 @@
 package aromko.de.wishlist.viewModel;
 
-import android.support.annotation.NonNull;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -12,6 +10,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
 import aromko.de.wishlist.model.Payment;
 import aromko.de.wishlist.model.Wish;
 

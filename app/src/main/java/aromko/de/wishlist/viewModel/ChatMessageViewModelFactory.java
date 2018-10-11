@@ -1,8 +1,9 @@
 package aromko.de.wishlist.viewModel;
 
 import android.app.Application;
-import android.arch.lifecycle.ViewModel;
-import android.arch.lifecycle.ViewModelProvider;
+
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 public class ChatMessageViewModelFactory extends ViewModelProvider.NewInstanceFactory {
     private Application mApplication;

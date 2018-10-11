@@ -7,11 +7,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.PreferenceFragment;
-import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 
 import java.util.List;
 
+import androidx.appcompat.app.ActionBar;
 import aromko.de.wishlist.R;
 
 public class SettingsActivity extends AppCompatPreferenceActivity {
