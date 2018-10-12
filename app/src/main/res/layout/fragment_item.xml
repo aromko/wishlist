@@ -5,7 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="10dp"
-    android:clipToPadding="false">
+    android:layout_marginBottom="3dp"
+    android:clipToPadding="false"
+    app:cardCornerRadius="10dp"
+    app:contentPaddingBottom="15dp"
+    app:contentPaddingLeft="15dp"
+    app:contentPaddingRight="15dp"
+    app:contentPaddingTop="15dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -17,11 +23,11 @@
             android:id="@+id/ivProductImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:layout_marginTop="35dp"
+            android:layout_marginBottom="8dp"
             android:adjustViewBounds="true"
-            android:maxHeight="227dp"
             android:maxWidth="368dp"
+            android:maxHeight="227dp"
             app:layout_constraintBottom_toTopOf="@+id/relativeLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.613"
@@ -33,8 +39,8 @@
             android:id="@+id/tvItemOptions"
             android:layout_width="43dp"
             android:layout_height="56dp"
-            android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:text="&#8942;"
             android:textAppearance="?android:textAppearanceLarge"
@@ -47,16 +53,19 @@
 
         <TextView
             android:id="@+id/item_name"
-            android:layout_width="240dp"
-            android:layout_height="33dp"
+            android:layout_width="303dp"
+            android:layout_height="wrap_content"
             android:layout_margin="4dp"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:text="Samsung S7"
             android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/ivWishstrength"
+            app:layout_constraintVertical_bias="0.0" />
 
         <TextView
             android:id="@+id/item_price"
@@ -86,17 +95,13 @@
             android:layout_width="29dp"
             android:layout_height="27dp"
             android:layout_margin="3dp"
-            android:layout_marginBottom="96dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginBottom="96dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/tvItemOptions"
-            app:layout_constraintHorizontal_bias="0.88"
-            app:layout_constraintStart_toEndOf="@+id/item_name"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0"
-            app:srcCompat="@drawable/ic_wishstrength_low" />
+            app:srcCompat="@drawable/ic_wishstrength_low"
+            tools:layout_editor_absoluteX="4dp" />
 
         <ImageView
             android:id="@+id/favorite"
@@ -104,14 +109,11 @@
             android:layout_height="27dp"
             android:layout_alignParentStart="false"
             android:layout_margin="3dp"
-            android:layout_marginBottom="96dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginBottom="96dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/ivWishstrength"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toEndOf="@+id/item_name"
+            app:layout_constraintStart_toEndOf="@+id/ivWishstrength"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0"
             app:srcCompat="@drawable/ic_favorite_border" />
@@ -162,8 +164,8 @@
                 android:id="@+id/ivUrl"
                 android:layout_width="29dp"
                 android:layout_height="27dp"
-                android:layout_alignParentEnd="true"
                 android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
                 android:layout_marginEnd="86dp"
                 app:srcCompat="@drawable/ic_open_in_browser" />
 

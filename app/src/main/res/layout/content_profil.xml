@@ -4,22 +4,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/cardview_shadow_start_color"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".activity.ProfilActivity"
-    tools:showIn="@layout/activity_profil"
-    android:background="@color/cardview_shadow_start_color">
+    tools:showIn="@layout/activity_profil">
 
     <View
         android:layout_width="match_parent"
         android:layout_height="210dp"
-        android:background="@color/colorPrimaryDark"/>
+        android:background="@color/colorPrimaryDark" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp">
+        android:layout_marginRight="20dp"
+        android:orientation="vertical">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -31,9 +32,9 @@
                 android:layout_height="150dp"
                 android:layout_centerHorizontal="true"
                 android:elevation="1dp"
+                android:onClick="showPhotoSelectionDialog"
                 android:src="@mipmap/ic_launcher_round"
-                android:tag="no_image_available"
-                android:onClick="showPhotoSelectionDialog"/>
+                android:tag="no_image_available" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -44,11 +45,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="85dp"
-                    app:contentPaddingTop="15dp"
-                    app:contentPaddingRight="15dp"
-                    app:contentPaddingLeft="15dp"
+                    app:cardCornerRadius="10dp"
                     app:contentPaddingBottom="15dp"
-                    app:cardCornerRadius="10dp">
+                    app:contentPaddingLeft="15dp"
+                    app:contentPaddingRight="15dp"
+                    app:contentPaddingTop="15dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -58,21 +59,21 @@
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_person"
-                            android:layout_marginTop="70dp"/>
+                            android:layout_marginTop="70dp"
+                            android:src="@drawable/ic_person" />
 
                         <com.google.android.material.textfield.TextInputLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/txtName"
-                            android:layout_marginTop="45dp">
+                            android:layout_marginTop="45dp"
+                            android:hint="@string/txtName">
 
                             <EditText
                                 android:id="@+id/etName"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:inputType="textPersonName"
-                                android:textSize="18dp"/>
+                                android:textSize="18dp" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                     </LinearLayout>
@@ -85,22 +86,22 @@
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_email"
-                            android:layout_marginTop="125dp"/>
+                            android:layout_marginTop="125dp"
+                            android:src="@drawable/ic_email" />
 
                         <com.google.android.material.textfield.TextInputLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/txtEmail"
-                            android:layout_marginTop="100dp">
+                            android:layout_marginTop="100dp"
+                            android:hint="@string/txtEmail">
 
                             <EditText
                                 android:id="@+id/etEmail"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:enabled="false"
                                 android:inputType="textEmailAddress"
-                                android:textSize="18dp"
-                                android:enabled="false"/>
+                                android:textSize="18dp" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                     </LinearLayout>
@@ -108,8 +109,8 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="right">
+                        android:gravity="right"
+                        android:orientation="horizontal">
 
                         <Button
                             android:id="@+id/btnSave"

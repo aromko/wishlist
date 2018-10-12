@@ -1,16 +1,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
         android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
         android:layout_marginTop="16dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="4dp"
         android:text="@string/txtChooseAnImage"
         android:textSize="20dp"
         android:textStyle="bold" />
@@ -19,27 +19,27 @@
         android:id="@+id/takePhoto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
         android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
         android:layout_marginTop="16dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="4dp"
+        android:backgroundTint="@color/colorPrimary"
         android:onClick="dispatchTakePictureIntent"
         android:text="@string/txtTakePhoto"
-        android:backgroundTint="@color/colorPrimary"
-        android:textColor="@color/cardview_light_background"/>
+        android:textColor="@color/cardview_light_background" />
 
     <Button
         android:id="@+id/addPhoto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
         android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
         android:layout_marginTop="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/colorPrimary"
         android:onClick="addImageFromStorage"
         android:text="@string/txtChooseFromGallery"
-        android:backgroundTint="@color/colorPrimary"
-        android:textColor="@color/cardview_light_background"/>
+        android:textColor="@color/cardview_light_background" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout2"
@@ -58,22 +58,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
             android:layout_marginTop="4dp"
+            android:layout_marginRight="4dp"
             android:inputType="textUri" />
 
         <Button
             android:id="@+id/downloadPic"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
             android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
             android:layout_marginTop="16dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginBottom="4dp"
+            android:backgroundTint="@color/colorPrimary"
             android:onClick="downloadImage"
             android:text="@string/txtDownloadImage"
-            android:backgroundTint="@color/colorPrimary"
-            android:textColor="@color/cardview_light_background"/>
+            android:textColor="@color/cardview_light_background" />
     </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>

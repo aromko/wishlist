@@ -5,8 +5,8 @@
     android:name="aromko.de.wishlist.fragment.ItemListFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="80dp"
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
+    android:layout_marginBottom="80dp"
     tools:context=".fragment.ItemListFragment"
     tools:listitem="@layout/fragment_item" />

@@ -142,8 +142,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="321dp"
                 android:layout_marginTop="12dp"
-                android:tag="no_image_available"
-                android:src="@drawable/no_image_available" />
+                android:src="@drawable/no_image_available"
+                android:tag="no_image_available" />
 
             <ImageButton
                 android:id="@+id/btnLocation"
