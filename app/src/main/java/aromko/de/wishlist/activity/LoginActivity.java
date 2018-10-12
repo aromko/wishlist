@@ -1,6 +1,9 @@
 package aromko.de.wishlist.activity;
 
+import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -22,11 +25,13 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import aromko.de.wishlist.R;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
-
 
     public static final String GOOGLE_REQUEST_ID_TOKEN = "1002207596437-e45j57olbmk7kpq3q3dpv89c92c7n8sj.apps.googleusercontent.com";
     private static final int RC_SIGN_IN = 9001;
@@ -106,6 +111,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (i == R.id.sign_in_button) {
             signIn();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+
     }
 }
 

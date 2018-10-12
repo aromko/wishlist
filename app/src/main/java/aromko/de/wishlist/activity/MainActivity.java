@@ -1,15 +1,18 @@
 package aromko.de.wishlist.activity;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -43,6 +46,8 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -61,6 +66,8 @@ import aromko.de.wishlist.viewModel.WishlistViewModel;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements ItemListFragment.OnListFragmentInteractionListener {
+
+    private static final int MY_PERMISSIONS_REQUEST = 1;
 
     public static final String AROMKO_PAGE_LINK = "aromko.page.link";
     public static final String EXAMPLE_LINK = "https://www.example.com/page?param=";
@@ -108,6 +115,39 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                new AlertDialog.Builder(MainActivity.this, R.style.Theme_MaterialComponents_Dialog_Alert)
+                        .setMessage("Um wichtige Funktionen der App nutzen zu können müssen sie den dafür erforderlichen Berechtigungen zustimmen.")
+                        .setPositiveButton("Ok",  new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                                ActivityCompat.requestPermissions(MainActivity.this,
+                                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.INTERNET,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.CAMERA},
+                                        MY_PERMISSIONS_REQUEST);
+                            }
+                        })
+                        .setNegativeButton("Abbrechen", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.cancel();
+                                signOut();
+                            }
+                        })
+                        .create()
+                        .show();
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.INTERNET,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.CAMERA},
+                        MY_PERMISSIONS_REQUEST);
+            }
+        }
 
         ibAddWishList = findViewById(R.id.ibAddWishList);
         ibDeleteWishlist = findViewById(R.id.ibDeleteWishList);
@@ -183,6 +223,26 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
             }
         }
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode){
+            case MY_PERMISSIONS_REQUEST: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(getApplicationContext(), "Viel Spaß beim benutzen der App.", Toast.LENGTH_LONG).show();
+
+                } else {
+                    Toast.makeText(getApplicationContext(), "Permission denied", Toast.LENGTH_SHORT).show();
+                    signOut();
+                    finish();
+                }
+                return;
+            }
+        }
+    }
+
 
     private void handleSendText(Intent intent) {
         sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
@@ -377,8 +437,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
             startActivity(new Intent(MainActivity.this, SettingsActivity.class));
             return true;
         } else if (id == R.id.action_logout) {
-            fFirebaseAuth.signOut();
-            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            signOut();
             finish();
             return true;
         } else if (id == R.id.action_invitePeople) {
@@ -388,6 +447,11 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void signOut() {
+        fFirebaseAuth.signOut();
+        startActivity(new Intent(MainActivity.this, LoginActivity.class));
     }
 
     @Override
