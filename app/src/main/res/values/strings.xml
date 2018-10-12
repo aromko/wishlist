@@ -73,4 +73,9 @@
     <string name="txtLogin">Anmelden</string>
     <string name="txtNoImageSourceFound">Es konnte kein Bildinhalt gefunden werden. Bitte geben Sie URLs mit der Endung .jpg, .gif, .png oder .jpeg an.</string>
     <string name="txtTextFromIntent">Lege einen neuen Wunsch an, um den Text zu übernehmen.</string>
+    <string name="txtPictureSuccesfulUploaded">Das Bild wurde erfolgreich hochgeladen.</string>
+    <string name="txtPictureNotSuccesfulUploaded">Das Bild konnte nicht hochgeladen werden.</string>
+    <string name="txtGetPermissions">Um wichtige Funktionen der App nutzen zu können müssen sie den dafür erforderlichen Berechtigungen zustimmen.</string>
+    <string name="txtHaveFunWithTheApp">Viel Spaß beim benutzen der App.</string>
+    <string name="txtPermissionDenied">Permission denied</string>
 </resources>

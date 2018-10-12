@@ -12,7 +12,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -67,11 +66,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements ItemListFragment.OnListFragmentInteractionListener {
 
-    private static final int MY_PERMISSIONS_REQUEST = 1;
-
     public static final String AROMKO_PAGE_LINK = "aromko.page.link";
     public static final String EXAMPLE_LINK = "https://www.example.com/page?param=";
     public static final String TEXT_PLAIN = "text/plain";
+    private static final int MY_PERMISSIONS_REQUEST = 1;
     private static final String HIDE_INVITE_PEOPLE = "hide_invite_people";
     PhotoHelper photoHelper;
     private String favoriteListId = "";
@@ -100,10 +98,10 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
                 int resultCode = bundle.getInt(UploadService.RESULT);
                 if (resultCode == RESULT_OK) {
                     Toast.makeText(MainActivity.this,
-                            "Das Bild wurde erfolgreich hochgeladen. ",
+                            getString(R.string.txtPictureSuccesfulUploaded),
                             Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(MainActivity.this, "Das Bild konnte nicht hochgeladen werden.",
+                    Toast.makeText(MainActivity.this, getString(R.string.txtPictureNotSuccesfulUploaded),
                             Toast.LENGTH_LONG).show();
                 }
             }
@@ -122,18 +120,18 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 new AlertDialog.Builder(MainActivity.this, R.style.Theme_MaterialComponents_Dialog_Alert)
-                        .setMessage("Um wichtige Funktionen der App nutzen zu können müssen sie den dafür erforderlichen Berechtigungen zustimmen.")
-                        .setPositiveButton("Ok",  new DialogInterface.OnClickListener() {
+                        .setMessage(getString(R.string.txtGetPermissions))
+                        .setPositiveButton(R.string.txtOk, new DialogInterface.OnClickListener() {
 
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 dialogInterface.dismiss();
                                 ActivityCompat.requestPermissions(MainActivity.this,
-                                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.INTERNET,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.CAMERA},
+                                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.INTERNET, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA},
                                         MY_PERMISSIONS_REQUEST);
                             }
                         })
-                        .setNegativeButton("Abbrechen", new DialogInterface.OnClickListener() {
+                        .setNegativeButton(R.string.txtCancel, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 dialogInterface.cancel();
@@ -144,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
                         .show();
             } else {
                 ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.INTERNET,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.CAMERA},
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.INTERNET, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA},
                         MY_PERMISSIONS_REQUEST);
             }
         }
@@ -227,14 +225,14 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode){
+        switch (requestCode) {
             case MY_PERMISSIONS_REQUEST: {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(getApplicationContext(), "Viel Spaß beim benutzen der App.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.txtHaveFunWithTheApp), Toast.LENGTH_LONG).show();
 
                 } else {
-                    Toast.makeText(getApplicationContext(), "Permission denied", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.txtPermissionDenied), Toast.LENGTH_SHORT).show();
                     signOut();
                     finish();
                 }
