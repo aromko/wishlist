@@ -1,13 +1,13 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <EditTextPreference
-        android:key="favoriteListId"
-        android:title="@string/txtFavoriteId"
-        android:summary="@string/txtNotEditable"
-        android:enabled="false"
-        android:selectable="false"
-        android:persistent="false"
         android:defaultValue="Default"
-        android:shouldDisableView="true"/>
+        android:enabled="false"
+        android:key="favoriteListId"
+        android:persistent="false"
+        android:selectable="false"
+        android:shouldDisableView="true"
+        android:summary="@string/txtNotEditable"
+        android:title="@string/txtFavoriteId" />
 
 </PreferenceScreen>

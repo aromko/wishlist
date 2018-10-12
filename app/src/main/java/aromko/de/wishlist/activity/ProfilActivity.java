@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -76,8 +77,14 @@ public class ProfilActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            Bitmap bitmap = ((BitmapDrawable) ivProfileImage.getDrawable()).getBitmap();
-                            photoHelper.uploadImage(bitmap, "", user.getUid(), null, null);
+                            if (ivProfileImage.getTag().toString().equals("imageChanged")) {
+                                Bitmap bitmap = ((BitmapDrawable) ivProfileImage.getDrawable()).getBitmap();
+                                photoHelper.uploadImage(bitmap, "", user.getUid(), null, null);
+                            } else {
+                                Toast.makeText(getApplicationContext(), R.string.txtSuccessfulSave, Toast.LENGTH_LONG).show();
+                                flProgressBarHolder.setVisibility(View.GONE);
+                                finish();
+                            }
                         }
                     }
                 });
@@ -90,7 +97,6 @@ public class ProfilActivity extends AppCompatActivity {
     public void addImageFromStorage(View v) {
         photoHelper.requestImageFromStorage();
     }
-
 
     public void dispatchTakePictureIntent(View view) {
         photoHelper.requestImageFromCapture();
