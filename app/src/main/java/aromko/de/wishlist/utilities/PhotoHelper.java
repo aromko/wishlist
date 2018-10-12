@@ -12,15 +12,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageException;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
@@ -35,6 +32,7 @@ import java.util.concurrent.ExecutionException;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import aromko.de.wishlist.R;
+import aromko.de.wishlist.services.UploadService;
 import aromko.de.wishlist.viewModel.WishViewModel;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -130,36 +128,21 @@ public class PhotoHelper {
             reference = userId;
         }
 
-        FirebaseStorage storage = FirebaseStorage.getInstance(FIREBASE_STORAGE_BUCKET);
-        final StorageReference storageRef = storage.getReference(reference);
-
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 10, baos);
         byte[] data = baos.toByteArray();
 
-        UploadTask uploadTask = storageRef.putBytes(data);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                flProgressBarHolder.setVisibility(View.GONE);
-                Toast.makeText(mContext.getApplicationContext(), handleFirebaseStorageExceptions(exception), Toast.LENGTH_LONG).show();
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Toast.makeText(mContext.getApplicationContext(), R.string.txtSuccessfulSave, Toast.LENGTH_LONG).show();
-                flProgressBarHolder.setVisibility(View.GONE);
-                if (wishViewModel != null) {
-                    storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            wishViewModel.updatePhotoUrl(wishlistId, wishkey, uri);
-                        }
-                    });
-                }
-                mContext.finish();
-            }
-        });
+        Intent intent = new Intent(mContext, UploadService.class);
+        intent.putExtra(UploadService.WISHKEY, wishkey);
+        intent.putExtra(UploadService.WISHLISTID, wishlistId);
+        intent.putExtra(UploadService.REFERENCE, reference);
+        intent.putExtra(UploadService.DATA, data);
+        mContext.startService(intent);
+
+        Toast.makeText(mContext.getApplicationContext(), R.string.txtSuccessfulSave, Toast.LENGTH_LONG).show();
+        flProgressBarHolder.setVisibility(View.GONE);
+
+        mContext.finish();
 
     }
 
@@ -169,14 +152,13 @@ public class PhotoHelper {
         STORAGE.getReference(uId).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(final Uri uri) {
-
                 Picasso.get()
                         .load(String.valueOf(uri))
                         .transform(new CircleTransform())
                         .resize(200, 200)
                         .centerCrop()
-                        .networkPolicy(NetworkPolicy.OFFLINE)
-                        .into((ImageView) mContext.findViewById(R.id.civImage));
+                        .networkPolicy(NetworkPolicy.NO_CACHE)
+                        .into((CircleImageView) mContext.findViewById(R.id.civImage));
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -251,4 +233,5 @@ public class PhotoHelper {
             return null;
         }
     }
+
 }

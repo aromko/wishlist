@@ -1,7 +1,10 @@
 package aromko.de.wishlist.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
@@ -52,6 +55,7 @@ import aromko.de.wishlist.adapter.WishlistAdapter;
 import aromko.de.wishlist.fragment.ItemListFragment;
 import aromko.de.wishlist.model.Wish;
 import aromko.de.wishlist.model.Wishlist;
+import aromko.de.wishlist.services.UploadService;
 import aromko.de.wishlist.utilities.PhotoHelper;
 import aromko.de.wishlist.viewModel.WishlistViewModel;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -79,6 +83,26 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     private ImageButton ibDeleteWishlist;
     private String hideMenuItem;
     private String sharedText;
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle bundle = intent.getExtras();
+            if (bundle != null) {
+                int resultCode = bundle.getInt(UploadService.RESULT);
+                if (resultCode == RESULT_OK) {
+                    Toast.makeText(MainActivity.this,
+                            "Das Bild wurde erfolgreich hochgeladen. ",
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Das Bild konnte nicht hochgeladen werden.",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -443,4 +467,16 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     }
 
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(receiver, new IntentFilter(
+                UploadService.NOTIFICATION));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(receiver);
+    }
 }
