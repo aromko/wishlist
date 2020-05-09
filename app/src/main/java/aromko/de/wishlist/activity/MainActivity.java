@@ -66,7 +66,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements ItemListFragment.OnListFragmentInteractionListener {
 
-    public static final String AROMKO_PAGE_LINK = "aromko.page.link";
+    public static final String AROMKO_PAGE_LINK = "https://aromko.page.link";
     public static final String EXAMPLE_LINK = "https://www.example.com/page?param=";
     public static final String TEXT_PLAIN = "text/plain";
     private static final int MY_PERMISSIONS_REQUEST = 1;
@@ -371,11 +371,9 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         }
         invalidateOptionsMenu();
 
-        Fragment fragment = null;
         Bundle bundle = new Bundle();
         bundle.putString("wishlistId", selectedWishlistId);
-        fragment = new ItemListFragment();
-        fragment.setArguments(bundle);
+        ItemListFragment fragment = (ItemListFragment) Fragment.instantiate(this, ItemListFragment.class.getName(), bundle);
 
         if (fragment != null) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -493,7 +491,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     public void onInviteClicked() {
         FirebaseDynamicLinks.getInstance().createDynamicLink()
                 .setLink(Uri.parse(EXAMPLE_LINK + selectedWishlistId))
-                .setDynamicLinkDomain(AROMKO_PAGE_LINK)
+                .setDomainUriPrefix(AROMKO_PAGE_LINK)
                 .setAndroidParameters(new DynamicLink.AndroidParameters.Builder().build())
                 .buildShortDynamicLink()
                 .addOnCompleteListener(this, new OnCompleteListener<ShortDynamicLink>() {

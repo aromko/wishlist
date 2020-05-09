@@ -29,9 +29,7 @@ public class ChatMessageViewModel extends ViewModel {
 
     public ChatMessageViewModel() {
         liveData = new FirebaseQueryLiveData(lists_ref);
-    }
-
-    ;
+    };
 
     public ChatMessageViewModel(Application mApplication, final String wishId) {
         message_record_path = DB_PATH_MESSAGES + wishId;
