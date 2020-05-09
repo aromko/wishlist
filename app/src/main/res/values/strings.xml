@@ -78,4 +78,15 @@
     <string name="txtGetPermissions">Um wichtige Funktionen der App nutzen zu können müssen sie den dafür erforderlichen Berechtigungen zustimmen.</string>
     <string name="txtHaveFunWithTheApp">Viel Spaß beim benutzen der App.</string>
     <string name="txtPermissionDenied">Permission denied</string>
+    <string name="txtUserSymbol">Benutzersymbol</string>
+    <string name="txtExampleTitle">Samsung S7</string>
+    <string name="txtExamplePrice">100 €</string>
+    <string name="txtProductImage">Produktbild</string>
+    <string name="txtWishstrengthIcon">Wunschstärke</string>
+    <string name="txtExmapleUserCounter">10</string>
+    <string name="txtExampleMapIcon">Kartensymbol</string>
+    <string name="txtExampleUrlIcon">Urlsymbol</string>
+    <string name="txtExampleChatIcon">Chaticon</string>
+    <string name="txtExampleFavoriteIcon">Favoriteicon</string>
+    <string name="txtMenue">⋮</string>
 </resources>

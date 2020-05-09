@@ -16,9 +16,9 @@
             android:layout_marginTop="4dp"
             android:layout_marginRight="4dp"
             android:layout_marginBottom="4dp"
-            android:text="@string/txtDeleteWishlist"
+            android:text="@string/txtWouldYouLikeToDeleteTheWishlist"
             android:textColor="@color/common_google_signin_btn_text_dark_default"
-            android:textSize="24dp" />
+            android:textSize="18sp" />
 
         <ImageView
             android:layout_width="match_parent"
@@ -26,37 +26,5 @@
             android:layout_marginTop="5dp"
             android:background="@color/colorAccent" />
     </LinearLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:text="@string/txtWouldYouLikeToDeleteTheWishlist"
-        android:textSize="18sp" />
-
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dip"
-        android:background="#000000" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/text_input_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:hint="@string/txtNameOfTheList"
-        android:visibility="gone">
-
-        <EditText
-            android:id="@+id/txtNewWishlist"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginRight="4dp"
-            android:layout_marginBottom="4dp"
-            android:inputType="textEmailAddress" />
-
-    </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>

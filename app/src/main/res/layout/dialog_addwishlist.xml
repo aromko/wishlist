@@ -18,7 +18,7 @@
             android:layout_marginBottom="4dp"
             android:text="@string/txtCreateNewWishlist"
             android:textColor="@color/common_google_signin_btn_text_dark_default"
-            android:textSize="24dp" />
+            android:textSize="18sp" />
 
         <ImageView
             android:layout_width="match_parent"

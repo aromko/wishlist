@@ -21,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -79,7 +80,8 @@ public class ChatActivity extends AppCompatActivity {
 
         linearLayoutManager = new LinearLayoutManager(this);
 
-        chatMessageViewModel = ViewModelProviders.of(this, new ChatMessageViewModelFactory(this.getApplication(), wishId)).get(ChatMessageViewModel.class);
+        ViewModelProvider viewModelProvider = new ViewModelProvider(this, new ChatMessageViewModelFactory(this.getApplication(), wishId));
+        chatMessageViewModel = viewModelProvider.get(ChatMessageViewModel.class);
 
         final LiveData<List<ChatMessage>> listsLiveData = chatMessageViewModel.getListsLiveData();
 

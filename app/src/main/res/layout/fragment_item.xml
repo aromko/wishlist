@@ -13,9 +13,7 @@
     app:contentPaddingRight="15dp"
     app:contentPaddingTop="15dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -26,6 +24,7 @@
             android:layout_marginTop="35dp"
             android:layout_marginBottom="8dp"
             android:adjustViewBounds="true"
+            android:contentDescription="@string/txtProductImage"
             android:maxWidth="368dp"
             android:maxHeight="227dp"
             app:layout_constraintBottom_toTopOf="@+id/relativeLayout"
@@ -40,9 +39,10 @@
             android:layout_width="43dp"
             android:layout_height="56dp"
             android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:text="&#8942;"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:text="@string/txtMenue"
             android:textAppearance="?android:textAppearanceLarge"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -58,7 +58,7 @@
             android:layout_margin="4dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="Samsung S7"
+            android:text="@string/txtExampleTitle"
             android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -73,7 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="100 €"
+            android:text="@string/txtExamplePrice"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
@@ -97,11 +97,12 @@
             android:layout_margin="3dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="96dp"
+            android:contentDescription="@string/txtWishstrengthIcon"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0"
-            app:srcCompat="@drawable/ic_wishstrength_low"
-            tools:layout_editor_absoluteX="4dp" />
+            app:srcCompat="@drawable/ic_wishstrength_low" />
 
         <ImageView
             android:id="@+id/favorite"
@@ -112,6 +113,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="96dp"
+            android:contentDescription="@string/txtExampleFavoriteIcon"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/ivWishstrength"
             app:layout_constraintTop_toTopOf="parent"
@@ -124,8 +126,8 @@
             android:layout_height="match_parent"
             android:layout_marginTop="30dp"
             app:layout_constraintBottom_toTopOf="@+id/item_price"
-            app:layout_constraintTop_toBottomOf="@+id/ivProductImage"
-            tools:layout_editor_absoluteX="0dp">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ivProductImage">
 
             <RelativeLayout
                 android:id="@+id/rlUsers"
@@ -137,17 +139,23 @@
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="29dp"
+                    android:contentDescription="@string/txtUserSymbol"
                     app:srcCompat="@drawable/ic_person" />
 
                 <TextView
                     android:id="@+id/tvUsers"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginTop="2dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="22dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginEnd="-1dp"
                     android:background="@color/cardview_light_background"
-                    android:text="10"
-                    android:textSize="12sp" />
+                    android:text="@string/txtExmapleUserCounter"
+                    android:textSize="12sp"
+                    tools:ignore="PrivateResource" />
 
             </RelativeLayout>
 
@@ -158,6 +166,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginStart="81dp"
+                android:contentDescription="@string/txtExampleMapIcon"
                 app:srcCompat="@drawable/ic_map" />
 
             <ImageView
@@ -167,6 +176,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="86dp"
+                android:contentDescription="@string/txtExampleUrlIcon"
                 app:srcCompat="@drawable/ic_open_in_browser" />
 
             <ImageView
@@ -176,6 +186,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginStart="42dp"
+                android:contentDescription="@string/txtExampleChatIcon"
                 app:srcCompat="@drawable/ic_chat" />
         </RelativeLayout>
 
