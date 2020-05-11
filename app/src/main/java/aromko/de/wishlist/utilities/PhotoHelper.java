@@ -14,6 +14,9 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
@@ -29,8 +32,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import aromko.de.wishlist.R;
 import aromko.de.wishlist.services.UploadService;
 import aromko.de.wishlist.viewModel.WishViewModel;
@@ -86,6 +87,7 @@ public class PhotoHelper {
             myImage = task.execute(url).get();
             if (myImage != null) {
                 civImage.setImageBitmap(myImage);
+                civImage.setTag(mContext.getString(R.string.txtImageChanged));
             } else {
                 civImage.setImageBitmap(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.no_image_available));
                 Toast.makeText(mContext, R.string.txtNoImageSourceFound, Toast.LENGTH_LONG).show();

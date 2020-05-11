@@ -4,7 +4,7 @@ import com.google.firebase.database.Exclude;
 
 import java.util.Map;
 
-public class Wish {
+public class Wish implements Comparable<Wish>{
 
     @Exclude
     private String wishId;
@@ -183,5 +183,10 @@ public class Wish {
                 ", placeId=" + placeId +
                 ", photoUrl=" + photoUrl +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Wish wish) {
+        return Long.compare(wish.getTimestamp(), getTimestamp());
     }
 }

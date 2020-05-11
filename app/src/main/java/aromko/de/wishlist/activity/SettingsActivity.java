@@ -9,9 +9,10 @@ import android.preference.EditTextPreference;
 import android.preference.PreferenceFragment;
 import android.view.MenuItem;
 
+import androidx.appcompat.app.ActionBar;
+
 import java.util.List;
 
-import androidx.appcompat.app.ActionBar;
 import aromko.de.wishlist.R;
 
 public class SettingsActivity extends AppCompatPreferenceActivity {

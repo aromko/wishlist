@@ -4,7 +4,7 @@ import com.google.firebase.database.Exclude;
 
 import java.util.Map;
 
-public class Wishlist {
+public class Wishlist implements Comparable<Wishlist>{
 
     @Exclude
     private String key;
@@ -87,5 +87,10 @@ public class Wishlist {
                 ", wishCounter=" + wishCounter +
                 ", isFavoriteList=" + isFavoriteList +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Wishlist wishlist) {
+        return Long.compare(getTimestamp(), wishlist.getTimestamp());
     }
 }

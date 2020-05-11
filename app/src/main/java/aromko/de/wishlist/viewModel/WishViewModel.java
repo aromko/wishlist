@@ -2,6 +2,15 @@ package aromko.de.wishlist.viewModel;
 
 import android.app.Application;
 import android.net.Uri;
+import android.os.Build;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -11,14 +20,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
 import aromko.de.wishlist.database.FirebaseQueryLiveData;
 import aromko.de.wishlist.model.Wish;
 import aromko.de.wishlist.model.Wishlist;
@@ -35,18 +39,17 @@ public class WishViewModel extends ViewModel {
         liveData = new FirebaseQueryLiveData(wishes_ref);
     }
 
-    ;
-
     public WishViewModel(Application mApplication, final String wishlistId) {
 
         wishes_ref = FirebaseDatabase.getInstance().getReference("/" + DB_PATH_WISHES + "/" + wishlistId);
-        liveData = new FirebaseQueryLiveData(wishes_ref);
+        liveData = new FirebaseQueryLiveData(wishes_ref.orderByChild("timestamp"));
         listsLiveData.addSource(liveData, new Observer<DataSnapshot>() {
             @Override
             public void onChanged(@Nullable final DataSnapshot dataSnapshot) {
                 if (dataSnapshot != null) {
                     final List<Wish> lists = new ArrayList<>();
                     new AppExecutors().mainThread().execute(new Runnable() {
+                        @RequiresApi(api = Build.VERSION_CODES.N)
                         @Override
                         public void run() {
                             for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
@@ -54,6 +57,7 @@ public class WishViewModel extends ViewModel {
                                 wish.setWishId(snapshot.getKey().toString());
                                 wish.setWishlistId(wishlistId);
                                 lists.add(wish);
+                                Collections.sort(lists);
                             }
                             listsLiveData.postValue(lists);
                         }

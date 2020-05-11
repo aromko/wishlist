@@ -5,6 +5,8 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.net.Uri;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
@@ -12,7 +14,6 @@ import com.google.firebase.storage.StorageException;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import androidx.annotation.NonNull;
 import aromko.de.wishlist.R;
 import aromko.de.wishlist.viewModel.WishViewModel;
 
