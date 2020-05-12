@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -396,6 +397,9 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     public void selectFavoritesOnStartup() {
         for (Wishlist favoriteWishlist : listItems) {
             if (favoriteWishlist.isFavoriteList()) {
+                if(favoriteWishlist.getWishCounter() > 0) {
+                    tvInfo.setVisibility(View.INVISIBLE);
+                }
                 openFragment(listItems.indexOf(favoriteWishlist));
                 break;
             }
@@ -530,9 +534,11 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
                     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplication());
                     if(userSetting.getFavoriteListId().isEmpty()) {
                         favoriteListId = listViewModel.insertList("Favoriten", true);
-                        sharedPreferences.edit().putString("favoriteListId", favoriteListId).commit();
                         userSettingRepository.insert(fFirebaseAuth.getCurrentUser().getUid(), favoriteListId);
+                    } else {
+                        favoriteListId = userSetting.getFavoriteListId();
                     }
+                    sharedPreferences.edit().putString("favoriteListId", favoriteListId).commit();
                 }
             });
         } else {

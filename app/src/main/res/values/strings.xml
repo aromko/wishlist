@@ -51,8 +51,8 @@
     <string name="txtNoInvitationFound">Die Einladung konnte nicht zugeordnet werden.</string>
     <string name="txtOk">OK</string>
     <string name="txtCancel">Abbrechen</string>
-    <string name="txtInvitationMessage">Hey, ich möchte meine Liste mit dir teilen. Klicke auf den Link, um ihr beizutreten:</string>
-    <string name="txtFavoritelistCantBeDeleted">Die Favoritenliste kann nicht gelöscht werden</string>
+    <string name="txtInvitationMessage">Hey, ich möchte meine Liste mit dir teilen. Klicke auf folgenden Link, um ihr beizutreten:</string>
+    <string name="txtFavoritelistCantBeDeleted">Die Favoritenliste kann nicht gelöscht werden.</string>
     <string name="txtEditProfile">Profil bearbeiten</string>
     <string name="txtAddWish">Wunsch hinzufügen</string>
     <string name="txtWishSuccessfulAdded">Wunsch wurde erfolgreich hinzugefügt.</string>
@@ -75,8 +75,8 @@
     <string name="txtTextFromIntent">Lege einen neuen Wunsch an, um den Text zu übernehmen.</string>
     <string name="txtPictureSuccesfulUploaded">Das Bild wurde erfolgreich hochgeladen.</string>
     <string name="txtPictureNotSuccesfulUploaded">Das Bild konnte nicht hochgeladen werden.</string>
-    <string name="txtGetPermissions">Um wichtige Funktionen der App nutzen zu können müssen sie den dafür erforderlichen Berechtigungen zustimmen.</string>
-    <string name="txtHaveFunWithTheApp">Viel Spaß beim benutzen der App.</string>
+    <string name="txtGetPermissions">Um wichtige Funktionen der App nutzen zu können müssen Sie den dafür erforderlichen Berechtigungen zustimmen.</string>
+    <string name="txtHaveFunWithTheApp">Viel Spaß beim Benutzen der App.</string>
     <string name="txtPermissionDenied">Permission denied</string>
     <string name="txtUserSymbol">Benutzersymbol</string>
     <string name="txtExampleTitle">Samsung S7</string>
