@@ -58,8 +58,10 @@ import java.util.List;
 import aromko.de.wishlist.R;
 import aromko.de.wishlist.adapter.WishlistAdapter;
 import aromko.de.wishlist.fragment.ItemListFragment;
+import aromko.de.wishlist.model.UserSetting;
 import aromko.de.wishlist.model.Wish;
 import aromko.de.wishlist.model.Wishlist;
+import aromko.de.wishlist.repositories.UserSettingRepository;
 import aromko.de.wishlist.services.UploadService;
 import aromko.de.wishlist.utilities.PhotoHelper;
 import aromko.de.wishlist.viewModel.WishlistViewModel;
@@ -197,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         drawListAdapter.setNotifyOnChange(true);
         listViewModel = ViewModelProviders.of(this).get(WishlistViewModel.class);
         try {
-            favoriteListId = checkIfFavoriteListIdExists();
+            checkIfFavoriteListIdExists();
         } catch (Exception e) {
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
             finish();
@@ -517,16 +519,25 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
                 });
     }
 
-    public String checkIfFavoriteListIdExists() {
+    public void checkIfFavoriteListIdExists() {
+        final UserSettingRepository userSettingRepository = new UserSettingRepository();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String favoriteListId;
         if (sharedPreferences.getString("favoriteListId", "").isEmpty()) {
-            favoriteListId = listViewModel.insertList("Favoriten", true);
-            sharedPreferences.edit().putString("favoriteListId", favoriteListId).apply();
+            userSettingRepository.get(fFirebaseAuth.getCurrentUser().getUid(), new UserSettingRepository.FirebaseCallback() {
+                @Override
+                public void onCallback(UserSetting userSetting) {
+                    String favoriteListId = "";
+                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplication());
+                    if(userSetting.getFavoriteListId().isEmpty()) {
+                        favoriteListId = listViewModel.insertList("Favoriten", true);
+                        sharedPreferences.edit().putString("favoriteListId", favoriteListId).commit();
+                        userSettingRepository.insert(fFirebaseAuth.getCurrentUser().getUid(), favoriteListId);
+                    }
+                }
+            });
         } else {
             favoriteListId = sharedPreferences.getString("favoriteListId", "");
         }
-        return favoriteListId;
     }
 
     public void deleteWishlist(View view) {
