@@ -8,6 +8,8 @@
     android:layout_marginBottom="3dp"
     android:clipToPadding="false"
     app:cardCornerRadius="10dp"
+    app:cardElevation="8dp"
+    app:cardMaxElevation="8dp"
     app:contentPaddingBottom="15dp"
     app:contentPaddingLeft="15dp"
     app:contentPaddingRight="15dp"
@@ -19,37 +21,33 @@
 
         <ImageView
             android:id="@+id/ivProductImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="35dp"
-            android:layout_marginBottom="8dp"
+            android:layout_width="368dp"
+            android:layout_height="227dp"
+            android:layout_marginTop="20dp"
             android:adjustViewBounds="true"
             android:contentDescription="@string/txtProductImage"
             android:maxWidth="368dp"
             android:maxHeight="227dp"
-            app:layout_constraintBottom_toTopOf="@+id/relativeLayout"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.613"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/item_name"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@+id/item_name" />
 
         <TextView
             android:id="@+id/tvItemOptions"
-            android:layout_width="43dp"
-            android:layout_height="56dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/txtMenue"
             android:textAppearance="?android:textAppearanceLarge"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.01" />
+            app:layout_constraintStart_toEndOf="@+id/relativeLayout"
+            app:layout_constraintTop_toBottomOf="@+id/divider"
+            app:layout_constraintVertical_bias="1.0" />
 
         <TextView
             android:id="@+id/item_name"
@@ -57,51 +55,48 @@
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="4dp"
             android:text="@string/txtExampleTitle"
             android:textSize="24sp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ivWishstrength"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/item_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="16dp"
             android:text="@string/txtExamplePrice"
-            android:textSize="24sp"
+            android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/relativeLayout" />
+            app:layout_constraintBottom_toBottomOf="@+id/ivWishstrength"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.986"
+            app:layout_constraintStart_toEndOf="@+id/ivWishstrength" />
 
         <TextView
             android:id="@+id/tvDescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:textSize="24sp"
+            android:layout_marginStart="4dp"
+            android:textSize="18sp"
             android:textStyle="italic"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/item_price" />
+            app:layout_constraintTop_toBottomOf="@+id/ivShowInfos" />
 
         <ImageView
             android:id="@+id/ivWishstrength"
             android:layout_width="29dp"
             android:layout_height="27dp"
             android:layout_margin="3dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="96dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="16dp"
             android:contentDescription="@string/txtWishstrengthIcon"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintTop_toBottomOf="@+id/tvDescription"
             app:srcCompat="@drawable/ic_wishstrength_low" />
 
         <ImageView
@@ -110,29 +105,40 @@
             android:layout_height="27dp"
             android:layout_alignParentStart="false"
             android:layout_margin="3dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="96dp"
             android:contentDescription="@string/txtExampleFavoriteIcon"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/ivWishstrength"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintEnd_toStartOf="@+id/tvItemOptions"
+            app:layout_constraintHorizontal_bias="0.9"
+            app:layout_constraintStart_toEndOf="@+id/relativeLayout"
+            app:layout_constraintTop_toBottomOf="@+id/divider"
+            app:layout_constraintVertical_bias="0.421"
             app:srcCompat="@drawable/ic_favorite_border" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ivWishstrength" />
 
         <RelativeLayout
             android:id="@+id/relativeLayout"
             android:layout_width="235dp"
             android:layout_height="match_parent"
-            android:layout_marginTop="30dp"
-            app:layout_constraintBottom_toTopOf="@+id/item_price"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ivProductImage">
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/ivWishstrength"
+            app:layout_constraintTop_toBottomOf="@+id/divider">
 
             <RelativeLayout
                 android:id="@+id/rlUsers"
-                android:layout_width="34dp"
-                android:layout_height="30dp"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
                 app:layout_constraintVertical_bias="1.0"
                 tools:layout_editor_absoluteX="8dp">
 
@@ -149,9 +155,9 @@
                     android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true"
-                    android:layout_marginStart="22dp"
+                    android:layout_marginStart="28dp"
                     android:layout_marginTop="0dp"
-                    android:layout_marginEnd="-1dp"
+                    android:layout_marginEnd="-7dp"
                     android:background="@color/cardview_light_background"
                     android:text="@string/txtExmapleUserCounter"
                     android:textSize="12sp"
@@ -189,6 +195,15 @@
                 android:contentDescription="@string/txtExampleChatIcon"
                 app:srcCompat="@drawable/ic_chat" />
         </RelativeLayout>
+
+        <ImageButton
+            android:id="@+id/ivShowInfos"
+            android:layout_width="29dp"
+            android:layout_height="27dp"
+            android:background="@color/colorWhite"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ivProductImage"
+            app:srcCompat="@drawable/ic_expand_more" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

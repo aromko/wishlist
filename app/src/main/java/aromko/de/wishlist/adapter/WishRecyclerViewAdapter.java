@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -224,6 +225,19 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
                 }
             }
         });
+
+        holder.ivShowInfos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (null != mListener) {
+                    Log.i("XXXX", String.valueOf(holder.tvDescription.getVisibility()));
+                    switch (holder.tvDescription.getVisibility()){
+                        case 8: holder.tvDescription.setVisibility(View.VISIBLE); break;
+                        default: holder.tvDescription.setVisibility(View.GONE);break;
+                    }
+                }
+            }
+        });
     }
 
     public void showPaymentAlertDialog(final String wishId, final double price, final String wishlistId) {
@@ -303,6 +317,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
         public final ImageView ivUrl;
         public final TextView tvDescription;
         public final ImageView ivChat;
+        public final ImageView ivShowInfos;
 
         public Wish mItem;
 
@@ -321,6 +336,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
             ivUrl = view.findViewById(R.id.ivUrl);
             tvDescription = view.findViewById(R.id.tvDescription);
             ivChat = view.findViewById(R.id.ivChat);
+            ivShowInfos = view.findViewById(R.id.ivShowInfos);
         }
 
         @Override

@@ -12,6 +12,7 @@
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/colorPrimaryDark"
         app:layout_constrainedHeight="true">
 
         <TextView
@@ -22,6 +23,7 @@
             android:layout_margin="8dp"
             android:text="@string/txtNoWishFound"
             android:textAlignment="center"
+            android:textColor="@color/colorWhite"
             android:textSize="18sp" />
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
