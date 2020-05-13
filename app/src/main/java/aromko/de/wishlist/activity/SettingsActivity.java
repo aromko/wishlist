@@ -11,12 +11,13 @@ import android.view.MenuItem;
 
 import androidx.appcompat.app.ActionBar;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.List;
 
 import aromko.de.wishlist.R;
 
 public class SettingsActivity extends AppCompatPreferenceActivity {
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,9 +61,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_general);
             setHasOptionsMenu(true);
-            SharedPreferences sp = getPreferenceScreen().getSharedPreferences();
+            FirebaseAuth fFirebaseAuth = FirebaseAuth.getInstance();
+            SharedPreferences sharedPreferences = getActivity().getSharedPreferences(fFirebaseAuth.getCurrentUser().getUid(), MODE_PRIVATE);
             EditTextPreference editTextPref = (EditTextPreference) findPreference("favoriteListId");
-            editTextPref.setSummary(sp.getString("favoriteListId", ""));
+            editTextPref.setSummary(sharedPreferences.getString("favoriteListId", ""));
         }
 
         @Override

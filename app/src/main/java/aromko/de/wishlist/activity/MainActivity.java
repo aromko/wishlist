@@ -525,13 +525,13 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
 
     public void checkIfFavoriteListIdExists() {
         final UserSettingRepository userSettingRepository = new UserSettingRepository();
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(fFirebaseAuth.getCurrentUser().getUid(), MODE_PRIVATE);
         if (sharedPreferences.getString("favoriteListId", "").isEmpty()) {
             userSettingRepository.get(fFirebaseAuth.getCurrentUser().getUid(), new UserSettingRepository.FirebaseCallback() {
                 @Override
                 public void onCallback(UserSetting userSetting) {
                     String favoriteListId = "";
-                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplication());
+                    SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(fFirebaseAuth.getCurrentUser().getUid(), MODE_PRIVATE);
                     if(userSetting.getFavoriteListId().isEmpty()) {
                         favoriteListId = listViewModel.insertList("Favoriten", true);
                         userSettingRepository.insert(fFirebaseAuth.getCurrentUser().getUid(), favoriteListId);

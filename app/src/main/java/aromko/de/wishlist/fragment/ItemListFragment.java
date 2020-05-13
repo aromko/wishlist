@@ -34,6 +34,8 @@ import aromko.de.wishlist.viewModel.PaymentViewModel;
 import aromko.de.wishlist.viewModel.WishViewModel;
 import aromko.de.wishlist.viewModel.WishViewModelFactory;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class ItemListFragment extends Fragment {
 
     public static final String GOOGLE_NAVIGATION_Q = "google.navigation:q=";
@@ -58,7 +60,8 @@ public class ItemListFragment extends Fragment {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        FirebaseAuth fFirebaseAuth = FirebaseAuth.getInstance();
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(fFirebaseAuth.getCurrentUser().getUid(), MODE_PRIVATE);
         favoriteListId = sharedPreferences.getString("favoriteListId", "");
     }
 
