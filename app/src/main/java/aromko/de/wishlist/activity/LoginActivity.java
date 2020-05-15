@@ -2,6 +2,7 @@ package aromko.de.wishlist.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,7 +29,6 @@ import aromko.de.wishlist.R;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
-    public static final String GOOGLE_REQUEST_ID_TOKEN = "1002207596437-e45j57olbmk7kpq3q3dpv89c92c7n8sj.apps.googleusercontent.com";
     private static final int RC_SIGN_IN = 9001;
     private FirebaseAuth fFirebaseAuth;
     private GoogleSignInClient mGoogleSignInClient;
@@ -44,10 +44,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         textView.setText(R.string.txtLogin);
         findViewById(R.id.sign_in_button).setOnClickListener(this);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(GOOGLE_REQUEST_ID_TOKEN)
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
-
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         fFirebaseAuth = FirebaseAuth.getInstance();
     }

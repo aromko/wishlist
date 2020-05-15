@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        release {
+            storeFile file('/Users/Koehlema/android_keystore/keystore')
+            storePassword 'BEha$mufr09'
+            keyAlias = 'release'
+            keyPassword 'BEha$mufr09'
+        }
+    }
     compileSdkVersion 28
     defaultConfig {
         applicationId "aromko.de.wishlist"
@@ -14,6 +22,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            applicationIdSuffix ".debug"
         }
     }
     compileOptions {

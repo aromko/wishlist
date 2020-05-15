@@ -25,7 +25,7 @@ public class UploadService extends IntentService {
     public static final String DATA = "data";
     public static final String RESULT = "result";
     public static final String NOTIFICATION = "aromko.de.wishlist.MainActivity";
-    private static final String FIREBASE_STORAGE_BUCKET = "gs://wishlist-app-aromko.appspot.com";
+    private static final String FIREBASE_STORAGE_BUCKET = "gs://" + R.string.google_storage_bucket;
     private int result = Activity.RESULT_CANCELED;
     private WishViewModel wishViewModel = new WishViewModel();
 

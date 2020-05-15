@@ -21,8 +21,8 @@
 
         <ImageView
             android:id="@+id/ivProductImage"
-            android:layout_width="368dp"
-            android:layout_height="227dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:adjustViewBounds="true"
             android:contentDescription="@string/txtProductImage"
@@ -93,8 +93,8 @@
             android:layout_width="29dp"
             android:layout_height="27dp"
             android:layout_margin="3dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:contentDescription="@string/txtWishstrengthIcon"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvDescription"
@@ -202,6 +202,7 @@
             android:layout_width="29dp"
             android:layout_height="27dp"
             android:background="@color/colorWhite"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ivProductImage"
             app:srcCompat="@drawable/ic_expand_more" />

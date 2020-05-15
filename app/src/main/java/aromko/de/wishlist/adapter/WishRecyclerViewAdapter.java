@@ -90,6 +90,11 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
             holder.favorite.setTag(context.getString(R.string.txtIsNoFavorite));
         }
 
+        if(holder.mItem.getDescription().isEmpty()) {
+            holder.ivShowInfos.setVisibility(View.GONE);
+        } else {
+            holder.ivShowInfos.setVisibility(View.VISIBLE);
+        }
         switch ((int) holder.mItem.getWishstrength()) {
             case 1:
                 holder.ivWishstrength.setImageResource(R.drawable.ic_wishstrength_medium);

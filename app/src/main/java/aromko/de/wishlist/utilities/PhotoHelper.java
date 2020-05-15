@@ -41,7 +41,7 @@ import static android.app.Activity.RESULT_OK;
 
 public class PhotoHelper {
 
-    private static final String FIREBASE_STORAGE_BUCKET = "gs://wishlist-app-aromko.appspot.com";
+    private static final String FIREBASE_STORAGE_BUCKET = "gs://" + R.string.google_storage_bucket;
     private static final int REQUEST_IMAGE_FROM_STORAGE = 1;
     private static final int REQUEST_IMAGE_CAPTURE = 2;
     private AlertDialog dialog;
