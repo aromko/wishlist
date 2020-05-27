@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1096090142423",
+    "firebase_url": "https://wishlist-dev-417ee.firebaseio.com",
+    "project_id": "wishlist-dev-417ee",
+    "storage_bucket": "wishlist-dev-417ee.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1096090142423:android:5c621cb0c0a15343d51292",
+        "android_client_info": {
+          "package_name": "aromko.de.wishlist.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1096090142423-j7m2n1ofvtk1vd7rtvs8bhhgl93q4nmb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "aromko.de.wishlist.debug",
+            "certificate_hash": "ee43eac2978466f3466e50c92f3ecabba4f95098"
+          }
+        },
+        {
+          "client_id": "1096090142423-77hfm96b3084h4rqojbvo0lmcm88o6e8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsjXrGZ7bAnVmqCK0-LxlGgXQ94WYnEh4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1096090142423-77hfm96b3084h4rqojbvo0lmcm88o6e8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
