@@ -73,7 +73,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:inputType="textPersonName"
-                                android:textSize="18dp" />
+                                android:textSize="18sp" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                     </LinearLayout>
@@ -101,7 +101,7 @@
                                 android:layout_height="wrap_content"
                                 android:enabled="false"
                                 android:inputType="textEmailAddress"
-                                android:textSize="18dp" />
+                                android:textSize="18sp" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                     </LinearLayout>

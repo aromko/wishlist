@@ -71,7 +71,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 loginToFirebase(account);
             } catch (ApiException e) {
-                Toast.makeText(getApplicationContext(), R.string.txtGoogleSignInFauked, Toast.LENGTH_LONG);
+                Toast.makeText(getApplicationContext(), R.string.txtGoogleSignInFauked, Toast.LENGTH_LONG).show();
             }
         }
     }

@@ -237,7 +237,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
                 if (null != mListener) {
                     Log.i("XXXX", String.valueOf(holder.tvDescription.getVisibility()));
                     switch (holder.tvDescription.getVisibility()){
-                        case 8: holder.tvDescription.setVisibility(View.VISIBLE); break;
+                        case View.VISIBLE: holder.tvDescription.setVisibility(View.VISIBLE); break;
                         default: holder.tvDescription.setVisibility(View.GONE);break;
                     }
                 }
