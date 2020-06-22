@@ -41,7 +41,6 @@ import static android.app.Activity.RESULT_OK;
 
 public class PhotoHelper {
 
-    private static final String FIREBASE_STORAGE_BUCKET = "gs://" + R.string.google_storage_bucket;
     private static final int REQUEST_IMAGE_FROM_STORAGE = 1;
     private static final int REQUEST_IMAGE_CAPTURE = 2;
     private AlertDialog dialog;
@@ -149,6 +148,7 @@ public class PhotoHelper {
     }
 
     public void requestProfilePicture(String uId) {
+        final String FIREBASE_STORAGE_BUCKET = "gs://" + mContext.getString(R.string.google_storage_bucket);
         FirebaseStorage STORAGE = FirebaseStorage.getInstance(FIREBASE_STORAGE_BUCKET);
 
         STORAGE.getReference(uId).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {

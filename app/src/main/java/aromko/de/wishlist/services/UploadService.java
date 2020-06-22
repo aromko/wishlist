@@ -3,6 +3,7 @@ package aromko.de.wishlist.services;
 import android.app.Activity;
 import android.app.IntentService;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
@@ -25,7 +26,7 @@ public class UploadService extends IntentService {
     public static final String DATA = "data";
     public static final String RESULT = "result";
     public static final String NOTIFICATION = "aromko.de.wishlist.MainActivity";
-    private static final String FIREBASE_STORAGE_BUCKET = "gs://" + R.string.google_storage_bucket;
+
     private int result = Activity.RESULT_CANCELED;
     private WishViewModel wishViewModel = new WishViewModel();
 
@@ -39,6 +40,7 @@ public class UploadService extends IntentService {
         final String wishlistId = intent.getStringExtra(WISHLISTID);
         final String reference = intent.getStringExtra(REFERENCE);
         byte[] data = intent.getByteArrayExtra(DATA);
+        final String FIREBASE_STORAGE_BUCKET = "gs://" + getApplicationContext().getString(R.string.google_storage_bucket);
 
         FirebaseStorage storage = FirebaseStorage.getInstance(FIREBASE_STORAGE_BUCKET);
         final StorageReference storageRef = storage.getReference(reference);
