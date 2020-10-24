@@ -30,32 +30,26 @@ public class ChatMessageViewModel extends ViewModel {
 
     public ChatMessageViewModel() {
         liveData = new FirebaseQueryLiveData(lists_ref);
-    };
+    }
 
     public ChatMessageViewModel(Application mApplication, final String wishId) {
         message_record_path = DB_PATH_MESSAGES + wishId;
         lists_ref = FirebaseDatabase.getInstance().getReference(message_record_path);
         liveData = new FirebaseQueryLiveData(lists_ref);
-        listsLiveData.addSource(liveData, new Observer<DataSnapshot>() {
-            @Override
-            public void onChanged(@Nullable final DataSnapshot dataSnapshot) {
-                if (dataSnapshot != null) {
-                    final List<ChatMessage> lists = new ArrayList<>();
-                    new AppExecutors().mainThread().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                ChatMessage chatMessage = snapshot.getValue(ChatMessage.class);
-                                chatMessage.setWishId(wishId);
-                                lists.add(chatMessage);
-                            }
-                            listsLiveData.postValue(lists);
-                        }
-                    });
+        listsLiveData.addSource(liveData, dataSnapshot -> {
+            if (dataSnapshot != null) {
+                final List<ChatMessage> lists = new ArrayList<>();
+                new AppExecutors().mainThread().execute(() -> {
+                    for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        ChatMessage chatMessage = snapshot.getValue(ChatMessage.class);
+                        chatMessage.setWishId(wishId);
+                        lists.add(chatMessage);
+                    }
+                    listsLiveData.postValue(lists);
+                });
 
-                } else {
-                    listsLiveData.setValue(null);
-                }
+            } else {
+                listsLiveData.setValue(null);
             }
         });
     }

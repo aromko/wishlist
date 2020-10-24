@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -46,6 +47,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
         mFavoriteListId = favoriteListId;
     }
 
+    @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -57,7 +59,6 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.mItem = mValues.get(position);
-
         if (holder.mItem.getWishlistId().equals(mFavoriteListId)) {
             holder.favorite.setVisibility(View.INVISIBLE);
             holder.tvItemOptions.setVisibility(View.INVISIBLE);
@@ -79,7 +80,8 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
         if (holder.mItem.getPrice() == holder.mItem.getSalvagePrice()) {
             holder.item_price.setText(format.format(holder.mItem.getPrice()));
         } else {
-            holder.item_price.setText(format.format(holder.mItem.getPrice()) + " (" + format.format(holder.mItem.getSalvagePrice()) + ")");
+            String priceText = format.format(holder.mItem.getPrice()) + " (" + format.format(holder.mItem.getSalvagePrice()) + ")";
+            holder.item_price.setText(priceText);
         }
 
 
@@ -105,43 +107,34 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
             default:
                 holder.ivWishstrength.setImageResource(R.drawable.ic_wishstrength_low);
         }
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (null != mListener) {
-                    mListener.onListFragmentInteraction(holder.mItem, holder.getAdapterPosition());
-                }
+        holder.mView.setOnClickListener(view -> {
+            if (null != mListener) {
+                mListener.onListFragmentInteraction(holder.mItem, holder.getAdapterPosition());
             }
         });
 
-        holder.favorite.setOnClickListener(new ImageView.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                boolean isFavorite = true;
+        holder.favorite.setOnClickListener(view -> {
+            boolean isFavorite = true;
 
-                if (holder.favorite.getTag() == context.getString(R.string.txtIsNoFavorite)) {
-                    holder.favorite.setImageResource(R.drawable.ic_favorite);
-                    holder.favorite.setTag(context.getString(R.string.txtIsFavorite));
+            if (holder.favorite.getTag() == context.getString(R.string.txtIsNoFavorite)) {
+                holder.favorite.setImageResource(R.drawable.ic_favorite);
+                holder.favorite.setTag(context.getString(R.string.txtIsFavorite));
+            } else {
+                holder.favorite.setImageResource(R.drawable.ic_favorite_border);
+                holder.favorite.setTag(context.getString(R.string.txtIsNoFavorite));
+                isFavorite = false;
+            }
+            if (null != mListener) {
+                mListener.onFavoriteInteraction(holder.mItem, isFavorite);
+            }
+        });
+
+        holder.ivMap.setOnClickListener(v -> {
+            if (null != mListener) {
+                if (holder.mItem.getLongitude() != 0 && holder.mItem.getLatitude() != 0) {
+                    mListener.onMapInteraction(holder.mItem.getLongitude(), holder.mItem.getLatitude());
                 } else {
-                    holder.favorite.setImageResource(R.drawable.ic_favorite_border);
-                    holder.favorite.setTag(context.getString(R.string.txtIsNoFavorite));
-                    isFavorite = false;
-                }
-                if (null != mListener) {
-                    mListener.onFavoriteInteraction(holder.mItem, isFavorite);
-                }
-            }
-        });
-
-        holder.ivMap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    if (holder.mItem.getLongitude() != 0 && holder.mItem.getLatitude() != 0) {
-                        mListener.onMapInteraction(holder.mItem.getLongitude(), holder.mItem.getLatitude());
-                    } else {
-                        Toast.makeText(context, R.string.txtNoPlaceFound, Toast.LENGTH_LONG).show();
-                    }
+                    Toast.makeText(context, R.string.txtNoPlaceFound, Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -165,81 +158,66 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
                     });
         }
 
-        holder.tvItemOptions.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                PopupMenu popupMenu = new PopupMenu(context, holder.tvItemOptions);
+        holder.tvItemOptions.setOnClickListener(view -> {
+            PopupMenu popupMenu = new PopupMenu(context, holder.tvItemOptions);
 
-                popupMenu.inflate(R.menu.item_options_menu);
+            popupMenu.inflate(R.menu.item_options_menu);
 
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.edit:
-                                Intent editWishAcitivity = new Intent(view.getContext(), EditWishActivity.class);
-                                editWishAcitivity.putExtra("wishlistId", holder.mItem.getWishlistId());
-                                editWishAcitivity.putExtra("wishId", holder.mItem.getWishId());
-                                view.getContext().startActivity(editWishAcitivity);
-                                return true;
-                            case R.id.payment:
-                                if (null != mListener) {
-                                    mListener.onPaymentInteraction(holder.mItem.getWishId(), holder.mItem.getPrice(), holder.mItem.getPrice(), holder.mItem.getWishlistId());
-                                }
-                                return true;
-                            case R.id.partial_payment:
-                                if (null != mListener) {
-                                    showPaymentAlertDialog(holder.mItem.getWishId(), holder.mItem.getPrice(), holder.mItem.getWishlistId());
-                                }
-                                return true;
-                            case R.id.delete_wish:
-                                if (null != mListener) {
-                                    showDeleteWishAlertDialog(holder.mItem.getWishId(), holder.mItem.getWishlistId());
-                                }
-                                return true;
-                            default:
-                                return false;
-                        }
+            popupMenu.setOnMenuItemClickListener(item -> {
+                int itemId = item.getItemId();
+                if (itemId == R.id.edit) {
+                    Intent editWishAcitivity = new Intent(view.getContext(), EditWishActivity.class);
+                    editWishAcitivity.putExtra("wishlistId", holder.mItem.getWishlistId());
+                    editWishAcitivity.putExtra("wishId", holder.mItem.getWishId());
+                    view.getContext().startActivity(editWishAcitivity);
+                    return true;
+                } else if (itemId == R.id.payment) {
+                    if (null != mListener) {
+                        mListener.onPaymentInteraction(holder.mItem.getWishId(), holder.mItem.getPrice(), holder.mItem.getPrice(), holder.mItem.getWishlistId());
                     }
-                });
-                popupMenu.show();
+                    return true;
+                } else if (itemId == R.id.partial_payment) {
+                    if (null != mListener) {
+                        showPaymentAlertDialog(holder.mItem.getWishId(), holder.mItem.getPrice(), holder.mItem.getWishlistId());
+                    }
+                    return true;
+                } else if (itemId == R.id.delete_wish) {
+                    if (null != mListener) {
+                        showDeleteWishAlertDialog(holder.mItem.getWishId(), holder.mItem.getWishlistId());
+                    }
+                    return true;
+                }
+                return false;
+            });
+            popupMenu.show();
 
-            }
         });
 
-        holder.ivUrl.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    if (holder.mItem.getUrl() != null && !holder.mItem.getUrl().isEmpty()) {
-                        mListener.onUrlInteraction(holder.mItem.getUrl());
-                    } else {
-                        Toast.makeText(context, R.string.txtNoUrlFound, Toast.LENGTH_LONG).show();
-                    }
+        holder.ivUrl.setOnClickListener(v -> {
+            if (null != mListener) {
+                if (holder.mItem.getUrl() != null && !holder.mItem.getUrl().isEmpty()) {
+                    mListener.onUrlInteraction(holder.mItem.getUrl());
+                } else {
+                    Toast.makeText(context, R.string.txtNoUrlFound, Toast.LENGTH_LONG).show();
                 }
             }
         });
 
         holder.tvDescription.setText(holder.mItem.getDescription());
 
-        holder.ivChat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    mListener.onChatInteraction(holder.mItem.getWishId());
-                }
+        holder.ivChat.setOnClickListener(v -> {
+            if (null != mListener) {
+                mListener.onChatInteraction(holder.mItem.getWishId());
             }
         });
 
-        holder.ivShowInfos.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    Log.i("XXXX", String.valueOf(holder.tvDescription.getVisibility()));
-                    switch (holder.tvDescription.getVisibility()){
-                        case View.VISIBLE: holder.tvDescription.setVisibility(View.VISIBLE); break;
-                        default: holder.tvDescription.setVisibility(View.GONE);break;
-                    }
+        holder.ivShowInfos.setOnClickListener(v -> {
+            if (null != mListener) {
+                Log.i("XXXX", String.valueOf(holder.tvDescription.getVisibility()));
+                if (holder.tvDescription.getVisibility() == View.VISIBLE) {
+                    holder.tvDescription.setVisibility(View.VISIBLE);
+                } else {
+                    holder.tvDescription.setVisibility(View.GONE);
                 }
             }
         });
@@ -254,23 +232,15 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
         builder.setView(viewPartialPayment);
         final EditText txtPartialPayment = viewPartialPayment.findViewById(R.id.txtPartialPayment);
 
-        builder.setPositiveButton(R.string.txtOk, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                double partialPrice = Double.parseDouble(txtPartialPayment.getText().toString().replace(",", "."));
-                if (partialPrice != 0) {
-                    if (null != mListener) {
-                        mListener.onPaymentInteraction(wishId, price, partialPrice, wishlistId);
-                    }
+        builder.setPositiveButton(R.string.txtOk, (dialogInterface, i) -> {
+            double partialPrice = Double.parseDouble(txtPartialPayment.getText().toString().replace(",", "."));
+            if (partialPrice != 0) {
+                if (null != mListener) {
+                    mListener.onPaymentInteraction(wishId, price, partialPrice, wishlistId);
                 }
-                dialogInterface.dismiss();
             }
-        }).setNegativeButton(R.string.txtCancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-            }
-        });
+            dialogInterface.dismiss();
+        }).setNegativeButton(R.string.txtCancel, (dialogInterface, i) -> dialogInterface.cancel());
         AlertDialog dialog = builder.create();
         dialog.show();
     }
@@ -283,22 +253,14 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
 
         builder.setView(viewDeleteWish);
 
-        builder.setPositiveButton(R.string.txtOk, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
+        builder.setPositiveButton(R.string.txtOk, (dialogInterface, i) -> {
 
-                if (null != mListener) {
-                    mListener.onDeleteWishInteraction(wishId, wishlistId);
-                }
+            if (null != mListener) {
+                mListener.onDeleteWishInteraction(wishId, wishlistId);
+            }
 
-                dialogInterface.dismiss();
-            }
-        }).setNegativeButton(R.string.txtCancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-            }
-        });
+            dialogInterface.dismiss();
+        }).setNegativeButton(R.string.txtCancel, (dialogInterface, i) -> dialogInterface.cancel());
         AlertDialog dialog = builder.create();
         dialog.show();
     }

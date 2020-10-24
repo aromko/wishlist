@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -76,7 +76,7 @@ public class WishActivity extends AppCompatActivity {
         adapter.setDropDownViewResource(R.layout.spinner_item);
         spWishstrength.setAdapter(adapter);
 
-        wishViewModel = ViewModelProviders.of(this).get(WishViewModel.class);
+        wishViewModel = new ViewModelProvider(this).get(WishViewModel.class);
 
         Intent myIntent = getIntent();
         wishlistId = myIntent.getStringExtra("wishlistId");
@@ -120,17 +120,15 @@ public class WishActivity extends AppCompatActivity {
         photoHelper.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK) {
-            switch (requestCode) {
-
-                case PLACE_PICKER_REQUEST:
-                    if (resultCode == RESULT_OK) {
-                        Place place = PlacePicker.getPlace(this, data);
-                        tvLocation.setText(place.getName() + "\n" + place.getAddress());
-                        longitude = place.getLatLng().longitude;
-                        latitude = place.getLatLng().latitude;
-                        placeId = place.getId();
-                    }
-                    break;
+            if (requestCode == PLACE_PICKER_REQUEST) {
+                if (resultCode == RESULT_OK) {
+                    Place place = PlacePicker.getPlace(this, data);
+                    String displayText = place.getName() + "\n" + place.getAddress();
+                    tvLocation.setText(displayText);
+                    longitude = place.getLatLng().longitude;
+                    latitude = place.getLatLng().latitude;
+                    placeId = place.getId();
+                }
             }
         }
     }

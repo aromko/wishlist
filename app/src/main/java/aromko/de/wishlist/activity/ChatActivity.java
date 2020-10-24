@@ -41,7 +41,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private String username;
     private ChatMessageViewModel chatMessageViewModel;
-    private ArrayList<ChatMessage> listItems = new ArrayList<ChatMessage>();
+    private ArrayList<ChatMessage> listItems = new ArrayList<>();
     private String wishId;
 
     private FirebaseAuth fFirebaseAuth;
@@ -85,18 +85,13 @@ public class ChatActivity extends AppCompatActivity {
 
         final LiveData<List<ChatMessage>> listsLiveData = chatMessageViewModel.getListsLiveData();
 
-        listsLiveData.observe(this, new Observer<List<ChatMessage>>() {
-            @Override
-            public void onChanged(@Nullable List<ChatMessage> chatMessages) {
-                rvMessageRecyclerView.setLayoutManager(linearLayoutManager);
-                listItems.clear();
+        listsLiveData.observe(this, chatMessages -> {
+            rvMessageRecyclerView.setLayoutManager(linearLayoutManager);
+            listItems.clear();
 
-                for (ChatMessage chatMessage : chatMessages) {
-                    listItems.add(chatMessage);
-                }
-                rvMessageRecyclerView.setAdapter(new ChatMessageViewHolderAdapter(listItems, username));
-                pbProgressBar.setVisibility(View.INVISIBLE);
-            }
+            listItems.addAll(chatMessages);
+            rvMessageRecyclerView.setAdapter(new ChatMessageViewHolderAdapter(listItems, username));
+            pbProgressBar.setVisibility(View.INVISIBLE);
         });
 
         etMessageText.addTextChangedListener(new TextWatcher() {
@@ -112,11 +107,7 @@ public class ChatActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (s.toString().isEmpty()) {
-                    btnSendButton.setEnabled(false);
-                } else {
-                    btnSendButton.setEnabled(true);
-                }
+                btnSendButton.setEnabled(!s.toString().isEmpty());
             }
         });
     }

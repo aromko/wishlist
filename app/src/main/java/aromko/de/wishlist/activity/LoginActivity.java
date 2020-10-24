@@ -2,7 +2,6 @@ package aromko.de.wishlist.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -79,17 +78,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void loginToFirebase(GoogleSignInAccount acct) {
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         fFirebaseAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            if (fFirebaseAuth.getCurrentUser() != null) {
-                                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                                finish();
-                            }
-                        } else {
-                            Snackbar.make(findViewById(R.id.main_layout), R.string.txtAithenticationFailed, Snackbar.LENGTH_SHORT).show();
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        if (fFirebaseAuth.getCurrentUser() != null) {
+                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                            finish();
                         }
+                    } else {
+                        Snackbar.make(findViewById(R.id.main_layout), R.string.txtAithenticationFailed, Snackbar.LENGTH_SHORT).show();
                     }
                 });
     }

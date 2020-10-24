@@ -36,30 +36,24 @@ public class WishlistViewModel extends ViewModel {
     private FirebaseUser fFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
     public WishlistViewModel() {
-        listsLiveData.addSource(liveData, new Observer<DataSnapshot>() {
-            @Override
-            public void onChanged(@Nullable final DataSnapshot dataSnapshot) {
-                if (dataSnapshot != null) {
-                    final List<Wishlist> lists = new ArrayList<>();
-                    new AppExecutors().mainThread().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                Wishlist wishlist = snapshot.getValue(Wishlist.class);
-                                wishlist.setKey(snapshot.getKey().toString());
-                                String currentUid = fFirebaseUser.getUid();
-                                if (wishlist.getAllowedUsers() != null && wishlist.getAllowedUsers().containsKey(currentUid) && wishlist.getAllowedUsers().get(currentUid).equals(true)) {
-                                    lists.add(wishlist);
-                                }
-
-                            }
-                            listsLiveData.postValue(lists);
+        listsLiveData.addSource(liveData, dataSnapshot -> {
+            if (dataSnapshot != null) {
+                final List<Wishlist> lists = new ArrayList<>();
+                new AppExecutors().mainThread().execute(() -> {
+                    for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        Wishlist wishlist = snapshot.getValue(Wishlist.class);
+                        wishlist.setKey(snapshot.getKey());
+                        String currentUid = fFirebaseUser.getUid();
+                        if (wishlist.getAllowedUsers() != null && wishlist.getAllowedUsers().containsKey(currentUid) && wishlist.getAllowedUsers().get(currentUid).equals(true)) {
+                            lists.add(wishlist);
                         }
-                    });
 
-                } else {
-                    listsLiveData.setValue(null);
-                }
+                    }
+                    listsLiveData.postValue(lists);
+                });
+
+            } else {
+                listsLiveData.setValue(null);
             }
         });
     }

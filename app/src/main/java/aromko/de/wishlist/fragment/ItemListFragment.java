@@ -5,16 +5,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -45,7 +45,7 @@ public class ItemListFragment extends Fragment {
     private OnListFragmentInteractionListener mListener;
 
     private WishViewModel wishViewModel;
-    private ArrayList<Wish> listItems = new ArrayList<Wish>();
+    private ArrayList<Wish> listItems = new ArrayList<>();
 
     private String favoriteListId = "";
 
@@ -67,7 +67,7 @@ public class ItemListFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         String wishlistId = "";
 
@@ -85,22 +85,17 @@ public class ItemListFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            wishViewModel = ViewModelProviders.of(this, new WishViewModelFactory(this.getActivity().getApplication(), wishlistId)).get(WishViewModel.class);
+            wishViewModel = new ViewModelProvider(this, new WishViewModelFactory(this.getActivity().getApplication(), wishlistId)).get(WishViewModel.class);
 
             final LiveData<List<Wish>> listsLiveData = wishViewModel.getListsLiveData();
 
-            listsLiveData.observe(this, new Observer<List<Wish>>() {
-                @Override
-                public void onChanged(@Nullable List<Wish> lists) {
-                    LinearLayoutManager myLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-                    int scrollPosition = myLayoutManager.findFirstVisibleItemPosition();
-                    listItems.clear();
-                    for (Wish list : lists) {
-                        listItems.add(list);
-                    }
-                    recyclerView.setAdapter(new WishRecyclerViewAdapter(listItems, mListener, favoriteListId));
-                    recyclerView.scrollToPosition(scrollPosition);
-                }
+            listsLiveData.observe(getViewLifecycleOwner(), lists -> {
+                LinearLayoutManager myLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                int scrollPosition = myLayoutManager.findFirstVisibleItemPosition();
+                listItems.clear();
+                listItems.addAll(lists);
+                recyclerView.setAdapter(new WishRecyclerViewAdapter(listItems, mListener, favoriteListId));
+                recyclerView.scrollToPosition(scrollPosition);
             });
 
             mListener = new OnListFragmentInteractionListener() {
@@ -159,7 +154,7 @@ public class ItemListFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof OnListFragmentInteractionListener) {
             mListener = (OnListFragmentInteractionListener) context;

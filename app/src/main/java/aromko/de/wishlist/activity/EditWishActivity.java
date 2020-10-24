@@ -86,37 +86,32 @@ public class EditWishActivity extends AppCompatActivity {
         wishlistId = myIntent.getStringExtra("wishlistId");
         wishId = myIntent.getStringExtra("wishId");
 
-        wishViewModel.selectWish(wishlistId, wishId, new WishViewModel.FirebaseCallback() {
-            @Override
-            public void onCallback(Wish wish) {
+        wishViewModel.selectWish(wishlistId, wishId, wish -> {
 
-                etTitle.setText(wish.getTitle());
-                etPrice.setText(String.valueOf(wish.getPrice()).replace(".", ","));
-                etUrl.setText(wish.getUrl());
-                etDescription.setText(wish.getDescription());
-                spWishstrength.setSelection((int) wish.getWishstrength());
-                isImageSet = wish.isImageSet();
-                if (isImageSet && wish.getPhotoUrl() != null) {
-                    photoHelper.requestProductPicture(wish.getPhotoUrl());
-                }
+            etTitle.setText(wish.getTitle());
+            etPrice.setText(String.valueOf(wish.getPrice()).replace(".", ","));
+            etUrl.setText(wish.getUrl());
+            etDescription.setText(wish.getDescription());
+            spWishstrength.setSelection((int) wish.getWishstrength());
+            isImageSet = wish.isImageSet();
+            if (isImageSet && wish.getPhotoUrl() != null) {
+                photoHelper.requestProductPicture(wish.getPhotoUrl());
+            }
 
-                longitude = wish.getLongitude();
-                latitude = wish.getLatitude();
-                if (wish.getPlaceId() != null) {
-                    Places.getGeoDataClient(getApplicationContext()).getPlaceById(wish.getPlaceId()).addOnCompleteListener(new OnCompleteListener<PlaceBufferResponse>() {
-                        @Override
-                        public void onComplete(@NonNull Task<PlaceBufferResponse> task) {
-                            if (task.isSuccessful()) {
-                                PlaceBufferResponse places = task.getResult();
-                                Place myPlace = places.get(0);
-                                tvLocation.setText(myPlace.getName() + "\n" + myPlace.getAddress());
-                                places.release();
-                            } else {
-                                Toast.makeText(getApplicationContext(), R.string.txtNoPlaceFound, Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    });
-                }
+            longitude = wish.getLongitude();
+            latitude = wish.getLatitude();
+            if (wish.getPlaceId() != null) {
+                Places.getGeoDataClient(getApplicationContext()).getPlaceById(wish.getPlaceId()).addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        PlaceBufferResponse places = task.getResult();
+                        Place myPlace = places.get(0);
+                        String displayText = myPlace.getName() + "\n" + myPlace.getAddress();
+                        tvLocation.setText(displayText);
+                        places.release();
+                    } else {
+                        Toast.makeText(getApplicationContext(), R.string.txtNoPlaceFound, Toast.LENGTH_LONG).show();
+                    }
+                });
             }
         });
 
@@ -154,16 +149,14 @@ public class EditWishActivity extends AppCompatActivity {
         photoHelper.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK) {
-            switch (requestCode) {
-
-                case PLACE_PICKER_REQUEST:
-                    if (resultCode == RESULT_OK) {
-                        Place place = PlacePicker.getPlace(this, data);
-                        tvLocation.setText(place.getName() + "\n" + place.getAddress());
-                        longitude = place.getLatLng().longitude;
-                        latitude = place.getLatLng().latitude;
-                    }
-                    break;
+            if (requestCode == PLACE_PICKER_REQUEST) {
+                if (resultCode == RESULT_OK) {
+                    Place place = PlacePicker.getPlace(this, data);
+                    String displayText = place.getName() + "\n" + place.getAddress();
+                    tvLocation.setText(displayText);
+                    longitude = place.getLatLng().longitude;
+                    latitude = place.getLatLng().latitude;
+                }
             }
         }
     }

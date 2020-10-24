@@ -11,8 +11,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,7 +36,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -82,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     private TextView etUserEmail;
     private TextView etUserName;
     private ListView listView;
-    private ArrayList<Wishlist> listItems = new ArrayList<Wishlist>();
+    private ArrayList<Wishlist> listItems = new ArrayList<>();
     private ImageButton ibAddWishList;
     private WishlistViewModel listViewModel;
     private String selectedWishlistId;
@@ -131,22 +129,15 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
                     Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 new AlertDialog.Builder(MainActivity.this, R.style.Theme_MaterialComponents_Dialog_Alert)
                         .setMessage(getString(R.string.txtGetPermissions))
-                        .setPositiveButton(R.string.txtOk, new DialogInterface.OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.dismiss();
-                                ActivityCompat.requestPermissions(MainActivity.this,
-                                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.INTERNET, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA},
-                                        MY_PERMISSIONS_REQUEST);
-                            }
+                        .setPositiveButton(R.string.txtOk, (dialogInterface, i) -> {
+                            dialogInterface.dismiss();
+                            ActivityCompat.requestPermissions(MainActivity.this,
+                                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.INTERNET, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA},
+                                    MY_PERMISSIONS_REQUEST);
                         })
-                        .setNegativeButton(R.string.txtCancel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.cancel();
-                                signOut();
-                            }
+                        .setNegativeButton(R.string.txtCancel, (dialogInterface, i) -> {
+                            dialogInterface.cancel();
+                            signOut();
                         })
                         .create()
                         .show();
@@ -181,15 +172,12 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         checkIfUserLoggedIn();
 
         fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent wishActivity = new Intent(MainActivity.this, WishActivity.class);
-                wishActivity.putExtra("wishlistId", selectedWishlistId);
-                wishActivity.putExtra("sharedText", sharedText);
-                sharedText = null;
-                startActivity(wishActivity);
-            }
+        fab.setOnClickListener(view -> {
+            Intent wishActivity = new Intent(MainActivity.this, WishActivity.class);
+            wishActivity.putExtra("wishlistId", selectedWishlistId);
+            wishActivity.putExtra("sharedText", sharedText);
+            sharedText = null;
+            startActivity(wishActivity);
         });
 
         listView = findViewById(R.id.listView);
@@ -198,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         final WishlistAdapter drawListAdapter = new WishlistAdapter(this, listItems);
         listView.setAdapter(drawListAdapter);
         drawListAdapter.setNotifyOnChange(true);
-        listViewModel = ViewModelProviders.of(this).get(WishlistViewModel.class);
+        listViewModel = new ViewModelProvider(this).get(WishlistViewModel.class);
         try {
             checkIfFavoriteListIdExists();
         } catch (Exception e) {
@@ -207,16 +195,13 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         }
 
         final LiveData<List<Wishlist>> listsLiveData = listViewModel.getListsLiveData();
-        listsLiveData.observe(this, new Observer<List<Wishlist>>() {
-            @Override
-            public void onChanged(@Nullable List<Wishlist> lists) {
-                drawListAdapter.clear();
-                for (Wishlist list : lists) {
-                    if(list.getName().equalsIgnoreCase("Favoriten")) {
-                        drawListAdapter.insert(list, 0);
-                    } else {
-                        drawListAdapter.add(list);
-                    }
+        listsLiveData.observe(this, lists -> {
+            drawListAdapter.clear();
+            for (Wishlist list : lists) {
+                if(list.getName().equalsIgnoreCase("Favoriten")) {
+                    drawListAdapter.insert(list, 0);
+                } else {
+                    drawListAdapter.add(list);
                 }
             }
         });
@@ -239,19 +224,17 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED && grantResults[2] == PackageManager.PERMISSION_GRANTED && grantResults[3] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(getApplicationContext(), getString(R.string.txtHaveFunWithTheApp), Toast.LENGTH_LONG).show();
+        if (requestCode == MY_PERMISSIONS_REQUEST) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED && grantResults[2] == PackageManager.PERMISSION_GRANTED && grantResults[3] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(getApplicationContext(), getString(R.string.txtHaveFunWithTheApp), Toast.LENGTH_LONG).show();
 
-                } else {
-                    Toast.makeText(getApplicationContext(), getString(R.string.txtPermissionDenied), Toast.LENGTH_SHORT).show();
-                    signOut();
-                    finish();
-                }
-                return;
+            } else {
+                Toast.makeText(getApplicationContext(), getString(R.string.txtPermissionDenied), Toast.LENGTH_SHORT).show();
+                signOut();
+                finish();
             }
+            return;
         }
     }
 
@@ -265,43 +248,30 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
 
     private void processFirebaseDynamicLink() {
         FirebaseDynamicLinks.getInstance().getDynamicLink(getIntent())
-                .addOnSuccessListener(this, new OnSuccessListener<PendingDynamicLinkData>() {
-                    @Override
-                    public void onSuccess(PendingDynamicLinkData data) {
-                        if (data != null) {
-                            Uri deepLink = data.getLink();
-                            listViewModel.addUserToWishlist(deepLink.getQueryParameter("param"));
-                        } else {
-                            return;
-                        }
+                .addOnSuccessListener(this, data -> {
+                    if (data != null) {
+                        Uri deepLink = data.getLink();
+                        listViewModel.addUserToWishlist(deepLink.getQueryParameter("param"));
                     }
                 })
-                .addOnFailureListener(this, new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getApplicationContext(), R.string.txtNoInvitationFound, Toast.LENGTH_LONG).show();
-                    }
-                });
+                .addOnFailureListener(this, e -> Toast.makeText(getApplicationContext(), R.string.txtNoInvitationFound, Toast.LENGTH_LONG).show());
     }
 
     private void addListeners() {
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                for (int i = 0; i < listView.getChildCount(); i++) {
-                    listView.getChildAt(i).setBackgroundColor(Color.WHITE);
-                }
-
-                if (listItems.get(position).getWishCounter() > 0) {
-                    tvInfo.setVisibility(View.INVISIBLE);
-                } else {
-                    tvInfo.setVisibility(View.VISIBLE);
-                }
-                openFragment(position);
-
-                DrawerLayout drawer = findViewById(R.id.drawer_layout);
-                drawer.closeDrawer(GravityCompat.START);
+        listView.setOnItemClickListener((adapterView, view, position, id) -> {
+            for (int i = 0; i < listView.getChildCount(); i++) {
+                listView.getChildAt(i).setBackgroundColor(Color.WHITE);
             }
+
+            if (listItems.get(position).getWishCounter() > 0) {
+                tvInfo.setVisibility(View.INVISIBLE);
+            } else {
+                tvInfo.setVisibility(View.VISIBLE);
+            }
+            openFragment(position);
+
+            DrawerLayout drawer = findViewById(R.id.drawer_layout);
+            drawer.closeDrawer(GravityCompat.START);
         });
 
         listView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
@@ -314,16 +284,13 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
             }
         });
 
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                listView.setSelection(position);
-                selectedWishlistId = listItems.get(position).getKey();
+        listView.setOnItemLongClickListener((parent, view, position, id) -> {
+            listView.setSelection(position);
+            selectedWishlistId = listItems.get(position).getKey();
 
-                showAlertDialog(position, R.layout.dialog_editwishlist);
+            showAlertDialog(position, R.layout.dialog_editwishlist);
 
-                return true;
-            }
+            return true;
         });
     }
 
@@ -338,31 +305,19 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         if (position != -1) {
             txtNewWishlist.setText(listItems.get(position).getName());
         }
-        builder.setPositiveButton(R.string.txtOk, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                String text = txtNewWishlist.getText().toString();
-                if (!text.isEmpty() || layoutId == R.layout.dialog_deletewishlist) {
-                    switch (layoutId) {
-                        case R.layout.dialog_editwishlist:
-                            listViewModel.updateList(selectedWishlistId, text);
-                            break;
-                        case R.layout.dialog_addwishlist:
-                            listViewModel.insertList(text, false);
-                            break;
-                        case R.layout.dialog_deletewishlist:
-                            listViewModel.deleteList(selectedWishlistId);
-                            break;
-                    }
+        builder.setPositiveButton(R.string.txtOk, (dialogInterface, i) -> {
+            String text = txtNewWishlist.getText().toString();
+            if (!text.isEmpty() || layoutId == R.layout.dialog_deletewishlist) {
+                if (layoutId == R.layout.dialog_editwishlist) {
+                    listViewModel.updateList(selectedWishlistId, text);
+                } else if (layoutId == R.layout.dialog_addwishlist) {
+                    listViewModel.insertList(text, false);
+                } else if (layoutId == R.layout.dialog_deletewishlist) {
+                    listViewModel.deleteList(selectedWishlistId);
                 }
-                dialogInterface.dismiss();
             }
-        }).setNegativeButton(R.string.txtCancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-            }
-        });
+            dialogInterface.dismiss();
+        }).setNegativeButton(R.string.txtCancel, (dialogInterface, i) -> dialogInterface.cancel());
         AlertDialog dialog = builder.create();
         dialog.show();
     }
@@ -416,7 +371,6 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         } else {
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
             finish();
-            return;
         }
     }
 
@@ -505,20 +459,17 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
                 .setDomainUriPrefix(AROMKO_PAGE_LINK)
                 .setAndroidParameters(new DynamicLink.AndroidParameters.Builder().build())
                 .buildShortDynamicLink()
-                .addOnCompleteListener(this, new OnCompleteListener<ShortDynamicLink>() {
-                    @Override
-                    public void onComplete(@NonNull Task<ShortDynamicLink> task) {
-                        if (task.isSuccessful()) {
-                            Uri shortLink = task.getResult().getShortLink();
-                            Intent sendIntent = new Intent();
-                            String msg = getString(R.string.txtInvitationMessage) + shortLink.toString();
-                            sendIntent.setAction(Intent.ACTION_SEND);
-                            sendIntent.putExtra(Intent.EXTRA_TEXT, msg);
-                            sendIntent.setType(TEXT_PLAIN);
-                            startActivityForResult(sendIntent, 0);
-                        } else {
-                            Toast.makeText(getApplicationContext(), R.string.txtInvitationLinkCouldNotBeCreated, Toast.LENGTH_LONG).show();
-                        }
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        Uri shortLink = task.getResult().getShortLink();
+                        Intent sendIntent = new Intent();
+                        String msg = getString(R.string.txtInvitationMessage) + shortLink.toString();
+                        sendIntent.setAction(Intent.ACTION_SEND);
+                        sendIntent.putExtra(Intent.EXTRA_TEXT, msg);
+                        sendIntent.setType(TEXT_PLAIN);
+                        startActivityForResult(sendIntent, 0);
+                    } else {
+                        Toast.makeText(getApplicationContext(), R.string.txtInvitationLinkCouldNotBeCreated, Toast.LENGTH_LONG).show();
                     }
                 });
     }
@@ -527,19 +478,16 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         final UserSettingRepository userSettingRepository = new UserSettingRepository();
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(fFirebaseAuth.getCurrentUser().getUid(), MODE_PRIVATE);
         if (sharedPreferences.getString("favoriteListId", "").isEmpty()) {
-            userSettingRepository.get(fFirebaseAuth.getCurrentUser().getUid(), new UserSettingRepository.FirebaseCallback() {
-                @Override
-                public void onCallback(UserSetting userSetting) {
-                    String favoriteListId = "";
-                    SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(fFirebaseAuth.getCurrentUser().getUid(), MODE_PRIVATE);
-                    if(userSetting.getFavoriteListId().isEmpty()) {
-                        favoriteListId = listViewModel.insertList("Favoriten", true);
-                        userSettingRepository.insert(fFirebaseAuth.getCurrentUser().getUid(), favoriteListId);
-                    } else {
-                        favoriteListId = userSetting.getFavoriteListId();
-                    }
-                    sharedPreferences.edit().putString("favoriteListId", favoriteListId).commit();
+            userSettingRepository.get(fFirebaseAuth.getCurrentUser().getUid(), userSetting -> {
+                String favoriteListId;
+                SharedPreferences sharedPreferences1 = getApplicationContext().getSharedPreferences(fFirebaseAuth.getCurrentUser().getUid(), MODE_PRIVATE);
+                if(userSetting.getFavoriteListId().isEmpty()) {
+                    favoriteListId = listViewModel.insertList("Favoriten", true);
+                    userSettingRepository.insert(fFirebaseAuth.getCurrentUser().getUid(), favoriteListId);
+                } else {
+                    favoriteListId = userSetting.getFavoriteListId();
                 }
+                sharedPreferences1.edit().putString("favoriteListId", favoriteListId).commit();
             });
         } else {
             favoriteListId = sharedPreferences.getString("favoriteListId", "");

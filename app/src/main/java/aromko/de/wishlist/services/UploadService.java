@@ -3,8 +3,8 @@ package aromko.de.wishlist.services;
 import android.app.Activity;
 import android.app.IntentService;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -46,25 +46,14 @@ public class UploadService extends IntentService {
         final StorageReference storageRef = storage.getReference(reference);
 
         UploadTask uploadTask = storageRef.putBytes(data);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                handleFirebaseStorageExceptions(exception);
-                publishResults(result);
+        uploadTask.addOnFailureListener(exception -> {
+            handleFirebaseStorageExceptions(exception);
+            publishResults(result);
+        }).addOnSuccessListener(taskSnapshot -> {
+            if (wishlistId != null && wishkey != null) {
+                storageRef.getDownloadUrl().addOnSuccessListener(uri -> wishViewModel.updatePhotoUrl(wishlistId, wishkey, uri));
             }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                if (wishlistId != null && wishkey != null) {
-                    storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            wishViewModel.updatePhotoUrl(wishlistId, wishkey, uri);
-                        }
-                    });
-                }
-                publishResults(Activity.RESULT_OK);
-            }
+            publishResults(Activity.RESULT_OK);
         });
     }
 

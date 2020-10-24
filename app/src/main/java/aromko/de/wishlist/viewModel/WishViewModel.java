@@ -43,29 +43,22 @@ public class WishViewModel extends ViewModel {
 
         wishes_ref = FirebaseDatabase.getInstance().getReference("/" + DB_PATH_WISHES + "/" + wishlistId);
         liveData = new FirebaseQueryLiveData(wishes_ref.orderByChild("timestamp"));
-        listsLiveData.addSource(liveData, new Observer<DataSnapshot>() {
-            @Override
-            public void onChanged(@Nullable final DataSnapshot dataSnapshot) {
-                if (dataSnapshot != null) {
-                    final List<Wish> lists = new ArrayList<>();
-                    new AppExecutors().mainThread().execute(new Runnable() {
-                        @RequiresApi(api = Build.VERSION_CODES.N)
-                        @Override
-                        public void run() {
-                            for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                Wish wish = snapshot.getValue(Wish.class);
-                                wish.setWishId(snapshot.getKey().toString());
-                                wish.setWishlistId(wishlistId);
-                                lists.add(wish);
-                                Collections.sort(lists);
-                            }
-                            listsLiveData.postValue(lists);
-                        }
-                    });
+        listsLiveData.addSource(liveData, dataSnapshot -> {
+            if (dataSnapshot != null) {
+                final List<Wish> lists = new ArrayList<>();
+                new AppExecutors().mainThread().execute(() -> {
+                    for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        Wish wish = snapshot.getValue(Wish.class);
+                        wish.setWishId(snapshot.getKey());
+                        wish.setWishlistId(wishlistId);
+                        lists.add(wish);
+                        Collections.sort(lists);
+                    }
+                    listsLiveData.postValue(lists);
+                });
 
-                } else {
-                    listsLiveData.setValue(null);
-                }
+            } else {
+                listsLiveData.setValue(null);
             }
         });
     }
@@ -117,7 +110,7 @@ public class WishViewModel extends ViewModel {
 
     public void setWishAsFavorite(String wishlistId, String wishId, Wish wish, String favoriteListId) {
         FirebaseDatabase.getInstance().getReference("/" + DB_PATH_WISHES + "/" + wishlistId + "/" + wishId).setValue(wish);
-        int counter = 0;
+        int counter;
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("/" + DB_PATH_WISHES + "/" + favoriteListId + "/" + wishId);
         if (wish.getMarkedAsFavorite() != null && wish.getMarkedAsFavorite().get(FirebaseAuth.getInstance().getCurrentUser().getUid()).equals(true)) {
             databaseReference.setValue(wish);
