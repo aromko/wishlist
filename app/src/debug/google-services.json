@@ -15,11 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "1096090142423-j7m2n1ofvtk1vd7rtvs8bhhgl93q4nmb.apps.googleusercontent.com",
+          "client_id": "1096090142423-qh1svu8jrjiqpnpusehqo49mj3kqpufc.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "aromko.de.wishlist.debug",
-            "certificate_hash": "ee43eac2978466f3466e50c92f3ecabba4f95098"
+            "certificate_hash": "c3e600d314832676bf0b08f6149b4e693337d03a"
           }
         },
         {
