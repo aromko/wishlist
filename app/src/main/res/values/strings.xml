@@ -90,4 +90,5 @@
     <string name="txtExampleChatIcon">Chaticon</string>
     <string name="txtExampleFavoriteIcon">Favoriteicon</string>
     <string name="txtMenue">⋮</string>
+    <string name="txtErrorPlaces">Hier ist ein fehler aufgetreten:</string>
 </resources>

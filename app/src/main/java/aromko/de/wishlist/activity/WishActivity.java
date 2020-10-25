@@ -19,10 +19,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.common.api.Status;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
+
+import java.util.Arrays;
+import java.util.List;
 
 import aromko.de.wishlist.R;
 import aromko.de.wishlist.model.Wish;
@@ -32,8 +37,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class WishActivity extends AppCompatActivity {
 
-    static final int PLACE_PICKER_REQUEST = 3;
-    PhotoHelper photoHelper;
+    private static int AUTOCOMPLETE_REQUEST_CODE = 3;
+    private static List<Place.Field> PLACE_FIELDS = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG);
     private ImageButton btnAddPhoto;
     private CircleImageView ivProductImage;
     private EditText etTitle;
@@ -49,6 +54,9 @@ public class WishActivity extends AppCompatActivity {
     private double latitude;
     private String placeId;
     private String sharedText;
+
+
+    PhotoHelper photoHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +94,11 @@ public class WishActivity extends AppCompatActivity {
         }
 
         photoHelper = new PhotoHelper(this);
+
+        if (!Places.isInitialized()) {
+            Places.initialize(getApplicationContext(), "AIzaSyD-KB0cNj0mGvmhNQ2FyFXIXDRKeHDV5Ck");
+        }
+
     }
 
     @Override
@@ -119,16 +132,17 @@ public class WishActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         photoHelper.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == RESULT_OK) {
-            if (requestCode == PLACE_PICKER_REQUEST) {
-                if (resultCode == RESULT_OK) {
-                    Place place = PlacePicker.getPlace(this, data);
-                    String displayText = place.getName() + "\n" + place.getAddress();
-                    tvLocation.setText(displayText);
-                    longitude = place.getLatLng().longitude;
-                    latitude = place.getLatLng().latitude;
-                    placeId = place.getId();
-                }
+        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                com.google.android.libraries.places.api.model.Place place = Autocomplete.getPlaceFromIntent(data);
+                tvLocation.setText(setLocationText(place));
+                placeId = place.getId();
+                longitude = place.getLatLng().longitude;
+                latitude = place.getLatLng().latitude;
+            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+                Status status = Autocomplete.getStatusFromIntent(data);
+                Toast.makeText(getApplicationContext(), R.string.txtErrorPlaces + " " + status, Toast.LENGTH_LONG).show();
+            } else if (resultCode == RESULT_CANCELED) {
             }
         }
     }
@@ -157,11 +171,14 @@ public class WishActivity extends AppCompatActivity {
         }
     }
 
+    public void placePicker(View view) {
+        //s. https://developers.google.com/places/android-sdk/client-migration#field-masks
+        Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, PLACE_FIELDS)
+                .build(this);
+        startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
+    }
 
-    public void placePicker(View view) throws GooglePlayServicesNotAvailableException, GooglePlayServicesRepairableException {
-
-        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-
-        startActivityForResult(builder.build(this), PLACE_PICKER_REQUEST);
+    private String setLocationText(com.google.android.libraries.places.api.model.Place place) {
+        return place.getName() + "\n" + place.getAddress();
     }
 }

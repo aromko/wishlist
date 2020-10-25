@@ -42,35 +42,6 @@
           ]
         }
       }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:1002207596437:android:db5031028de43fc33ff09c",
-        "android_client_info": {
-          "package_name": "aromko.de.wishlist.debug"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "1002207596437-e45j57olbmk7kpq3q3dpv89c92c7n8sj.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyD-KB0cNj0mGvmhNQ2FyFXIXDRKeHDV5Ck"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "1002207596437-e45j57olbmk7kpq3q3dpv89c92c7n8sj.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
     }
   ],
   "configuration_version": "1"

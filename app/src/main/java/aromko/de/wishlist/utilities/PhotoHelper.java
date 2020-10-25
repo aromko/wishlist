@@ -149,9 +149,9 @@ public class PhotoHelper {
 
     public void requestProfilePicture(String uId) {
         final String FIREBASE_STORAGE_BUCKET = "gs://" + mContext.getString(R.string.google_storage_bucket);
-        FirebaseStorage STORAGE = FirebaseStorage.getInstance(FIREBASE_STORAGE_BUCKET);
+        FirebaseStorage firebaseStorage = FirebaseStorage.getInstance(FIREBASE_STORAGE_BUCKET);
 
-        STORAGE.getReference(uId).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+        firebaseStorage.getReference(uId).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(final Uri uri) {
                 Picasso.get()
