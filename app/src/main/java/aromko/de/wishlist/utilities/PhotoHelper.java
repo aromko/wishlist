@@ -87,6 +87,7 @@ public class PhotoHelper {
             if (myImage != null) {
                 civImage.setImageBitmap(myImage);
                 civImage.setTag(mContext.getString(R.string.txtImageChanged));
+
             } else {
                 civImage.setImageBitmap(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.no_image_available));
                 Toast.makeText(mContext, R.string.txtNoImageSourceFound, Toast.LENGTH_LONG).show();
@@ -138,7 +139,7 @@ public class PhotoHelper {
         intent.putExtra(UploadService.WISHLISTID, wishlistId);
         intent.putExtra(UploadService.REFERENCE, reference);
         intent.putExtra(UploadService.DATA, data);
-        mContext.startService(intent);
+        UploadService.enqueueWork(mContext, intent);
 
         Toast.makeText(mContext.getApplicationContext(), R.string.txtSuccessfulSave, Toast.LENGTH_LONG).show();
         flProgressBarHolder.setVisibility(View.GONE);

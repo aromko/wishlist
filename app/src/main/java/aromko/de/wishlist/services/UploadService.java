@@ -1,15 +1,14 @@
 package aromko.de.wishlist.services;
 
 import android.app.Activity;
-import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
+import android.os.SystemClock;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.JobIntentService;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageException;
 import com.google.firebase.storage.StorageReference;
@@ -18,8 +17,9 @@ import com.google.firebase.storage.UploadTask;
 import aromko.de.wishlist.R;
 import aromko.de.wishlist.viewModel.WishViewModel;
 
-public class UploadService extends IntentService {
+public class UploadService extends JobIntentService {
 
+    static final int JOB_ID = 1000;
     public static final String WISHKEY = "wishkey";
     public static final String WISHLISTID = "wishlistId";
     public static final String REFERENCE = "reference";
@@ -30,12 +30,19 @@ public class UploadService extends IntentService {
     private int result = Activity.RESULT_CANCELED;
     private WishViewModel wishViewModel = new WishViewModel();
 
-    public UploadService() {
-        super("UploadService");
+    public static void enqueueWork(Context context, Intent work) {
+        enqueueWork(context, UploadService.class, JOB_ID, work);
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
+    public void onCreate() {
+        super.onCreate();
+        Log.i("SimpleJobIntentService", "JOb started");
+    }
+
+    @Override
+    protected void onHandleWork(@NonNull Intent intent) {
+        Log.i("SimpleJobIntentService", "Executing work: " + intent);
         final String wishkey = intent.getStringExtra(WISHKEY);
         final String wishlistId = intent.getStringExtra(WISHLISTID);
         final String reference = intent.getStringExtra(REFERENCE);
@@ -55,6 +62,7 @@ public class UploadService extends IntentService {
             }
             publishResults(Activity.RESULT_OK);
         });
+        Log.i("SimpleJobIntentService", "Completed service @ " + SystemClock.elapsedRealtime());
     }
 
     private void publishResults(int result) {
@@ -72,26 +80,25 @@ public class UploadService extends IntentService {
                 errorMessage += " " + R.string.txtUnknownError;
                 break;
             case StorageException.ERROR_BUCKET_NOT_FOUND:
-                break;
-            case StorageException.ERROR_CANCELED:
-                break;
-            case StorageException.ERROR_INVALID_CHECKSUM:
-                break;
-            case StorageException.ERROR_NOT_AUTHENTICATED:
-                break;
+            case StorageException.ERROR_RETRY_LIMIT_EXCEEDED:
+            case StorageException.ERROR_QUOTA_EXCEEDED:
+            case StorageException.ERROR_PROJECT_NOT_FOUND:
             case StorageException.ERROR_NOT_AUTHORIZED:
+            case StorageException.ERROR_NOT_AUTHENTICATED:
+            case StorageException.ERROR_INVALID_CHECKSUM:
+            case StorageException.ERROR_CANCELED:
                 break;
             case StorageException.ERROR_OBJECT_NOT_FOUND:
                 errorMessage += " " + R.string.txtObjectNotFound;
                 break;
-            case StorageException.ERROR_PROJECT_NOT_FOUND:
-                break;
-            case StorageException.ERROR_QUOTA_EXCEEDED:
-                break;
-            case StorageException.ERROR_RETRY_LIMIT_EXCEEDED:
-                break;
         }
         return errorMessage;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.i("SimpleJobIntentService", "JOb started");
     }
 
 }

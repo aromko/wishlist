@@ -182,6 +182,10 @@ public class EditWishActivity extends AppCompatActivity {
             bitmap = ((BitmapDrawable) ivProductImage.getDrawable()).getBitmap();
         }
 
+        if (ivProductImage.getTag().toString().equals(getString(R.string.txtImageChanged))) {
+            isImageSet = true;
+        }
+
         double price = 0.00;
         if (!etPrice.getText().toString().isEmpty()) {
             price = Double.valueOf(etPrice.getText().toString().replace(",", "."));
