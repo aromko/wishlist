@@ -57,6 +57,8 @@ public class EditWishActivity extends AppCompatActivity {
     private double latitude;
     private String placeId;
     private boolean isImageSet;
+    private ImageButton btnDeleteImage;
+    private String photoUrl;
 
     PhotoHelper photoHelper;
 
@@ -80,6 +82,7 @@ public class EditWishActivity extends AppCompatActivity {
         flProgressBarHolder = findViewById(R.id.flProgressBarHolder);
         spWishstrength = findViewById(R.id.spWishstrength);
         tvLocation = findViewById(R.id.tvLocation);
+        btnDeleteImage = findViewById(R.id.btnDeleteImage);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.wishstrength_selection_array, R.layout.spinner_item);
@@ -106,8 +109,14 @@ public class EditWishActivity extends AppCompatActivity {
             etDescription.setText(wish.getDescription());
             spWishstrength.setSelection((int) wish.getWishstrength());
             isImageSet = wish.isImageSet();
-            if (isImageSet && wish.getPhotoUrl() != null) {
-                photoHelper.requestProductPicture(wish.getPhotoUrl());
+            if (wish.getPhotoUrl() != null) {
+                photoUrl = wish.getPhotoUrl();
+            } else {
+                photoUrl = "";
+            }
+
+            if (isImageSet && !photoUrl.equals("")) {
+                photoHelper.requestProductPicture(photoUrl);
             }
 
             longitude = wish.getLongitude();
@@ -125,6 +134,8 @@ public class EditWishActivity extends AppCompatActivity {
                     }
                 });
             }
+
+            btnDeleteImage.setTag(photoUrl);
         });
 
     }
@@ -142,10 +153,13 @@ public class EditWishActivity extends AppCompatActivity {
         photoHelper.startPhotoSelectionDialog();
     }
 
-    public void addImageFromStorage(View v) {
+    public void addImageFromLocalStorage(View v) {
         photoHelper.requestImageFromStorage();
     }
 
+    public void removeImageFromView(View view) {
+        photoHelper.removeImageFromView();
+    }
 
     public void dispatchTakePictureIntent(View view) {
         photoHelper.requestImageFromCapture();
@@ -184,13 +198,17 @@ public class EditWishActivity extends AppCompatActivity {
 
         if (ivProductImage.getTag().toString().equals(getString(R.string.txtImageChanged))) {
             isImageSet = true;
+        } else if (ivProductImage.getTag().toString().equals(getString(R.string.txtImageDeleted))) {
+            photoHelper.deleteImageFromFirebaseStorage(btnDeleteImage.getTag().toString());
+            isImageSet = false;
+            photoUrl = "";
         }
 
         double price = 0.00;
         if (!etPrice.getText().toString().isEmpty()) {
             price = Double.valueOf(etPrice.getText().toString().replace(",", "."));
         }
-        Wish wish = new Wish(etTitle.getText().toString(), price, etUrl.getText().toString(), etDescription.getText().toString(), Long.valueOf(spWishstrength.getSelectedItemId()), isImageSet, System.currentTimeMillis() / 1000, longitude, latitude, price, placeId, "");
+        Wish wish = new Wish(etTitle.getText().toString(), price, etUrl.getText().toString(), etDescription.getText().toString(), Long.valueOf(spWishstrength.getSelectedItemId()), isImageSet, System.currentTimeMillis() / 1000, longitude, latitude, price, placeId, photoUrl);
         wishViewModel.updateWish(wishlistId, wishId, wish);
         if (!ivProductImage.getTag().toString().equals(getString(R.string.txtImageChanged))) {
             Toast.makeText(getApplicationContext(), R.string.txtSuccessfulChangedWish, Toast.LENGTH_LONG).show();

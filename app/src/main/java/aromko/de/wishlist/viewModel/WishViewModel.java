@@ -2,14 +2,10 @@ package aromko.de.wishlist.viewModel;
 
 import android.app.Application;
 import android.net.Uri;
-import android.os.Build;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -73,7 +69,6 @@ public class WishViewModel extends ViewModel {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Wish savedWish = dataSnapshot.getValue(Wish.class);
-                wish.setPhotoUrl(savedWish.getPhotoUrl());
                 wish.setMarkedAsFavorite(savedWish.getMarkedAsFavorite());
                 dataSnapshot.getRef().setValue(wish);
             }

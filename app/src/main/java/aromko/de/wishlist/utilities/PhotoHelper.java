@@ -21,6 +21,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageException;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
@@ -171,6 +172,30 @@ public class PhotoHelper {
         });
     }
 
+    public void removeImageFromView() {
+        mContext.findViewById(R.id.civImage).setTag(mContext.getString(R.string.txtImageDeleted));
+        mContext.findViewById(R.id.civImage).setBackgroundResource(R.drawable.no_image_available);
+        Picasso.get()
+                .load(String.valueOf(mContext.getDrawable(R.drawable.no_image_available)))
+                .transform(new CircleTransform())
+                .resize(200, 200)
+                .centerCrop()
+                .into((CircleImageView) mContext.findViewById(R.id.civImage));
+    }
+
+    public void deleteImageFromFirebaseStorage(String photoUrl){
+        StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(photoUrl);
+
+        storageReference.delete().addOnSuccessListener(aVoid -> {
+            Log.e("firebasestorage", "onSuccess: deleted file");
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.e("firebasestorage", "onFailure: did not delete file");
+            }
+        });
+    }
+
     private String handleFirebaseStorageExceptions(@NonNull Exception exception) {
         int errorCode = ((StorageException) exception).getErrorCode();
         String errorMessage = exception.getMessage();
@@ -205,7 +230,7 @@ public class PhotoHelper {
     public void requestProductPicture(String photoUrl) {
         Picasso.get()
                 .load(Uri.parse(photoUrl))
-                .networkPolicy(NetworkPolicy.OFFLINE)
+                .networkPolicy(NetworkPolicy.OFFLINE).stableKey(photoUrl)
                 .into((CircleImageView) mContext.findViewById(R.id.civImage));
 
     }

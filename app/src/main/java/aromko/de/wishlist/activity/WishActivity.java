@@ -114,7 +114,7 @@ public class WishActivity extends AppCompatActivity {
         photoHelper.startPhotoSelectionDialog();
     }
 
-    public void addImageFromStorage(View v) {
+    public void addImageFromLocalStorage(View v) {
         photoHelper.requestImageFromStorage();
     }
 
