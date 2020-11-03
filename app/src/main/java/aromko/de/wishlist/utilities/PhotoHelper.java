@@ -17,8 +17,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageException;
 import com.google.firebase.storage.StorageReference;
@@ -153,23 +151,15 @@ public class PhotoHelper {
         final String FIREBASE_STORAGE_BUCKET = "gs://" + mContext.getString(R.string.google_storage_bucket);
         FirebaseStorage firebaseStorage = FirebaseStorage.getInstance(FIREBASE_STORAGE_BUCKET);
 
-        firebaseStorage.getReference(uId).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(final Uri uri) {
+        firebaseStorage.getReference(uId).getDownloadUrl().addOnSuccessListener(uri ->
                 Picasso.get()
                         .load(String.valueOf(uri))
                         .transform(new CircleTransform())
                         .resize(200, 200)
                         .centerCrop()
                         .networkPolicy(NetworkPolicy.NO_CACHE)
-                        .into((CircleImageView) mContext.findViewById(R.id.civImage));
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Log.e("requestProfilePicture", handleFirebaseStorageExceptions(exception));
-            }
-        });
+                        .into((CircleImageView) mContext.findViewById(R.id.civImage)))
+                .addOnFailureListener(exception -> Log.e("requestProfilePicture", handleFirebaseStorageExceptions(exception)));
     }
 
     public void removeImageFromView() {
@@ -183,16 +173,11 @@ public class PhotoHelper {
                 .into((CircleImageView) mContext.findViewById(R.id.civImage));
     }
 
-    public void deleteImageFromFirebaseStorageFromUrl(String photoUrl){
+    public void deleteImageFromFirebaseStorageFromUrl(String photoUrl) {
         StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(photoUrl);
         storageReference.delete().addOnSuccessListener(aVoid -> {
             Log.e("firebasestorage", "onSuccess: deleted file");
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Log.e("firebasestorage", "onFailure: did not delete file");
-            }
-        });
+        }).addOnFailureListener(exception -> Log.e("firebasestorage", "onFailure: did not delete file"));
     }
 
     private String handleFirebaseStorageExceptions(@NonNull Exception exception) {
@@ -204,23 +189,16 @@ public class PhotoHelper {
                 errorMessage += " " + mContext.getString(R.string.txtUnknownError);
                 break;
             case StorageException.ERROR_BUCKET_NOT_FOUND:
-                break;
             case StorageException.ERROR_CANCELED:
-                break;
             case StorageException.ERROR_INVALID_CHECKSUM:
-                break;
             case StorageException.ERROR_NOT_AUTHENTICATED:
-                break;
             case StorageException.ERROR_NOT_AUTHORIZED:
+            case StorageException.ERROR_PROJECT_NOT_FOUND:
+            case StorageException.ERROR_QUOTA_EXCEEDED:
+            case StorageException.ERROR_RETRY_LIMIT_EXCEEDED:
                 break;
             case StorageException.ERROR_OBJECT_NOT_FOUND:
                 errorMessage += " " + mContext.getString(R.string.txtObjectNotFound);
-                break;
-            case StorageException.ERROR_PROJECT_NOT_FOUND:
-                break;
-            case StorageException.ERROR_QUOTA_EXCEEDED:
-                break;
-            case StorageException.ERROR_RETRY_LIMIT_EXCEEDED:
                 break;
         }
         return errorMessage;
