@@ -233,10 +233,12 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
         final EditText txtPartialPayment = viewPartialPayment.findViewById(R.id.txtPartialPayment);
 
         builder.setPositiveButton(R.string.txtOk, (dialogInterface, i) -> {
-            double partialPrice = Double.parseDouble(txtPartialPayment.getText().toString().replace(",", "."));
-            if (partialPrice != 0) {
-                if (null != mListener) {
-                    mListener.onPaymentInteraction(wishId, price, partialPrice, wishlistId);
+            if (!"".equals(txtPartialPayment.getText().toString())) {
+                double partialPrice = Double.parseDouble(txtPartialPayment.getText().toString().replace(",", "."));
+                if (partialPrice != 0) {
+                    if (null != mListener) {
+                        mListener.onPaymentInteraction(wishId, price, partialPrice, wishlistId);
+                    }
                 }
             }
             dialogInterface.dismiss();
