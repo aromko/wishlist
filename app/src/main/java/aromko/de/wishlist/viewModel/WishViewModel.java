@@ -2,6 +2,7 @@ package aromko.de.wishlist.viewModel;
 
 import android.app.Application;
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -14,6 +15,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -186,6 +189,17 @@ public class WishViewModel extends ViewModel {
 
             }
         });
+
+        deleteImageFromFirebaseStorageByWishId(wishId);
+    }
+
+    public void deleteImageFromFirebaseStorageByWishId(String wishId) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
+        StorageReference desertRef = storageRef.child(wishId);
+        desertRef.delete().addOnSuccessListener(aVoid -> {
+            Log.i(this.getClass().getName(), String.format("File with wishId %s deleted successfully", wishId));
+        }).addOnFailureListener(exception -> Log.e(this.getClass().getName(), String.format("File with wishId %s not deleted. More infos: %s", wishId, exception.getMessage())));
     }
 
     public void updatePhotoUrl(String wishlistId, String wishkey, final Uri uri) {

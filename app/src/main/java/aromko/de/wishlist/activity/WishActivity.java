@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -54,6 +55,8 @@ public class WishActivity extends AppCompatActivity {
     private double latitude;
     private String placeId;
     private String sharedText;
+    private ImageButton btnDeleteImage;
+    private String photoUrl;
 
 
     PhotoHelper photoHelper;
@@ -78,6 +81,7 @@ public class WishActivity extends AppCompatActivity {
         flProgressBarHolder = findViewById(R.id.flProgressBarHolder);
         spWishstrength = findViewById(R.id.spWishstrength);
         tvLocation = findViewById(R.id.tvLocation);
+        btnDeleteImage = findViewById(R.id.btnDeleteImage);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.wishstrength_selection_array, R.layout.spinner_item);
@@ -99,6 +103,7 @@ public class WishActivity extends AppCompatActivity {
             Places.initialize(getApplicationContext(), "AIzaSyD-KB0cNj0mGvmhNQ2FyFXIXDRKeHDV5Ck");
         }
 
+        photoUrl = "";
     }
 
     @Override
@@ -118,6 +123,9 @@ public class WishActivity extends AppCompatActivity {
         photoHelper.requestImageFromStorage();
     }
 
+    public void removeImageFromView(View view) {
+        photoHelper.removeImageFromView();
+    }
 
     public void dispatchTakePictureIntent(View view) {
         photoHelper.requestImageFromCapture();
@@ -149,17 +157,24 @@ public class WishActivity extends AppCompatActivity {
 
     public void saveWish(View view) {
         flProgressBarHolder.setVisibility(View.VISIBLE);
-        Bitmap bitmap = ((BitmapDrawable) ivProductImage.getDrawable()).getBitmap();
+        Bitmap bitmap = null;
+        if (ivProductImage.getDrawable() != null) {
+            bitmap = ((BitmapDrawable) ivProductImage.getDrawable()).getBitmap();
+        }
 
         boolean isImageSet = false;
         if (ivProductImage.getTag().toString().equals(getString(R.string.txtImageChanged))) {
             isImageSet = true;
+        } else if (ivProductImage.getTag().toString().equals(getString(R.string.txtImageDeleted)) && !"".equals(photoUrl)) {
+            isImageSet = false;
+            photoUrl = "";
         }
+
         double price = 0.00;
         if (!etPrice.getText().toString().isEmpty()) {
             price = Double.valueOf(etPrice.getText().toString().replace(",", "."));
         }
-        Wish wish = new Wish(etTitle.getText().toString(), price, etUrl.getText().toString(), etDescription.getText().toString(), Long.valueOf(spWishstrength.getSelectedItemId()), isImageSet, System.currentTimeMillis() / 1000, longitude, latitude, price, placeId, "");
+        Wish wish = new Wish(etTitle.getText().toString(), price, etUrl.getText().toString(), etDescription.getText().toString(), Long.valueOf(spWishstrength.getSelectedItemId()), isImageSet, System.currentTimeMillis() / 1000, longitude, latitude, price, placeId, photoUrl);
         String wishkey = wishViewModel.insertWish(wishlistId, wish);
         if (wishkey.isEmpty() || !ivProductImage.getTag().toString().equals(getString(R.string.txtImageChanged))) {
             Toast.makeText(getApplicationContext(), R.string.txtWishSuccessfulAdded, Toast.LENGTH_LONG).show();
@@ -178,7 +193,7 @@ public class WishActivity extends AppCompatActivity {
         startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
     }
 
-    private String setLocationText(com.google.android.libraries.places.api.model.Place place) {
+    private String setLocationText(Place place) {
         return place.getName() + "\n" + place.getAddress();
     }
 }

@@ -183,9 +183,8 @@ public class PhotoHelper {
                 .into((CircleImageView) mContext.findViewById(R.id.civImage));
     }
 
-    public void deleteImageFromFirebaseStorage(String photoUrl){
+    public void deleteImageFromFirebaseStorageFromUrl(String photoUrl){
         StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(photoUrl);
-
         storageReference.delete().addOnSuccessListener(aVoid -> {
             Log.e("firebasestorage", "onSuccess: deleted file");
         }).addOnFailureListener(new OnFailureListener() {

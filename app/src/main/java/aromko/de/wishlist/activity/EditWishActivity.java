@@ -199,7 +199,7 @@ public class EditWishActivity extends AppCompatActivity {
         if (ivProductImage.getTag().toString().equals(getString(R.string.txtImageChanged))) {
             isImageSet = true;
         } else if (ivProductImage.getTag().toString().equals(getString(R.string.txtImageDeleted)) && !"".equals(photoUrl)) {
-            photoHelper.deleteImageFromFirebaseStorage(btnDeleteImage.getTag().toString());
+            photoHelper.deleteImageFromFirebaseStorageFromUrl(btnDeleteImage.getTag().toString());
             isImageSet = false;
             photoUrl = "";
         }
