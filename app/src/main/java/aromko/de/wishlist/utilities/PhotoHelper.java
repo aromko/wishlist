@@ -56,9 +56,9 @@ public class PhotoHelper {
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         View v = mContext.getLayoutInflater().inflate(R.layout.dialog_photo_selection, null);
         etDownloadUrl = v.findViewById(R.id.etDownloadurl);
-        builder.setView(v);
         civImage = mContext.findViewById(R.id.civImage);
         flProgressBarHolder = mContext.findViewById(R.id.flProgressBarHolder);
+        builder.setView(v);
         dialog = builder.create();
         dialog.show();
     }

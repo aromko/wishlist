@@ -11,12 +11,9 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -74,18 +71,15 @@ public class ProfilActivity extends AppCompatActivity {
                 .build();
 
         user.updateProfile(profileUpdates)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            if (ivProfileImage.getTag().toString().equals("imageChanged")) {
-                                Bitmap bitmap = ((BitmapDrawable) ivProfileImage.getDrawable()).getBitmap();
-                                photoHelper.uploadImage(bitmap, "", user.getUid(), null, null);
-                            } else {
-                                Toast.makeText(getApplicationContext(), R.string.txtSuccessfulSave, Toast.LENGTH_LONG).show();
-                                flProgressBarHolder.setVisibility(View.GONE);
-                                finish();
-                            }
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        if (ivProfileImage.getTag().toString().equals("imageChanged")) {
+                            Bitmap bitmap = ((BitmapDrawable) ivProfileImage.getDrawable()).getBitmap();
+                            photoHelper.uploadImage(bitmap, "", user.getUid(), null, null);
+                        } else {
+                            Toast.makeText(getApplicationContext(), R.string.txtSuccessfulSave, Toast.LENGTH_LONG).show();
+                            flProgressBarHolder.setVisibility(View.GONE);
+                            finish();
                         }
                     }
                 });
@@ -95,7 +89,7 @@ public class ProfilActivity extends AppCompatActivity {
         photoHelper.startPhotoSelectionDialog();
     }
 
-    public void addImageFromStorage(View v) {
+    public void addImageFromLocalStorage(View v) {
         photoHelper.requestImageFromStorage();
     }
 
