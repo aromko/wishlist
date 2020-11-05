@@ -195,7 +195,8 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
 
         holder.ivUrl.setOnClickListener(v -> {
             if (null != mListener) {
-                if (holder.mItem.getUrl() != null && !holder.mItem.getUrl().isEmpty()) {
+                if (holder.mItem.getUrl() != null && !holder.mItem.getUrl().isEmpty() && holder.mItem.getUrl().startsWith("https://")) {
+                    Log.i("AAAAA", "AAAAAA");
                     mListener.onUrlInteraction(holder.mItem.getUrl());
                 } else {
                     Toast.makeText(context, R.string.txtNoUrlFound, Toast.LENGTH_LONG).show();

@@ -71,7 +71,7 @@
                     android:layout_height="wrap_content"
                     android:digits="0123456789,"
                     android:ems="10"
-                    android:inputType="textCapWords"
+                    android:inputType="number|textCapWords"
                     android:textSize="18sp"
                     tools:layout_editor_absoluteX="16dp"
                     tools:layout_editor_absoluteY="36dp" />
@@ -94,7 +94,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:inputType="textPersonName"
+                    android:inputType="textUri"
                     android:textSize="18sp"
                     tools:layout_editor_absoluteX="16dp"
                     tools:layout_editor_absoluteY="36dp" />
