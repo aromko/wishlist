@@ -1,12 +1,12 @@
 package aromko.de.wishlist.utilities;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -47,6 +47,7 @@ public class PhotoHelper {
     private CircleImageView civImage;
     private FrameLayout flProgressBarHolder;
     private Activity mContext;
+    private Uri imageUri;
 
     public PhotoHelper(Activity mContext) {
         this.mContext = mContext;
@@ -70,8 +71,14 @@ public class PhotoHelper {
 
     public void requestImageFromCapture() {
         cancelDialog();
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        mContext.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.TITLE, "New Picture");
+        values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera");
+        imageUri = mContext.getContentResolver().insert(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+        mContext.startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
     }
 
     public void downloadImageFromWeb() {
@@ -112,12 +119,21 @@ public class PhotoHelper {
                     }
                     break;
                 case REQUEST_IMAGE_CAPTURE:
-                    Bundle extras = data.getExtras();
-                    Bitmap imageBitmap = (Bitmap) extras.get("data");
-                    civImage.setImageBitmap(imageBitmap);
-                    civImage.setTag(mContext.getString(R.string.txtImageChanged));
+                    Bitmap imageBitmap = null;
+                    try {
+                        imageBitmap = MediaStore.Images.Media.getBitmap(
+                                mContext.getContentResolver(), imageUri);
+
+                        civImage.setImageBitmap(imageBitmap);
+                        civImage.setTag(mContext.getString(R.string.txtImageChanged));
+                    } catch (IOException e) {
+                        Log.e("REQUEST_IMAGE_CAPTURE", "setBitmap()", e);
+                    }
                     break;
             }
+        } else {
+            int rowsDeleted = mContext.getContentResolver().delete(imageUri, null, null);
+            Log.d("PHOTOHELPER", rowsDeleted + " rows deleted");
         }
     }
 
