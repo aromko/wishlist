@@ -71,9 +71,7 @@ public class PhotoHelper {
     public void requestImageFromCapture() {
         cancelDialog();
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(mContext.getPackageManager()) != null) {
-            mContext.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-        }
+        mContext.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
     }
 
     public void downloadImageFromWeb() {

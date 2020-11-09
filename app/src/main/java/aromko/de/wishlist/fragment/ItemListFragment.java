@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -118,12 +117,10 @@ public class ItemListFragment extends Fragment {
 
                 @Override
                 public void onMapInteraction(double longitude, double latitude) {
-                    Uri gmmIntentUri = Uri.parse(GOOGLE_NAVIGATION_Q + String.valueOf(latitude) + "," + String.valueOf(longitude));
+                    Uri gmmIntentUri = Uri.parse(GOOGLE_NAVIGATION_Q + latitude + "," + longitude);
                     Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                     mapIntent.setPackage(COM_GOOGLE_ANDROID_APPS_MAPS);
-                    if (mapIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                        startActivity(mapIntent);
-                    }
+                    startActivity(mapIntent);
                 }
 
                 @Override

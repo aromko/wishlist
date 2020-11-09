@@ -67,13 +67,29 @@ public class WishViewModel extends ViewModel {
         return listsLiveData;
     }
 
-    public void updateWish(String wishlistId, String wishId, final Wish wish) {
+    public void updateWish(String wishlistId, String wishId, Wish wish, String favoriteListId) {
         FirebaseDatabase.getInstance().getReference("/" + DB_PATH_WISHES + "/" + wishlistId + "/" + wishId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Wish savedWish = dataSnapshot.getValue(Wish.class);
                 wish.setMarkedAsFavorite(savedWish.getMarkedAsFavorite());
                 dataSnapshot.getRef().setValue(wish);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        FirebaseDatabase.getInstance().getReference("/" + DB_PATH_WISHES + "/" + favoriteListId + "/" + wishId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Wish savedWish = dataSnapshot.getValue(Wish.class);
+                if (savedWish != null) {
+                    wish.setMarkedAsFavorite(savedWish.getMarkedAsFavorite());
+                    dataSnapshot.getRef().setValue(wish);
+                }
             }
 
             @Override

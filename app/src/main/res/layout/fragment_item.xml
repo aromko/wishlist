@@ -40,6 +40,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
+            android:paddingLeft="10dp"
             android:text="@string/txtMenue"
             android:textAppearance="?android:textAppearanceLarge"
             app:layout_constraintBottom_toBottomOf="parent"

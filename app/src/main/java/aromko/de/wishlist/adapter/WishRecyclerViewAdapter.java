@@ -1,12 +1,10 @@
 package aromko.de.wishlist.adapter;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -214,8 +212,7 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
 
         holder.ivShowInfos.setOnClickListener(v -> {
             if (null != mListener) {
-                Log.i("XXXX", String.valueOf(holder.tvDescription.getVisibility()));
-                if (holder.tvDescription.getVisibility() == View.VISIBLE) {
+                if (holder.tvDescription.getVisibility() == View.GONE) {
                     holder.tvDescription.setVisibility(View.VISIBLE);
                 } else {
                     holder.tvDescription.setVisibility(View.GONE);

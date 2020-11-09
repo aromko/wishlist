@@ -1,6 +1,7 @@
 package aromko.de.wishlist.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Arrays;
 import java.util.List;
@@ -59,6 +61,7 @@ public class EditWishActivity extends AppCompatActivity {
     private boolean isImageSet;
     private ImageButton btnDeleteImage;
     private String photoUrl;
+    private String favoriteListId = "";
 
     PhotoHelper photoHelper;
 
@@ -138,6 +141,9 @@ public class EditWishActivity extends AppCompatActivity {
             btnDeleteImage.setTag(photoUrl);
         });
 
+        FirebaseAuth fFirebaseAuth = FirebaseAuth.getInstance();
+        SharedPreferences sharedPreferences = this.getSharedPreferences(fFirebaseAuth.getCurrentUser().getUid(), MODE_PRIVATE);
+        favoriteListId = sharedPreferences.getString("favoriteListId", "");
     }
 
     @Override
@@ -209,7 +215,7 @@ public class EditWishActivity extends AppCompatActivity {
             price = Double.valueOf(etPrice.getText().toString().replace(",", "."));
         }
         Wish wish = new Wish(etTitle.getText().toString(), price, etUrl.getText().toString(), etDescription.getText().toString(), Long.valueOf(spWishstrength.getSelectedItemId()), isImageSet, System.currentTimeMillis() / 1000, longitude, latitude, price, placeId, photoUrl);
-        wishViewModel.updateWish(wishlistId, wishId, wish);
+        wishViewModel.updateWish(wishlistId, wishId, wish, favoriteListId);
         if (!ivProductImage.getTag().toString().equals(getString(R.string.txtImageChanged))) {
             Toast.makeText(getApplicationContext(), R.string.txtSuccessfulChangedWish, Toast.LENGTH_LONG).show();
             flProgressBarHolder.setVisibility(View.GONE);
