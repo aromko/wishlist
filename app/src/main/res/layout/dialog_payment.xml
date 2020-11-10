@@ -43,7 +43,7 @@
             android:layout_marginRight="4dp"
             android:layout_marginBottom="4dp"
             android:digits="0123456789,"
-            android:inputType="textCapWords" />
+            android:inputType="number|numberDecimal" />
 
     </com.google.android.material.textfield.TextInputLayout>
 

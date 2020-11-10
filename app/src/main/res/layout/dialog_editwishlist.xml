@@ -42,7 +42,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginRight="4dp"
             android:layout_marginBottom="4dp"
-            android:inputType="textEmailAddress" />
+            android:inputType="text|textCapSentences" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
