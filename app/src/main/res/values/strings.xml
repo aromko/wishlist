@@ -92,4 +92,7 @@
     <string name="txtExampleFavoriteIcon">Favoriteicon</string>
     <string name="txtMenue">⋮</string>
     <string name="txtErrorPlaces">Hier ist ein fehler aufgetreten:</string>
+    <string name="invalid_title">Bitte geben sie einen Titel ein.</string>
+    <string name="invalid_url">Bitte geben Sie ine gültige URL ein.</string>
+    <string name="invalid_price">Bitte geben Sie einen gültigen Preis mit max. 2  Nachkommastellen ein.</string>
 </resources>

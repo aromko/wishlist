@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.util.Patterns;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -18,6 +19,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.basgeekball.awesomevalidation.AwesomeValidation;
+import com.basgeekball.awesomevalidation.utility.RegexTemplate;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.libraries.places.api.Places;
@@ -37,6 +40,8 @@ import aromko.de.wishlist.model.Wish;
 import aromko.de.wishlist.utilities.PhotoHelper;
 import aromko.de.wishlist.viewModel.WishViewModel;
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.basgeekball.awesomevalidation.ValidationStyle.BASIC;
 
 
 public class EditWishActivity extends AppCompatActivity {
@@ -64,6 +69,7 @@ public class EditWishActivity extends AppCompatActivity {
     private String favoriteListId = "";
 
     PhotoHelper photoHelper;
+    AwesomeValidation awesomeValidation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,6 +150,11 @@ public class EditWishActivity extends AppCompatActivity {
         FirebaseAuth fFirebaseAuth = FirebaseAuth.getInstance();
         SharedPreferences sharedPreferences = this.getSharedPreferences(fFirebaseAuth.getCurrentUser().getUid(), MODE_PRIVATE);
         favoriteListId = sharedPreferences.getString("favoriteListId", "");
+
+        awesomeValidation = new AwesomeValidation(BASIC);
+        awesomeValidation.addValidation(this, R.id.etTitle, RegexTemplate.NOT_EMPTY, R.string.invalid_title);
+        awesomeValidation.addValidation(this, R.id.etPrice, "(^\\s*)|([0-9]+([,][0-9]{1,2})?)", R.string.invalid_price);
+        awesomeValidation.addValidation(this, R.id.etUrl,  "(^\\s*)|(^(http|https)://" + Patterns.WEB_URL + ")", R.string.invalid_url);
     }
 
     @Override
@@ -196,34 +207,36 @@ public class EditWishActivity extends AppCompatActivity {
     }
 
     public void saveWish(View view) {
-        flProgressBarHolder.setVisibility(View.VISIBLE);
-        Bitmap bitmap = null;
-        if (ivProductImage.getDrawable() != null) {
-            bitmap = ((BitmapDrawable) ivProductImage.getDrawable()).getBitmap();
-        }
+        if (awesomeValidation.validate()) {
+            flProgressBarHolder.setVisibility(View.VISIBLE);
+            Bitmap bitmap = null;
+            if (ivProductImage.getDrawable() != null) {
+                bitmap = ((BitmapDrawable) ivProductImage.getDrawable()).getBitmap();
+            }
 
-        if (ivProductImage.getTag().toString().equals(getString(R.string.txtImageChanged))) {
-            isImageSet = true;
-        } else if (ivProductImage.getTag().toString().equals(getString(R.string.txtImageDeleted)) && !"".equals(photoUrl)) {
-            photoHelper.deleteImageFromFirebaseStorageFromUrl(btnDeleteImage.getTag().toString());
-            isImageSet = false;
-            photoUrl = "";
-        }
+            if (ivProductImage.getTag().toString().equals(getString(R.string.txtImageChanged))) {
+                isImageSet = true;
+            } else if (ivProductImage.getTag().toString().equals(getString(R.string.txtImageDeleted)) && !"".equals(photoUrl)) {
+                photoHelper.deleteImageFromFirebaseStorageFromUrl(btnDeleteImage.getTag().toString());
+                isImageSet = false;
+                photoUrl = "";
+            }
 
-        double price = 0.00;
-        if (!etPrice.getText().toString().isEmpty()) {
-            price = Double.valueOf(etPrice.getText().toString().replace(",", "."));
-        }
-        Wish wish = new Wish(etTitle.getText().toString(), price, etUrl.getText().toString(), etDescription.getText().toString(), Long.valueOf(spWishstrength.getSelectedItemId()), isImageSet, System.currentTimeMillis() / 1000, longitude, latitude, price, placeId, photoUrl);
-        wishViewModel.updateWish(wishlistId, wishId, wish, favoriteListId);
-        if (!ivProductImage.getTag().toString().equals(getString(R.string.txtImageChanged))) {
-            Toast.makeText(getApplicationContext(), R.string.txtSuccessfulChangedWish, Toast.LENGTH_LONG).show();
-            flProgressBarHolder.setVisibility(View.GONE);
-            finish();
-        } else {
-            String userId = null;
-            if (bitmap != null) {
-                photoHelper.uploadImage(bitmap, wishId, userId, wishViewModel, wishlistId);
+            double price = 0.00;
+            if (!etPrice.getText().toString().isEmpty()) {
+                price = Double.valueOf(etPrice.getText().toString().replace(",", "."));
+            }
+            Wish wish = new Wish(etTitle.getText().toString(), price, etUrl.getText().toString(), etDescription.getText().toString(), Long.valueOf(spWishstrength.getSelectedItemId()), isImageSet, System.currentTimeMillis() / 1000, longitude, latitude, price, placeId, photoUrl);
+            wishViewModel.updateWish(wishlistId, wishId, wish, favoriteListId);
+            if (!ivProductImage.getTag().toString().equals(getString(R.string.txtImageChanged))) {
+                Toast.makeText(getApplicationContext(), R.string.txtSuccessfulChangedWish, Toast.LENGTH_LONG).show();
+                flProgressBarHolder.setVisibility(View.GONE);
+                finish();
+            } else {
+                String userId = null;
+                if (bitmap != null) {
+                    photoHelper.uploadImage(bitmap, wishId, userId, wishViewModel, wishlistId);
+                }
             }
         }
     }
