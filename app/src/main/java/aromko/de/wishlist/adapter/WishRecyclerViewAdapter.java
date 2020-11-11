@@ -3,7 +3,6 @@ package aromko.de.wishlist.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,10 +74,10 @@ public class WishRecyclerViewAdapter extends RecyclerView.Adapter<WishRecyclerVi
 
         holder.item_name.setText(holder.mItem.getTitle());
         NumberFormat format = NumberFormat.getCurrencyInstance();
-        if (holder.mItem.getPrice() == holder.mItem.getSalvagePrice()) {
+        if (holder.mItem.getSalvagePrice() == 0) {
             holder.item_price.setText(format.format(holder.mItem.getPrice()));
         } else {
-            String priceText = format.format(holder.mItem.getPrice()) + " (" + format.format(holder.mItem.getSalvagePrice()) + ")";
+            String priceText =  format.format(holder.mItem.getSalvagePrice()) + " / " + format.format(holder.mItem.getPrice());
             holder.item_price.setText(priceText);
         }
 

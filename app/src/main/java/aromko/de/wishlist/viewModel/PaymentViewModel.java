@@ -27,30 +27,31 @@ public class PaymentViewModel {
     }
 
     public void buyItem(final String wishId, final double price, final double partialPrice, final String wishlistId) {
+
         FirebaseDatabase.getInstance().getReference(DB_PATH_PAYMENTS + wishId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Map<String, Double> partialPayments = new HashMap<>();
-                double salvagePrice = 0.00;
+                double salvagePrice;
+                double salvagePriceUser = 0.0;
                 if (dataSnapshot.exists()) {
                     Payment currentPayment = dataSnapshot.getValue(Payment.class);
                     if (currentPayment.getPartialPayments() != null) {
                         partialPayments.putAll(currentPayment.getPartialPayments());
                     }
                     if (partialPayments.containsKey(fFirebaseUser.getUid())) {
-                        salvagePrice = currentPayment.getSalvagePrice() + partialPayments.get(fFirebaseUser.getUid()) - partialPrice;
-                    } else {
-                        salvagePrice = currentPayment.getSalvagePrice() - partialPrice;
+                        salvagePriceUser = partialPayments.get(fFirebaseUser.getUid()) + partialPrice;
                     }
+                    salvagePrice = currentPayment.getSalvagePrice() + partialPrice;
                     if (salvagePrice <= 0.00) {
                         salvagePrice = 0.00;
                     }
-                    partialPayments.put(fFirebaseUser.getUid(), partialPrice);
+                    partialPayments.put(fFirebaseUser.getUid(), salvagePriceUser);
                     currentPayment.setSalvagePrice(salvagePrice);
                     currentPayment.setPartialPayments(partialPayments);
                     dataSnapshot.getRef().setValue(currentPayment);
                 } else {
-                    salvagePrice = price - partialPrice;
+                    salvagePrice = partialPrice;
                     if (salvagePrice <= 0.00) {
                         salvagePrice = 0.00;
                     }

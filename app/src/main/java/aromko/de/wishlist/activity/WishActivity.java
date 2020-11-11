@@ -185,7 +185,7 @@ public class WishActivity extends AppCompatActivity {
             if (!etPrice.getText().toString().isEmpty()) {
                 price = Double.valueOf(etPrice.getText().toString().replace(",", "."));
             }
-            Wish wish = new Wish(etTitle.getText().toString(), price, etUrl.getText().toString(), etDescription.getText().toString(), Long.valueOf(spWishstrength.getSelectedItemId()), isImageSet, System.currentTimeMillis() / 1000, longitude, latitude, price, placeId, photoUrl);
+            Wish wish = new Wish(etTitle.getText().toString(), price, etUrl.getText().toString(), etDescription.getText().toString(), Long.valueOf(spWishstrength.getSelectedItemId()), isImageSet, System.currentTimeMillis() / 1000, longitude, latitude, 0, placeId, photoUrl);
             String wishkey = wishViewModel.insertWish(wishlistId, wish);
             if (wishkey.isEmpty() || !ivProductImage.getTag().toString().equals(getString(R.string.txtImageChanged))) {
                 Toast.makeText(getApplicationContext(), R.string.txtWishSuccessfulAdded, Toast.LENGTH_LONG).show();

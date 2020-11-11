@@ -67,6 +67,7 @@ public class EditWishActivity extends AppCompatActivity {
     private ImageButton btnDeleteImage;
     private String photoUrl;
     private String favoriteListId = "";
+    private double salvagePrice;
 
     PhotoHelper photoHelper;
     AwesomeValidation awesomeValidation;
@@ -145,6 +146,7 @@ public class EditWishActivity extends AppCompatActivity {
             }
 
             btnDeleteImage.setTag(photoUrl);
+            salvagePrice = wish.getSalvagePrice();
         });
 
         FirebaseAuth fFirebaseAuth = FirebaseAuth.getInstance();
@@ -226,7 +228,7 @@ public class EditWishActivity extends AppCompatActivity {
             if (!etPrice.getText().toString().isEmpty()) {
                 price = Double.valueOf(etPrice.getText().toString().replace(",", "."));
             }
-            Wish wish = new Wish(etTitle.getText().toString(), price, etUrl.getText().toString(), etDescription.getText().toString(), Long.valueOf(spWishstrength.getSelectedItemId()), isImageSet, System.currentTimeMillis() / 1000, longitude, latitude, price, placeId, photoUrl);
+            Wish wish = new Wish(etTitle.getText().toString(), price, etUrl.getText().toString(), etDescription.getText().toString(), Long.valueOf(spWishstrength.getSelectedItemId()), isImageSet, System.currentTimeMillis() / 1000, longitude, latitude, salvagePrice, placeId, photoUrl);
             wishViewModel.updateWish(wishlistId, wishId, wish, favoriteListId);
             if (!ivProductImage.getTag().toString().equals(getString(R.string.txtImageChanged))) {
                 Toast.makeText(getApplicationContext(), R.string.txtSuccessfulChangedWish, Toast.LENGTH_LONG).show();
