@@ -36,6 +36,7 @@ import aromko.de.wishlist.services.UploadService;
 import aromko.de.wishlist.viewModel.WishViewModel;
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
 public class PhotoHelper {
@@ -132,8 +133,10 @@ public class PhotoHelper {
                     break;
             }
         } else {
-            int rowsDeleted = mContext.getContentResolver().delete(imageUri, null, null);
-            Log.d("PHOTOHELPER", rowsDeleted + " rows deleted");
+            if (resultCode == RESULT_CANCELED && requestCode == REQUEST_IMAGE_CAPTURE) {
+                int rowsDeleted = mContext.getContentResolver().delete(imageUri, null, null);
+                Log.d("PHOTOHELPER", rowsDeleted + " rows deleted");
+            }
         }
     }
 
