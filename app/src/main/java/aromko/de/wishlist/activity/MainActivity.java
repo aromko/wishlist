@@ -477,6 +477,9 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
                     favoriteListId = userSetting.getFavoriteListId();
                 }
                 sharedPreferences1.edit().putString("favoriteListId", favoriteListId).commit();
+                Intent refresh = new Intent(this, MainActivity.class);
+                startActivity(refresh);
+                this.finish();
             });
         } else {
             favoriteListId = sharedPreferences.getString("favoriteListId", "");
