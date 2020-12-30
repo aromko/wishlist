@@ -5,9 +5,4 @@
         android:icon="@drawable/ic_info"
         android:title="@string/txtGeneral" />
 
-    <header
-        android:fragment="aromko.de.wishlist.activity.SettingsActivity$NotificationPreferenceFragment"
-        android:icon="@drawable/ic_notifications"
-        android:title="@string/txtNotifications" />
-
 </preference-headers>

@@ -43,6 +43,7 @@ import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import aromko.de.wishlist.R;
 import aromko.de.wishlist.adapter.WishlistAdapter;
@@ -223,7 +224,6 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
                 signOut();
                 finish();
             }
-            return;
         }
     }
 
@@ -240,7 +240,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
                 .addOnSuccessListener(this, data -> {
                     if (data != null) {
                         Uri deepLink = data.getLink();
-                        listViewModel.addUserToWishlist(deepLink.getQueryParameter("param"));
+                        listViewModel.addUserToWishlist(deepLink != null ? deepLink.getQueryParameter("param") : null);
                     }
                 })
                 .addOnFailureListener(this, e -> Toast.makeText(getApplicationContext(), R.string.txtNoInvitationFound, Toast.LENGTH_LONG).show());
@@ -364,7 +364,10 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     }
 
     public void loadProfilePicture(FirebaseAuth mAuth) {
-        photoHelper.requestProfilePicture(mAuth.getCurrentUser().getUid());
+        String uid = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
+        if (!"".equals(uid)) {
+            photoHelper.requestProfilePicture(uid);
+        }
     }
 
     @Override
@@ -380,7 +383,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-        if (hideMenuItem == HIDE_INVITE_PEOPLE) {
+        if (HIDE_INVITE_PEOPLE.equals(hideMenuItem)) {
             menu.findItem(R.id.action_invitePeople).setVisible(false);
         }
         return true;
@@ -452,14 +455,15 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
                     if (task.isSuccessful()) {
                         Uri shortLink = task.getResult().getShortLink();
                         Intent sendIntent = new Intent();
-                        String msg = getString(R.string.txtInvitationMessage) + shortLink.toString();
-                        sendIntent.setAction(Intent.ACTION_SEND);
-                        sendIntent.putExtra(Intent.EXTRA_TEXT, msg);
-                        sendIntent.setType(TEXT_PLAIN);
-                        startActivityForResult(sendIntent, 0);
-                    } else {
-                        Toast.makeText(getApplicationContext(), R.string.txtInvitationLinkCouldNotBeCreated, Toast.LENGTH_LONG).show();
+                        if (shortLink != null) {
+                            String msg = getString(R.string.txtInvitationMessage) + " " + shortLink.toString();
+                            sendIntent.setAction(Intent.ACTION_SEND);
+                            sendIntent.putExtra(Intent.EXTRA_TEXT, msg);
+                            sendIntent.setType(TEXT_PLAIN);
+                            startActivityForResult(sendIntent, 0);
+                        }
                     }
+                    Toast.makeText(getApplicationContext(), R.string.txtInvitationLinkCouldNotBeCreated, Toast.LENGTH_LONG).show();
                 });
     }
 
