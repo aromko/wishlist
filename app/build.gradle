@@ -14,8 +14,8 @@ android {
         applicationId "aromko.de.wishlist"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 3
-        versionName "1.0"
+        versionCode 4
+        versionName "@string/app_version"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

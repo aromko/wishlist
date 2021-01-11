@@ -75,7 +75,7 @@ public class ProfilActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         if (ivProfileImage.getTag().toString().equals("imageChanged")) {
                             Bitmap bitmap = ((BitmapDrawable) ivProfileImage.getDrawable()).getBitmap();
-                            photoHelper.uploadImage(bitmap, "", user.getUid(), null, null);
+                            photoHelper.uploadImage(bitmap, "", user.getUid(), null, null, null);
                         } else {
                             Toast.makeText(getApplicationContext(), R.string.txtSuccessfulSave, Toast.LENGTH_LONG).show();
                             flProgressBarHolder.setVisibility(View.GONE);

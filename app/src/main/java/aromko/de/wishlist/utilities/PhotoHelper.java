@@ -140,7 +140,7 @@ public class PhotoHelper {
         }
     }
 
-    public void uploadImage(Bitmap bitmap, final String wishkey, String userId, final WishViewModel wishViewModel, final String wishlistId) {
+    public void uploadImage(Bitmap bitmap, final String wishkey, String userId, final WishViewModel wishViewModel, final String wishlistId, String favoriteListId) {
         String reference = wishkey;
         if (userId != null) {
             reference = userId;
@@ -153,6 +153,7 @@ public class PhotoHelper {
         Intent intent = new Intent(mContext, UploadService.class);
         intent.putExtra(UploadService.WISHKEY, wishkey);
         intent.putExtra(UploadService.WISHLISTID, wishlistId);
+        intent.putExtra(UploadService.FAVORITELISTID, favoriteListId);
         intent.putExtra(UploadService.REFERENCE, reference);
         intent.putExtra(UploadService.DATA, data);
         UploadService.enqueueWork(mContext, intent);

@@ -22,6 +22,7 @@ public class UploadService extends JobIntentService {
     static final int JOB_ID = 1000;
     public static final String WISHKEY = "wishkey";
     public static final String WISHLISTID = "wishlistId";
+    public static final String FAVORITELISTID = "favoriteListId";
     public static final String REFERENCE = "reference";
     public static final String DATA = "data";
     public static final String RESULT = "result";
@@ -45,6 +46,7 @@ public class UploadService extends JobIntentService {
         Log.i("SimpleJobIntentService", "Executing work: " + intent);
         final String wishkey = intent.getStringExtra(WISHKEY);
         final String wishlistId = intent.getStringExtra(WISHLISTID);
+        final String favoritListId = intent.getStringExtra(FAVORITELISTID);
         final String reference = intent.getStringExtra(REFERENCE);
         byte[] data = intent.getByteArrayExtra(DATA);
         final String FIREBASE_STORAGE_BUCKET = "gs://" + getApplicationContext().getString(R.string.google_storage_bucket);
@@ -58,7 +60,13 @@ public class UploadService extends JobIntentService {
             publishResults(result);
         }).addOnSuccessListener(taskSnapshot -> {
             if (wishlistId != null && wishkey != null) {
-                storageRef.getDownloadUrl().addOnSuccessListener(uri -> wishViewModel.updatePhotoUrl(wishlistId, wishkey, uri));
+                storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                    wishViewModel.updatePhotoUrl(wishlistId, wishkey, uri);
+                    if (favoritListId != null) {
+                        wishViewModel.updatePhotoUrl(favoritListId, wishkey, uri);
+                    }
+                });
+
             }
             publishResults(Activity.RESULT_OK);
         });

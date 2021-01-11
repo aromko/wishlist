@@ -237,7 +237,7 @@ public class EditWishActivity extends AppCompatActivity {
             } else {
                 String userId = null;
                 if (bitmap != null) {
-                    photoHelper.uploadImage(bitmap, wishId, userId, wishViewModel, wishlistId);
+                    photoHelper.uploadImage(bitmap, wishId, userId, wishViewModel, wishlistId, favoriteListId);
                 }
             }
         }

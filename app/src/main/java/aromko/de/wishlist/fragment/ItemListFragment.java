@@ -1,5 +1,6 @@
 package aromko.de.wishlist.fragment;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -117,10 +119,13 @@ public class ItemListFragment extends Fragment {
 
                 @Override
                 public void onMapInteraction(double longitude, double latitude) {
-                    Uri gmmIntentUri = Uri.parse(GOOGLE_NAVIGATION_Q + latitude + "," + longitude);
-                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                    mapIntent.setPackage(COM_GOOGLE_ANDROID_APPS_MAPS);
-                    startActivity(mapIntent);
+                    try {
+                        Uri gmmIntentUri = Uri.parse(GOOGLE_NAVIGATION_Q + latitude + "," + longitude);
+                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                        startActivity(mapIntent);
+                    } catch (ActivityNotFoundException e) {
+                        Toast.makeText(context, "Leider befindet sich keine Navigationsapp auf Ihrem Handy oder ist deaktiviert.", Toast.LENGTH_LONG).show();
+                    }
                 }
 
                 @Override

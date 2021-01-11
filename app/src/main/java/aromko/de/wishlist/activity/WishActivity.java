@@ -193,7 +193,7 @@ public class WishActivity extends AppCompatActivity {
                 finish();
             } else {
                 String userId = null;
-                photoHelper.uploadImage(bitmap, wishkey, userId, wishViewModel, wishlistId);
+                photoHelper.uploadImage(bitmap, wishkey, userId, wishViewModel, wishlistId, null);
             }
         }
     }
