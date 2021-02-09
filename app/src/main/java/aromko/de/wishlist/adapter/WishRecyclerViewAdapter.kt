@@ -1,6 +1,9 @@
 package aromko.de.wishlist.adapter
 
 import android.content.*
+import android.graphics.Color
+import android.graphics.ColorFilter
+import android.graphics.LightingColorFilter
 import android.net.Uri
 import android.view.*
 import android.widget.*
@@ -16,6 +19,7 @@ import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
 import java.text.NumberFormat
 
+
 class WishRecyclerViewAdapter(private val mValues: List<Wish?>, private val mListener: OnListFragmentInteractionListener?, private val mFavoriteListId: String?) : RecyclerView.Adapter<WishRecyclerViewAdapter.ViewHolder>() {
     private var context: Context? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -27,6 +31,7 @@ class WishRecyclerViewAdapter(private val mValues: List<Wish?>, private val mLis
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.mItem = mValues[position]
+        checkValuesAndSetIconColor(holder)
         if (holder.mItem?.wishlistId == mFavoriteListId) {
             holder.favorite.visibility = View.INVISIBLE
             holder.tvItemOptions.visibility = View.INVISIBLE
@@ -185,6 +190,16 @@ class WishRecyclerViewAdapter(private val mValues: List<Wish?>, private val mLis
 
     override fun getItemCount(): Int {
         return mValues.size
+    }
+
+    private fun checkValuesAndSetIconColor(holder: ViewHolder) {
+        val filter: ColorFilter = LightingColorFilter(Color.GRAY, Color.GRAY)
+        if ("".equals(holder.mItem?.url)) {
+            holder.ivUrl.colorFilter = filter
+        }
+        if (holder.mItem?.longitude == 0.0 && holder.mItem?.latitude == 0.0) {
+            holder.ivMap.colorFilter = filter
+        }
     }
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {

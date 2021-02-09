@@ -11,7 +11,7 @@ class Wishlist : Comparable<Wishlist> {
     var wishCounter = 0
     var isFavoriteList = false
 
-    constructor() {}
+    constructor()
     constructor(name: String?, timestamp: Long) {
         this.name = name
         this.timestamp = timestamp

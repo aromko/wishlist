@@ -3,7 +3,7 @@ package aromko.de.wishlist.model
 class UserSetting {
     var favoriteListId: String? = null
 
-    constructor() {}
+    constructor()
     constructor(favoriteListId: String?) {
         this.favoriteListId = favoriteListId
     }

@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import aromko.de.wishlist.R
 import aromko.de.wishlist.model.Wish
 import aromko.de.wishlist.utilities.PhotoHelper
+import aromko.de.wishlist.utilities.Validator
 import aromko.de.wishlist.viewModel.WishViewModel
 import com.basgeekball.awesomevalidation.AwesomeValidation
 import com.basgeekball.awesomevalidation.ValidationStyle
@@ -69,7 +70,7 @@ class WishActivity : AppCompatActivity() {
         val adapter = ArrayAdapter.createFromResource(this,
                 R.array.wishstrength_selection_array, R.layout.spinner_item)
         adapter.setDropDownViewResource(R.layout.spinner_item)
-        spWishstrength?.setAdapter(adapter)
+        spWishstrength?.adapter = adapter
         wishViewModel = ViewModelProvider(this).get(WishViewModel::class.java)
         val myIntent = intent
         wishlistId = myIntent.getStringExtra("wishlistId")
@@ -134,6 +135,10 @@ class WishActivity : AppCompatActivity() {
     }
 
     fun saveWish(view: View?) {
+        if (Validator.checkUrl(etUrl?.text.toString())) {
+            etUrl?.setText("https://" + etUrl!!.text.toString())
+        }
+
         if (awesomeValidation!!.validate()) {
             flProgressBarHolder!!.visibility = View.VISIBLE
             var bitmap: Bitmap? = null

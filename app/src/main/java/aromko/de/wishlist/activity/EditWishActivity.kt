@@ -13,6 +13,7 @@ import androidx.appcompat.widget.Toolbar
 import aromko.de.wishlist.R
 import aromko.de.wishlist.model.Wish
 import aromko.de.wishlist.utilities.PhotoHelper
+import aromko.de.wishlist.utilities.Validator
 import aromko.de.wishlist.viewModel.WishViewModel
 import com.basgeekball.awesomevalidation.AwesomeValidation
 import com.basgeekball.awesomevalidation.ValidationStyle
@@ -73,7 +74,7 @@ class EditWishActivity : AppCompatActivity() {
         val adapter = ArrayAdapter.createFromResource(this,
                 R.array.wishstrength_selection_array, R.layout.spinner_item)
         adapter.setDropDownViewResource(R.layout.spinner_item)
-        spWishstrength?.setAdapter(adapter)
+        spWishstrength?.adapter = adapter
         photoHelper = PhotoHelper(this)
         val myIntent = intent
         wishlistId = myIntent.getStringExtra("wishlistId")
@@ -104,7 +105,7 @@ class EditWishActivity : AppCompatActivity() {
                         .build()
                 placesClient.fetchPlace(request).addOnSuccessListener { response: FetchPlaceResponse ->
                     val place = response.place
-                    tvLocation?.setText(setLocationText(place))
+                    tvLocation?.text = setLocationText(place)
                 }.addOnFailureListener { exception: Exception? ->
                     if (exception is ApiException) {
                         val apiException = exception
@@ -112,7 +113,7 @@ class EditWishActivity : AppCompatActivity() {
                     }
                 }
             }
-            btnDeleteImage?.setTag(photoUrl)
+            btnDeleteImage?.tag = photoUrl
             salvagePrice = wish.salvagePrice
         }
         val fFirebaseAuth = FirebaseAuth.getInstance()
@@ -170,6 +171,10 @@ class EditWishActivity : AppCompatActivity() {
     }
 
     fun saveWish(view: View?) {
+        if (Validator.checkUrl(etUrl?.text.toString())) {
+            etUrl?.setText("https://" + etUrl!!.text.toString())
+        }
+
         if (awesomeValidation!!.validate()) {
             flProgressBarHolder!!.visibility = View.VISIBLE
             var bitmap: Bitmap? = null

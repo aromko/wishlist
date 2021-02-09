@@ -1,13 +1,14 @@
 package aromko.de.wishlist.database
 
 import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.LiveData
 import com.google.firebase.database.*
 
 class FirebaseQueryLiveData : LiveData<DataSnapshot?> {
     private var query: Query? = null
     private val listener = MyValueEventListener()
-    private val handler = Handler()
+    private val handler = Handler(Looper.getMainLooper())
     private var listenerRemovePending = false
     private val removeListener = Runnable {
         query!!.removeEventListener(listener)

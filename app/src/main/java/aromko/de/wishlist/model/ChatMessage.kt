@@ -9,7 +9,7 @@ class ChatMessage {
     var text: String? = null
     var timestamp: Long = 0
 
-    constructor() {}
+    constructor()
     constructor(name: String?, text: String?, timestamp: Long) {
         this.name = name
         this.text = text

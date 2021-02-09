@@ -65,17 +65,17 @@ class ChatActivity : AppCompatActivity() {
         chatMessageViewModel = viewModelProvider.get(ChatMessageViewModel::class.java)
         val listsLiveData = chatMessageViewModel!!.listsLiveData
         listsLiveData.observe(this, { chatMessages: List<ChatMessage?>? ->
-            rvMessageRecyclerView?.setLayoutManager(linearLayoutManager)
+            rvMessageRecyclerView?.layoutManager = linearLayoutManager
             listItems.clear()
             listItems.addAll(chatMessages!!)
-            rvMessageRecyclerView?.setAdapter(ChatMessageViewHolderAdapter(listItems, username))
-            pbProgressBar?.setVisibility(View.INVISIBLE)
+            rvMessageRecyclerView?.adapter = ChatMessageViewHolderAdapter(listItems, username)
+            pbProgressBar?.visibility = View.INVISIBLE
         })
         etMessageText?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable) {
-                btnSendButton?.setEnabled(!s.toString().isEmpty())
+                btnSendButton?.isEnabled = !s.toString().isEmpty()
             }
         })
     }

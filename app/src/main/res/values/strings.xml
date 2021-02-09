@@ -93,7 +93,7 @@
     <string name="txtMenue">⋮</string>
     <string name="txtErrorPlaces">Hier ist ein fehler aufgetreten:</string>
     <string name="invalid_title">Bitte geben sie einen Titel ein.</string>
-    <string name="invalid_url">Bitte geben Sie ine gültige URL ein.</string>
+    <string name="invalid_url">Bitte geben Sie eine gültige URL ein.</string>
     <string name="invalid_price">Bitte geben Sie einen gültigen Preis mit max. 2  Nachkommastellen ein.</string>
     <string name="app_version">0.3.1</string>
     <string name="txtVersion">Version</string>

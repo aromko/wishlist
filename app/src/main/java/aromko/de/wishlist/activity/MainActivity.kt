@@ -2,20 +2,14 @@ package aromko.de.wishlist.activity
 
 import android.Manifest
 import android.content.*
-import android.content.Intent.ACTION_VIEW
 import android.content.pm.PackageManager
-import android.content.pm.ShortcutInfo
-import android.content.pm.ShortcutManager
 import android.graphics.Color
-import android.graphics.drawable.Icon
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.view.*
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.AdapterView.OnItemLongClickListener
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -27,8 +21,6 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import aromko.de.wishlist.R
-import aromko.de.wishlist.activity.LoginActivity
-import aromko.de.wishlist.activity.MainActivity
 import aromko.de.wishlist.adapter.WishlistAdapter
 import aromko.de.wishlist.fragment.ItemListFragment
 import aromko.de.wishlist.fragment.ItemListFragment.OnListFragmentInteractionListener
@@ -144,9 +136,9 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
             startActivity(wishActivity)
         })
         listView = findViewById(R.id.listView)
-        listView?.setChoiceMode(ListView.CHOICE_MODE_SINGLE)
+        listView?.choiceMode = ListView.CHOICE_MODE_SINGLE
         val drawListAdapter = WishlistAdapter(this, listItems)
-        listView?.setAdapter(drawListAdapter)
+        listView?.adapter = drawListAdapter
         drawListAdapter.setNotifyOnChange(true)
         listViewModel = ViewModelProvider(this).get(WishlistViewModel::class.java)
         try {
@@ -388,8 +380,9 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
                             sendIntent.type = TEXT_PLAIN
                             startActivityForResult(sendIntent, 0)
                         }
+                    } else {
+                        Toast.makeText(applicationContext, R.string.txtInvitationLinkCouldNotBeCreated, Toast.LENGTH_LONG).show()
                     }
-                    Toast.makeText(applicationContext, R.string.txtInvitationLinkCouldNotBeCreated, Toast.LENGTH_LONG).show()
                 }
     }
 

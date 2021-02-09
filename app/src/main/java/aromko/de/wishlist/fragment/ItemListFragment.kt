@@ -40,8 +40,10 @@ class ItemListFragment : Fragment() {
         favoriteListId = sharedPreferences.getString("favoriteListId", "")
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?,
+    ): View? {
         var wishlistId: String? = ""
         if (arguments!!.size() > 0) {
             wishlistId = arguments!!.getString("wishlistId")

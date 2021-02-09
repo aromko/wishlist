@@ -26,7 +26,7 @@ class Wish : Comparable<Wish> {
     var placeId: String? = null
     var photoUrl: String? = null
 
-    constructor() {}
+    constructor()
     constructor(title: String?, price: Double, url: String?, description: String?, wishstrength: Long, isImageSet: Boolean, timestamp: Long, longitude: Double, latitude: Double, salvagePrice: Double, placeId: String?, photoUrl: String?) {
         this.title = title
         this.price = price

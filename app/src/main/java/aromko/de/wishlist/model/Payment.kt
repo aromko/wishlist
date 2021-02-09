@@ -9,7 +9,7 @@ class Payment {
     var salvagePrice = 0.0
     var partialPayments: Map<String?, Double?>? = null
 
-    constructor() {}
+    constructor()
     constructor(price: Double, salvagePrice: Double, partialPayments: Map<String?, Double?>?) {
         this.price = price
         this.salvagePrice = salvagePrice
