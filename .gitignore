@@ -71,3 +71,7 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots
 fastlane/test_output
+/app/release/app-release.aab
+/app/release/app-release.apk
+/app/release/output-metadata.json
+/.idea/
