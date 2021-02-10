@@ -2,14 +2,20 @@ package aromko.de.wishlist.activity
 
 import android.Manifest
 import android.content.*
+import android.content.Intent.ACTION_VIEW
 import android.content.pm.PackageManager
+import android.content.pm.ShortcutInfo
+import android.content.pm.ShortcutManager
 import android.graphics.Color
+import android.graphics.drawable.Icon
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.*
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.AdapterView.OnItemLongClickListener
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -150,12 +156,20 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         val listsLiveData = listViewModel!!.listsLiveData
         listsLiveData.observe(this, { lists: List<Wishlist?>? ->
             drawListAdapter.clear()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                clearAllShortcuts()
+            }
             for (list in lists!!) {
                 if (list?.name.equals("Favoriten", ignoreCase = true)) {
                     drawListAdapter.insert(list, 0)
                 } else {
                     drawListAdapter.add(list)
                 }
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    createAppShortcut(list, lists.indexOf(list))
+                }
+
             }
         })
         addListeners()
@@ -180,54 +194,6 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
                 signOut()
                 finish()
             }
-        }
-    }
-
-    private fun handleSendText(intent: Intent) {
-        sharedText = intent.getStringExtra(Intent.EXTRA_TEXT)
-        if (sharedText != null) {
-            Toast.makeText(applicationContext, R.string.txtTextFromIntent, Toast.LENGTH_LONG).show()
-        }
-    }
-
-    private fun processFirebaseDynamicLink() {
-        FirebaseDynamicLinks.getInstance().getDynamicLink(intent)
-                .addOnSuccessListener(this) { data: PendingDynamicLinkData? ->
-                    if (data != null) {
-                        val deepLink = data.link
-                        listViewModel!!.addUserToWishlist(deepLink?.getQueryParameter("param"))
-                    }
-                }
-                .addOnFailureListener(this) { e: Exception? -> Toast.makeText(applicationContext, R.string.txtNoInvitationFound, Toast.LENGTH_LONG).show() }
-    }
-
-    private fun addListeners() {
-        listView!!.onItemClickListener = OnItemClickListener { adapterView: AdapterView<*>?, view: View?, position: Int, id: Long ->
-            for (i in 0 until listView!!.childCount) {
-                listView!!.getChildAt(i).setBackgroundColor(Color.WHITE)
-            }
-            if (listItems[position].wishCounter > 0) {
-                tvInfo!!.visibility = View.INVISIBLE
-            } else {
-                tvInfo!!.visibility = View.VISIBLE
-            }
-            openFragment(position)
-            val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
-            drawer.closeDrawer(GravityCompat.START)
-        }
-        listView!!.addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
-            override fun onLayoutChange(view: View, i: Int, i1: Int, i2: Int, i3: Int, i4: Int, i5: Int, i6: Int, i7: Int) {
-                if (listView!!.adapter.count > 0) {
-                    listView!!.removeOnLayoutChangeListener(this)
-                    selectFavoritesOnStartup()
-                }
-            }
-        })
-        listView!!.onItemLongClickListener = OnItemLongClickListener { parent: AdapterView<*>?, view: View?, position: Int, id: Long ->
-            listView!!.setSelection(position)
-            selectedWishlistId = listItems[position].key
-            showAlertDialog(position, R.layout.dialog_editwishlist)
-            true
         }
     }
 
@@ -256,6 +222,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         val dialog = builder.create()
         dialog.show()
     }
+
 
     fun openFragment(position: Int) {
         listView!!.setSelection(position)
@@ -287,11 +254,23 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
                 if (favoriteWishlist.wishCounter > 0) {
                     tvInfo!!.visibility = View.INVISIBLE
                 }
-                openFragment(listItems.indexOf(favoriteWishlist))
+                val extras = intent.extras
+                val position = extras?.get("WISHLIST_POSITION")
+                if (position != null && listItems.size - 1 >= position.toString().toInt()) {
+                    openFragment(position as Int)
+                } else {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        if (position != null) {
+                            removePinnedShortcut(position.toString())
+                        }
+                    }
+                    openFragment(listItems.indexOf(favoriteWishlist))
+                }
                 break
             }
         }
     }
+
 
     fun checkIfUserLoggedIn() {
         fFirebaseAuth = FirebaseAuth.getInstance()
@@ -352,13 +331,6 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         startActivity(Intent(this@MainActivity, LoginActivity::class.java))
     }
 
-    override fun onListFragmentInteraction(item: Wish?, adapterPosition: Int) {}
-    override fun onFavoriteInteraction(wish: Wish?, isFavorite: Boolean?) {}
-    override fun onMapInteraction(longitude: Double, latitude: Double) {}
-    override fun onUrlInteraction(url: String?) {}
-    override fun onPaymentInteraction(wishId: String?, price: Double, partialPrice: Double, wishlistId: String?) {}
-    override fun onChatInteraction(wishId: String?) {}
-    override fun onDeleteWishInteraction(wishId: String?, wishlistId: String?) {}
     fun addWishList(view: View?) {
         showAlertDialog(-1, R.layout.dialog_addwishlist)
     }
@@ -417,6 +389,83 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         }
     }
 
+    private fun handleSendText(intent: Intent) {
+        sharedText = intent.getStringExtra(Intent.EXTRA_TEXT)
+        if (sharedText != null) {
+            Toast.makeText(applicationContext, R.string.txtTextFromIntent, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun processFirebaseDynamicLink() {
+        FirebaseDynamicLinks.getInstance().getDynamicLink(intent)
+                .addOnSuccessListener(this) { data: PendingDynamicLinkData? ->
+                    if (data != null) {
+                        val deepLink = data.link
+                        listViewModel!!.addUserToWishlist(deepLink?.getQueryParameter("param"))
+                    }
+                }
+                .addOnFailureListener(this) { e: Exception? -> Toast.makeText(applicationContext, R.string.txtNoInvitationFound, Toast.LENGTH_LONG).show() }
+    }
+
+    private fun addListeners() {
+        listView!!.onItemClickListener = OnItemClickListener { adapterView: AdapterView<*>?, view: View?, position: Int, id: Long ->
+            for (i in 0 until listView!!.childCount) {
+                listView!!.getChildAt(i).setBackgroundColor(Color.WHITE)
+            }
+            if (listItems[position].wishCounter > 0) {
+                tvInfo!!.visibility = View.INVISIBLE
+            } else {
+                tvInfo!!.visibility = View.VISIBLE
+            }
+            openFragment(position)
+            val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
+            drawer.closeDrawer(GravityCompat.START)
+        }
+        listView!!.addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
+            override fun onLayoutChange(view: View, i: Int, i1: Int, i2: Int, i3: Int, i4: Int, i5: Int, i6: Int, i7: Int) {
+                if (listView!!.adapter.count > 0) {
+                    listView!!.removeOnLayoutChangeListener(this)
+                    selectFavoritesOnStartup()
+                }
+            }
+        })
+        listView!!.onItemLongClickListener = OnItemLongClickListener { parent: AdapterView<*>?, view: View?, position: Int, id: Long ->
+            listView!!.setSelection(position)
+            selectedWishlistId = listItems[position].key
+            showAlertDialog(position, R.layout.dialog_editwishlist)
+            true
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    private fun createAppShortcut(wishlist: Wishlist?, index: Int) {
+        val shortcutManager = getSystemService(ShortcutManager::class.java)
+
+        val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra("WISHLIST_POSITION", index)
+        intent.action = ACTION_VIEW
+
+        val shortcut = ShortcutInfo.Builder(applicationContext, index.toString())
+                .setShortLabel(wishlist?.name.toString())
+                .setLongLabel(wishlist?.name.toString())
+                .setIcon(Icon.createWithResource(applicationContext, R.drawable.appicon_background))
+                .setIntent(intent)
+                .build()
+        shortcutManager!!.pushDynamicShortcut(shortcut)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N_MR1)
+    private fun clearAllShortcuts() {
+        val shortcutManager = getSystemService(ShortcutManager::class.java)
+        shortcutManager.removeAllDynamicShortcuts()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N_MR1)
+    private fun removePinnedShortcut(shortcutId: String) {
+        val shortcutManager = getSystemService(ShortcutManager::class.java)
+        shortcutManager.disableShortcuts(listOf(shortcutId), getString(R.string.liist_already_deleted))
+    }
+
     override fun onResume() {
         super.onResume()
         registerReceiver(receiver, IntentFilter(
@@ -427,6 +476,14 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         super.onPause()
         unregisterReceiver(receiver)
     }
+
+    override fun onListFragmentInteraction(item: Wish?, adapterPosition: Int) {}
+    override fun onFavoriteInteraction(wish: Wish?, isFavorite: Boolean?) {}
+    override fun onMapInteraction(longitude: Double, latitude: Double) {}
+    override fun onUrlInteraction(url: String?) {}
+    override fun onPaymentInteraction(wishId: String?, price: Double, partialPrice: Double, wishlistId: String?) {}
+    override fun onChatInteraction(wishId: String?) {}
+    override fun onDeleteWishInteraction(wishId: String?, wishlistId: String?) {}
 
     companion object {
         const val AROMKO_PAGE_LINK = "https://aromko.page.link"
