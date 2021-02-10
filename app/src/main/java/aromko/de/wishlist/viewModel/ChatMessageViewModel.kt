@@ -48,7 +48,7 @@ class ChatMessageViewModel : ViewModel {
     fun insertMessage(displayName: String?, messageText: String?) {
         val chatMessageId = FirebaseDatabase.getInstance().getReference(message_record_path!!).push().key
         val chatMessage = ChatMessage(displayName, messageText, System.currentTimeMillis() / 1000)
-        FirebaseDatabase.getInstance().getReference(message_record_path + "/" + chatMessageId).setValue(chatMessage)
+        FirebaseDatabase.getInstance().getReference("$message_record_path/$chatMessageId").setValue(chatMessage)
     }
 
     companion object {

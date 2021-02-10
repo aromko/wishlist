@@ -20,7 +20,7 @@ class PaymentViewModel {
                 if (dataSnapshot.exists()) {
                     val currentPayment = dataSnapshot.getValue(Payment::class.java)
                     if (currentPayment?.partialPayments != null) {
-                        partialPayments.putAll(currentPayment?.partialPayments!!)
+                        partialPayments.putAll(currentPayment.partialPayments!!)
                     }
                     if (partialPayments.containsKey(fFirebaseUser!!.uid)) {
                         salvagePriceUser = partialPayments[fFirebaseUser.uid]!! + partialPrice
@@ -30,8 +30,8 @@ class PaymentViewModel {
                         salvagePrice = 0.00
                     }
                     partialPayments[fFirebaseUser.uid] = salvagePriceUser
-                    currentPayment?.salvagePrice = salvagePrice
-                    currentPayment?.partialPayments = partialPayments
+                    currentPayment.salvagePrice = salvagePrice
+                    currentPayment.partialPayments = partialPayments
                     dataSnapshot.ref.setValue(currentPayment)
                 } else {
                     salvagePrice = partialPrice
@@ -50,7 +50,7 @@ class PaymentViewModel {
     }
 
     private fun updateSalvagePriceInWish(salvagePrice: Double, wishId: String?, wishlistId: String?) {
-        FirebaseDatabase.getInstance().getReference(DB_PATH_WISHES + wishlistId + "/" + wishId).addListenerForSingleValueEvent(object : ValueEventListener {
+        FirebaseDatabase.getInstance().getReference("$DB_PATH_WISHES$wishlistId/$wishId").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
                     val currentWish = dataSnapshot.getValue(Wish::class.java)

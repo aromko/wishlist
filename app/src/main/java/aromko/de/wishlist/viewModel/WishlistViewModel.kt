@@ -18,11 +18,11 @@ class WishlistViewModel : ViewModel() {
     val listsLiveData = MediatorLiveData<List<Wishlist?>?>()
     private val fFirebaseUser = FirebaseAuth.getInstance().currentUser
     fun insertList(text: String?, isFavortieList: Boolean): String? {
-        val wishlistId = FirebaseDatabase.getInstance().getReference("/" + DB_PATH_WISHLISTS).push().key
+        val wishlistId = FirebaseDatabase.getInstance().getReference("/$DB_PATH_WISHLISTS").push().key
         val allowedUser: MutableMap<String?, Any?> = HashMap()
         allowedUser[fFirebaseUser!!.uid] = true
         val wishlist = Wishlist(text, System.currentTimeMillis() / 1000, allowedUser, 0, isFavortieList)
-        FirebaseDatabase.getInstance().getReference("/" + DB_PATH_WISHLISTS + "/" + wishlistId).setValue(wishlist)
+        FirebaseDatabase.getInstance().getReference("/$DB_PATH_WISHLISTS/$wishlistId").setValue(wishlist)
         return wishlistId
     }
 
@@ -31,12 +31,12 @@ class WishlistViewModel : ViewModel() {
     }
 
     fun addUserToWishlist(wishlistId: String?) {
-        FirebaseDatabase.getInstance().getReference("/" + DB_PATH_WISHLISTS + "/" + wishlistId).addListenerForSingleValueEvent(object : ValueEventListener {
+        FirebaseDatabase.getInstance().getReference("/$DB_PATH_WISHLISTS/$wishlistId").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val currentWishlist = dataSnapshot.getValue(Wishlist::class.java)
                 val allowedUsers: MutableMap<String?, Any?> = HashMap()
                 if (currentWishlist?.allowedUsers != null) {
-                    allowedUsers.putAll(currentWishlist?.allowedUsers!!)
+                    allowedUsers.putAll(currentWishlist.allowedUsers!!)
                 }
                 allowedUsers[fFirebaseUser!!.uid] = true
                 currentWishlist?.allowedUsers = allowedUsers
@@ -48,7 +48,7 @@ class WishlistViewModel : ViewModel() {
     }
 
     fun updateList(wishlistId: String?, name: String?) {
-        FirebaseDatabase.getInstance().getReference("/" + DB_PATH_WISHLISTS + "/" + wishlistId).addListenerForSingleValueEvent(object : ValueEventListener {
+        FirebaseDatabase.getInstance().getReference("/$DB_PATH_WISHLISTS/$wishlistId").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val currentWishlist = dataSnapshot.getValue(Wishlist::class.java)
                 currentWishlist?.name = name
@@ -60,7 +60,7 @@ class WishlistViewModel : ViewModel() {
     }
 
     fun deleteList(wishlistId: String?) {
-        FirebaseDatabase.getInstance().getReference("/" + DB_PATH_WISHLISTS + "/" + wishlistId).addListenerForSingleValueEvent(object : ValueEventListener {
+        FirebaseDatabase.getInstance().getReference("/$DB_PATH_WISHLISTS/$wishlistId").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val currentWishlist = dataSnapshot.getValue(Wishlist::class.java)
                 currentWishlist?.allowedUsers?.remove(fFirebaseUser!!.uid)
@@ -73,7 +73,7 @@ class WishlistViewModel : ViewModel() {
 
     companion object {
         private const val DB_PATH_WISHLISTS = "wishLists"
-        private val LISTS_REF = FirebaseDatabase.getInstance().getReference("/" + DB_PATH_WISHLISTS)
+        private val LISTS_REF = FirebaseDatabase.getInstance().getReference("/$DB_PATH_WISHLISTS")
     }
 
     init {
@@ -85,7 +85,7 @@ class WishlistViewModel : ViewModel() {
                         val wishlist = snapshot.getValue(Wishlist::class.java)
                         wishlist?.key = snapshot.key
                         val currentUid = fFirebaseUser!!.uid
-                        if (wishlist?.allowedUsers != null && wishlist?.allowedUsers!!.containsKey(currentUid) && wishlist?.allowedUsers!![currentUid] == true) {
+                        if (wishlist?.allowedUsers != null && wishlist.allowedUsers!!.containsKey(currentUid) && wishlist.allowedUsers!![currentUid] == true) {
                             lists.add(wishlist)
                         }
                     }
