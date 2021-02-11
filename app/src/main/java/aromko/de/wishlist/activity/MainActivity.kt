@@ -256,12 +256,14 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
                 }
                 val extras = intent.extras
                 val position = extras?.get("WISHLIST_POSITION")
-                if (position != null && listItems.size - 1 >= position.toString().toInt()) {
+                val shortcutId = extras?.get("WISHLIST_ID")
+                val wishlistIdExists = listItems.filter { item -> item.key?.equals(shortcutId) == true }
+                if (position != null && wishlistIdExists.isNotEmpty()) {
                     openFragment(position as Int)
                 } else {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                         if (position != null) {
-                            removePinnedShortcut(position.toString())
+                            removePinnedShortcut(shortcutId.toString())
                         }
                     }
                     openFragment(listItems.indexOf(favoriteWishlist))
@@ -443,9 +445,10 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
 
         val intent = Intent(this, MainActivity::class.java)
         intent.putExtra("WISHLIST_POSITION", index)
+        intent.putExtra("WISHLIST_ID", wishlist?.key)
         intent.action = ACTION_VIEW
 
-        val shortcut = ShortcutInfo.Builder(applicationContext, index.toString())
+        val shortcut = ShortcutInfo.Builder(applicationContext, wishlist?.key)
                 .setShortLabel(wishlist?.name.toString())
                 .setLongLabel(wishlist?.name.toString())
                 .setIcon(Icon.createWithResource(applicationContext, R.drawable.appicon_background))
