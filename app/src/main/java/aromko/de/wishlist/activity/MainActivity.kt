@@ -48,6 +48,7 @@ import com.google.firebase.dynamiclinks.PendingDynamicLinkData
 import com.google.firebase.dynamiclinks.ShortDynamicLink
 import de.hdodenhof.circleimageview.CircleImageView
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
@@ -153,23 +154,19 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
             startActivity(Intent(this@MainActivity, LoginActivity::class.java))
             finish()
         }
+
         val listsLiveData = listViewModel!!.listsLiveData
         listsLiveData.observe(this, { lists: List<Wishlist?>? ->
             drawListAdapter.clear()
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                clearAllShortcuts()
-            }
             for (list in lists!!) {
                 if (list?.name.equals("Favoriten", ignoreCase = true)) {
                     drawListAdapter.insert(list, 0)
                 } else {
                     drawListAdapter.add(list)
                 }
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    createAppShortcut(list, lists.indexOf(list))
-                }
-
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+                createAppShortcuts(lists)
             }
         })
         addListeners()
@@ -261,7 +258,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
                 if (position != null && wishlistIdExists.isNotEmpty()) {
                     openFragment(position as Int)
                 } else {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
                         if (position != null) {
                             removePinnedShortcut(shortcutId.toString())
                         }
@@ -439,22 +436,29 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.R)
-    private fun createAppShortcut(wishlist: Wishlist?, index: Int) {
+    @RequiresApi(Build.VERSION_CODES.N_MR1)
+    private fun createAppShortcuts(lists: List<Wishlist?>) {
         val shortcutManager = getSystemService(ShortcutManager::class.java)
+        val shortcutInfoList = ArrayList<ShortcutInfo>()
+        clearAllShortcuts()
+        for (list in lists) {
+            shortcutInfoList.add(createAppShortcut(list, lists.indexOf(list)))
+            shortcutManager!!.dynamicShortcuts = shortcutInfoList
+        }
+    }
 
+    @RequiresApi(Build.VERSION_CODES.N_MR1)
+    private fun createAppShortcut(wishlist: Wishlist?, index: Int): ShortcutInfo {
         val intent = Intent(this, MainActivity::class.java)
         intent.putExtra("WISHLIST_POSITION", index)
         intent.putExtra("WISHLIST_ID", wishlist?.key)
         intent.action = ACTION_VIEW
-
-        val shortcut = ShortcutInfo.Builder(applicationContext, wishlist?.key)
+        return ShortcutInfo.Builder(applicationContext, wishlist?.key)
                 .setShortLabel(wishlist?.name.toString())
                 .setLongLabel(wishlist?.name.toString())
                 .setIcon(Icon.createWithResource(applicationContext, R.drawable.appicon_background))
                 .setIntent(intent)
                 .build()
-        shortcutManager!!.pushDynamicShortcut(shortcut)
     }
 
     @RequiresApi(Build.VERSION_CODES.N_MR1)
