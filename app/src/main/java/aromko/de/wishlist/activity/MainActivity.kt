@@ -10,7 +10,6 @@ import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
@@ -207,7 +206,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
             ft.commit()
         }
 
-        if(listView!!.getChildAt(position-listView!!.firstVisiblePosition) != null) {
+        if (listView!!.getChildAt(position - listView!!.firstVisiblePosition) != null) {
             listView!!.getChildAt(position - listView!!.firstVisiblePosition).setBackgroundColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
         }
 

@@ -1,9 +1,7 @@
 package aromko.de.wishlist.activity
 
 import android.Manifest
-import android.graphics.Color
 import android.os.Bundle
-import android.preference.PreferenceManager
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import aromko.de.wishlist.R
