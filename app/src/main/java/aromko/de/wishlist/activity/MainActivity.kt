@@ -1,6 +1,5 @@
 package aromko.de.wishlist.activity
 
-import android.Manifest
 import android.content.*
 import android.content.Intent.ACTION_VIEW
 import android.content.pm.PackageManager
@@ -11,6 +10,7 @@ import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
@@ -20,7 +20,6 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -52,7 +51,7 @@ import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
-    var photoHelper: PhotoHelper? = null
+    private var photoHelper: PhotoHelper? = null
     private var favoriteListId: String? = ""
     private var fFirebaseAuth: FirebaseAuth? = null
     private var fFirebaseUser: FirebaseUser? = null
@@ -89,35 +88,6 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        if ((ContextCompat.checkSelfPermission(this,
-                        Manifest.permission.READ_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) || (ContextCompat.checkSelfPermission(this,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) || (ContextCompat.checkSelfPermission(this,
-                        Manifest.permission.INTERNET)
-                        != PackageManager.PERMISSION_GRANTED) || (ContextCompat.checkSelfPermission(this,
-                        Manifest.permission.CAMERA)
-                        != PackageManager.PERMISSION_GRANTED)) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                            Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                AlertDialog.Builder(this@MainActivity, R.style.Theme_MaterialComponents_Dialog_Alert)
-                        .setMessage(getString(R.string.txtGetPermissions))
-                        .setPositiveButton(R.string.txtOk) { dialogInterface: DialogInterface, i: Int ->
-                            dialogInterface.dismiss()
-                            ActivityCompat.requestPermissions(this@MainActivity, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.INTERNET, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
-                                    MY_PERMISSIONS_REQUEST)
-                        }
-                        .setNegativeButton(R.string.txtCancel) { dialogInterface: DialogInterface, i: Int ->
-                            dialogInterface.cancel()
-                            signOut()
-                        }
-                        .create()
-                        .show()
-            } else {
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.INTERNET, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
-                        MY_PERMISSIONS_REQUEST)
-            }
-        }
         ibAddWishList = findViewById(R.id.ibAddWishList)
         ibDeleteWishlist = findViewById(R.id.ibDeleteWishList)
         tvInfo = findViewById(R.id.tvInfo)
@@ -149,7 +119,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         drawListAdapter.setNotifyOnChange(true)
         listViewModel = ViewModelProvider(this).get(WishlistViewModel::class.java)
         try {
-            checkIfFavoriteListIdExists()
+            checkSharedPreferences()
         } catch (e: Exception) {
             startActivity(Intent(this@MainActivity, LoginActivity::class.java))
             finish()
@@ -164,9 +134,6 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
                 } else {
                     drawListAdapter.add(list)
                 }
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
-                createAppShortcuts(lists)
             }
         })
         addListeners()
@@ -184,7 +151,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == MY_PERMISSIONS_REQUEST) {
-            if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED && grantResults[2] == PackageManager.PERMISSION_GRANTED && grantResults[3] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED && grantResults[2] == PackageManager.PERMISSION_GRANTED && grantResults[3] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(applicationContext, getString(R.string.txtHaveFunWithTheApp), Toast.LENGTH_LONG).show()
             } else {
                 Toast.makeText(applicationContext, getString(R.string.txtPermissionDenied), Toast.LENGTH_SHORT).show()
@@ -194,7 +161,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         }
     }
 
-    fun showAlertDialog(position: Int, layoutId: Int) {
+    private fun showAlertDialog(position: Int, layoutId: Int) {
         val builder = AlertDialog.Builder(this@MainActivity)
         val inflater = this@MainActivity.layoutInflater
         val viewAddWishlist = inflater.inflate(layoutId, null)
@@ -205,7 +172,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         }
         builder.setPositiveButton(R.string.txtOk) { dialogInterface: DialogInterface, i: Int ->
             val text = txtNewWishlist.text.toString()
-            if (!text.isEmpty() || layoutId == R.layout.dialog_deletewishlist) {
+            if (text.isNotEmpty() || layoutId == R.layout.dialog_deletewishlist) {
                 if (layoutId == R.layout.dialog_editwishlist) {
                     listViewModel!!.updateList(selectedWishlistId, text)
                 } else if (layoutId == R.layout.dialog_addwishlist) {
@@ -220,8 +187,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         dialog.show()
     }
 
-
-    fun openFragment(position: Int) {
+    private fun openFragment(position: Int) {
         listView!!.setSelection(position)
         selectedWishlistId = listItems[position].key
         hideMenuItem = ""
@@ -240,12 +206,19 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
             ft.replace(R.id.content_frame, fragment)
             ft.commit()
         }
-        listView!!.getChildAt(position).setBackgroundColor(resources.getColor(R.color.colorPrimary))
+
+        if(listView!!.getChildAt(position-listView!!.firstVisiblePosition) != null) {
+            listView!!.getChildAt(position - listView!!.firstVisiblePosition).setBackgroundColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
+        }
+
         val selectedWishlist = listView!!.getItemAtPosition(position) as Wishlist
         this@MainActivity.title = selectedWishlist.name
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            createAppShortcuts(selectedWishlist, position)
+        }
     }
 
-    fun selectFavoritesOnStartup() {
+    private fun selectFavoritesOnStartup() {
         for (favoriteWishlist in listItems) {
             if (favoriteWishlist.isFavoriteList) {
                 if (favoriteWishlist.wishCounter > 0) {
@@ -256,7 +229,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
                 val shortcutId = extras?.get("WISHLIST_ID")
                 val wishlistIdExists = listItems.filter { item -> item.key?.equals(shortcutId) == true }
                 if (position != null && wishlistIdExists.isNotEmpty()) {
-                    openFragment(position as Int)
+                    openFragment(listItems.indexOf(listItems.find { item -> item.key?.equals(shortcutId) == true }))
                 } else {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
                         if (position != null) {
@@ -271,7 +244,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
     }
 
 
-    fun checkIfUserLoggedIn() {
+    private fun checkIfUserLoggedIn() {
         fFirebaseAuth = FirebaseAuth.getInstance()
         fFirebaseUser = fFirebaseAuth!!.currentUser
         if (fFirebaseUser != null) {
@@ -284,7 +257,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         }
     }
 
-    fun loadProfilePicture(mAuth: FirebaseAuth) {
+    private fun loadProfilePicture(mAuth: FirebaseAuth) {
         val uid = Objects.requireNonNull(mAuth.currentUser)?.uid
         if ("" != uid) {
             photoHelper!!.requestProfilePicture(uid)
@@ -325,7 +298,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         return super.onOptionsItemSelected(item)
     }
 
-    fun signOut() {
+    private fun signOut() {
         fFirebaseAuth!!.signOut()
         startActivity(Intent(this@MainActivity, LoginActivity::class.java))
     }
@@ -334,7 +307,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         showAlertDialog(-1, R.layout.dialog_addwishlist)
     }
 
-    fun onInviteClicked() {
+    private fun onInviteClicked() {
         FirebaseDynamicLinks.getInstance().createDynamicLink()
                 .setLink(Uri.parse(EXAMPLE_LINK + selectedWishlistId))
                 .setDomainUriPrefix(AROMKO_PAGE_LINK)
@@ -357,26 +330,29 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
                 }
     }
 
-    fun checkIfFavoriteListIdExists() {
+    private fun checkSharedPreferences() {
         val userSettingRepository = UserSettingRepository()
         val sharedPreferences = applicationContext.getSharedPreferences(fFirebaseAuth!!.currentUser!!.uid, MODE_PRIVATE)
         if (sharedPreferences.getString("favoriteListId", "")!!.isEmpty()) {
             userSettingRepository[fFirebaseAuth!!.currentUser!!.uid, { userSetting: UserSetting ->
                 val favoriteListId: String?
-                val sharedPreferences1 = applicationContext.getSharedPreferences(fFirebaseAuth!!.currentUser!!.uid, MODE_PRIVATE)
                 if (userSetting.favoriteListId!!.isEmpty()) {
                     favoriteListId = listViewModel!!.insertList("Favoriten", true)
                     userSettingRepository.insert(fFirebaseAuth!!.currentUser!!.uid, favoriteListId)
                 } else {
                     favoriteListId = userSetting.favoriteListId
                 }
-                sharedPreferences1.edit().putString("favoriteListId", favoriteListId).commit()
+                sharedPreferences.edit().putString("favoriteListId", favoriteListId).commit()
                 val refresh = Intent(this, MainActivity::class.java)
                 startActivity(refresh)
                 finish()
             }]
         } else {
             favoriteListId = sharedPreferences.getString("favoriteListId", "")
+        }
+
+        if (sharedPreferences.getBoolean("showAppIntro", true)) {
+            startActivity(Intent(this@MainActivity, AppIntroActivity::class.java))
         }
     }
 
@@ -437,14 +413,22 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
     }
 
     @RequiresApi(Build.VERSION_CODES.N_MR1)
-    private fun createAppShortcuts(lists: List<Wishlist?>) {
+    private fun createAppShortcuts(selectedWishlist: Wishlist, position: Int) {
         val shortcutManager = getSystemService(ShortcutManager::class.java)
         val shortcutInfoList = ArrayList<ShortcutInfo>()
-        clearAllShortcuts()
-        for (list in lists) {
-            shortcutInfoList.add(createAppShortcut(list, lists.indexOf(list)))
-            shortcutManager!!.dynamicShortcuts = shortcutInfoList
+        for (shortcutInfo in shortcutManager.dynamicShortcuts) {
+            val wishlist = listItems.find { item -> item.key?.equals(shortcutInfo.id) == true }
+            val wishlistPosition = listItems.indexOf(wishlist)
+            if (wishlistPosition != -1) {
+                shortcutInfoList.add(createAppShortcut(wishlist, wishlistPosition))
+            }
         }
+        if (shortcutManager.dynamicShortcuts.size == 4) {
+            shortcutInfoList.removeAt(0)
+        }
+        shortcutInfoList.add(createAppShortcut(selectedWishlist, position))
+        shortcutManager!!.dynamicShortcuts = shortcutInfoList
+        shortcutManager.updateShortcuts(shortcutInfoList)
     }
 
     @RequiresApi(Build.VERSION_CODES.N_MR1)
@@ -476,7 +460,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
     override fun onResume() {
         super.onResume()
         registerReceiver(receiver, IntentFilter(
-                UploadService.Companion.NOTIFICATION))
+                UploadService.NOTIFICATION))
     }
 
     override fun onPause() {

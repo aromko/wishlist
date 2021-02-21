@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Wishlist</string>
-    <string name="app_name_debug">Wishlist-DEV</string>
     <string name="txtSend">Senden</string>
     <string name="txtAdd">Hinzufügen</string>
     <string name="txtDelete">Löschen</string>
