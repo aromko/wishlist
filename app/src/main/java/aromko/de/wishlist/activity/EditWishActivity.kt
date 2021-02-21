@@ -171,8 +171,9 @@ class EditWishActivity : AppCompatActivity() {
     }
 
     fun saveWish(view: View?) {
-        if (Validator.checkUrl(etUrl?.text.toString())) {
-            etUrl?.setText("https://" + etUrl!!.text.toString())
+        var url =  etUrl!!.text.toString()
+        if (!url.isEmpty() && Validator.checkUrl(etUrl?.text.toString())) {
+            etUrl?.setText("https://" + url)
         }
 
         if (awesomeValidation!!.validate()) {
