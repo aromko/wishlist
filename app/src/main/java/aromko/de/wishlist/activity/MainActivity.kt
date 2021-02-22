@@ -453,7 +453,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
     @RequiresApi(Build.VERSION_CODES.N_MR1)
     private fun removePinnedShortcut(shortcutId: String) {
         val shortcutManager = getSystemService(ShortcutManager::class.java)
-        shortcutManager.disableShortcuts(listOf(shortcutId), getString(R.string.liist_already_deleted))
+        shortcutManager.disableShortcuts(listOf(shortcutId), getString(R.string.list_already_deleted))
     }
 
     override fun onResume() {

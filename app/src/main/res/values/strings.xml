@@ -1,4 +1,5 @@
 <resources>
+    <string name="app_version">0.4.0</string>
     <string name="app_name">Wishlist</string>
     <string name="txtSend">Senden</string>
     <string name="txtAdd">Hinzufügen</string>
@@ -94,7 +95,15 @@
     <string name="invalid_title">Bitte geben sie einen Titel ein.</string>
     <string name="invalid_url">Bitte geben Sie eine gültige URL ein.</string>
     <string name="invalid_price">Bitte geben Sie einen gültigen Preis mit max. 2  Nachkommastellen ein.</string>
-    <string name="app_version">0.4.0</string>
     <string name="txtVersion">Version</string>
-    <string name="liist_already_deleted">Diese Wunschliste wurde bereits gelöscht.</string>
+    <string name="list_already_deleted">Diese Wunschliste wurde bereits gelöscht.</string>
+    <string name="appIntroWelcome">Herzlich Willkommen zur Wishlist</string>
+    <string name="appIntroWelceomDesc">Nachfolgend werden dir die wichtigsten Funktionen der App vorgestellt.</string>
+    <string name="appIntroFavoriteDesc">Mit diesem Symbol kannst du die wichtigsten Wünsche kennzeichnen. Diese landen dann automatisch in deiner Favoritenliste.</string>
+    <string name="appIntroShareDesc">Teile deine Wünsche mit deinen Freunden. Schicke ihnen mit diesem Symbol einen Link und schon können sie die Liste auch benutzen.</string>
+    <string name="appIntroPermission">Berechtigungen für die App</string>
+    <string name="appIntroPermissionDesc">Damit du die App in vollen Zügen genießen kannst, werden ein paar Berechtigungen benötigt. Stimmst du diesen nicht zu, können nicht alle Funktionen der App genutzt werden. Die Berechtigungen kannst du nachträglich über die Einstellungen deines Endgeräts verändern.</string>
+    <string name="appIntroNavigationDesc">\"Zu jedem Wunsch kannst du Standortdaten hinterlegen, z.B ein Geschäft, in dem das Produkt zu kaufen ist. Mit einem Klick auf das Kartensymbol wird dann automatisch die Navigation gestartet. Wishlist speichert deine Standortdaten nicht und gibt diese nur an die Navigationsapp weiter. \"</string>
+    <string name="appIntroPhotoDesc">Zu jedem Wunsch kannst du ein Foto hinzufügen, direkt mit der Kamera, aus der Galerie oder dem Internet. Damit dies möglich ist, wird Zugriff auf deine Kamera benötigt, sowie Schreib- und Leserechte auf deinen Speicher.</string>
+    <string name="appIntroEnding">Viel Spaß beim Benutzen der App!</string>
 </resources>
