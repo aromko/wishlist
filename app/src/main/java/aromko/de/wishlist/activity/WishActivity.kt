@@ -43,7 +43,8 @@ class WishActivity : AppCompatActivity() {
     private var longitude = 0.0
     private var latitude = 0.0
     private var placeId: String? = null
-    private var sharedText: String? = null
+    private var sharedTitle: String? = null
+    private var sharedUrl: String? = null
     private var btnDeleteImage: ImageButton? = null
     private var photoUrl: String? = null
     var photoHelper: PhotoHelper? = null
@@ -74,9 +75,13 @@ class WishActivity : AppCompatActivity() {
         wishViewModel = ViewModelProvider(this).get(WishViewModel::class.java)
         val myIntent = intent
         wishlistId = myIntent.getStringExtra("wishlistId")
-        sharedText = myIntent.getStringExtra("sharedText")
-        if (sharedText != null) {
-            etTitle?.setText(sharedText)
+        sharedTitle = myIntent.getStringExtra("sharedTitle")
+        sharedUrl = myIntent.getStringExtra("sharedUrl")
+        if (sharedTitle != null) {
+            etTitle?.setText(sharedTitle)
+        }
+        if (sharedUrl != null) {
+            etUrl?.setText(sharedUrl)
         }
         photoHelper = PhotoHelper(this)
         if (!Places.isInitialized()) {

@@ -10,6 +10,7 @@ import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.*
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
@@ -44,6 +45,7 @@ import com.google.firebase.dynamiclinks.DynamicLink.AndroidParameters
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.dynamiclinks.PendingDynamicLinkData
 import com.google.firebase.dynamiclinks.ShortDynamicLink
+import com.google.firebase.messaging.FirebaseMessaging
 import de.hdodenhof.circleimageview.CircleImageView
 import java.util.*
 import kotlin.collections.ArrayList
@@ -66,12 +68,13 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
     private var civImage: CircleImageView? = null
     private var ibDeleteWishlist: ImageButton? = null
     private var hideMenuItem: String? = null
-    private var sharedText: String? = null
+    private var sharedTitle: String? = null
+    private var sharedUrl: String? = null
     private val receiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val bundle = intent.extras
             if (bundle != null) {
-                val resultCode = bundle.getInt(UploadService.Companion.RESULT)
+                val resultCode = bundle.getInt(UploadService.RESULT)
                 if (resultCode == RESULT_OK) {
                     Toast.makeText(this@MainActivity,
                             getString(R.string.txtPictureSuccesfulUploaded),
@@ -107,8 +110,10 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         fab?.setOnClickListener(View.OnClickListener { view: View? ->
             val wishActivity = Intent(this@MainActivity, WishActivity::class.java)
             wishActivity.putExtra("wishlistId", selectedWishlistId)
-            wishActivity.putExtra("sharedText", sharedText)
-            sharedText = null
+            wishActivity.putExtra("sharedTitle", sharedTitle)
+            wishActivity.putExtra("sharedUrl", sharedUrl)
+            sharedTitle = null
+            sharedUrl = null
             startActivity(wishActivity)
         })
         listView = findViewById(R.id.listView)
@@ -138,13 +143,23 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         addListeners()
         processFirebaseDynamicLink()
         val intent = intent
-        val action = intent.action
-        val type = intent.type
-        if (Intent.ACTION_SEND == action && type != null) {
-            if ("text/plain" == type) {
-                handleSendText(intent)
+        when {
+            intent?.action == Intent.ACTION_SEND -> {
+                if ("text/plain" == intent.type) {
+                    handleSendText(intent)
+                } else if (intent.type?.startsWith("image/") == true) {
+                    handleSendImage(intent)
+                }
+            }
+            intent?.action == Intent.ACTION_SEND_MULTIPLE
+                    && intent.type?.startsWith("image/") == true -> {
+                handleSendMultipleImages(intent) // Handle multiple images being sent
+            }
+            else -> {
+                // Handle other intents, such as being started from the home screen
             }
         }
+        FirebaseMessaging.getInstance().subscribeToTopic("pushNotifications")
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -364,10 +379,30 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
     }
 
     private fun handleSendText(intent: Intent) {
-        sharedText = intent.getStringExtra(Intent.EXTRA_TEXT)
+        extractShareInformationsFromExternalApp(intent)
+    }
+
+    private fun handleSendImage(intent: Intent) {
+        val imageContent = intent.getParcelableExtra<Parcelable>(Intent.EXTRA_STREAM)
+        extractShareInformationsFromExternalApp(intent)
+    }
+
+    private fun extractShareInformationsFromExternalApp(intent: Intent) {
+        val sharedText = intent.getStringExtra(Intent.EXTRA_TEXT)?.replace("\n", " ")
+        var splitted = sharedText?.split(" ")
+        sharedUrl = splitted?.find { item -> checkForUrl(item) }
+        splitted = splitted?.filter { item -> !checkForUrl(item) }
+        sharedTitle = splitted?.joinToString(" ")
+
         if (sharedText != null) {
             Toast.makeText(applicationContext, R.string.txtTextFromIntent, Toast.LENGTH_LONG).show()
         }
+    }
+
+    private fun checkForUrl(item: String) = item.startsWith("http", true)
+
+    private fun handleSendMultipleImages(intent: Intent) {
+        Toast.makeText(applicationContext, getString(R.string.no_share_suppot), Toast.LENGTH_LONG).show()
     }
 
     private fun processFirebaseDynamicLink() {
