@@ -1,19 +1,42 @@
 package aromko.de.wishlist.activity
 
-import android.annotation.TargetApi
-import android.content.Intent
-import android.os.Build
 import android.os.Bundle
-import android.preference.EditTextPreference
-import android.preference.PreferenceFragment
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.EditTextPreference
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
 import aromko.de.wishlist.R
 import com.google.firebase.auth.FirebaseAuth
 
-class SettingsActivity : AppCompatPreferenceActivity() {
+private const val TITLE_TAG = "preferencesActivityTitle"
+
+class SettingsActivity : AppCompatActivity(),
+        PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setupActionBar()
+        setContentView(R.layout.activity_settings)
+        if (savedInstanceState == null) {
+            supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.preferences, MainPreferences())
+                    .commit()
+        } else {
+            title = savedInstanceState.getCharSequence(TITLE_TAG)
+        }
+        supportFragmentManager.addOnBackStackChangedListener {
+            if (supportFragmentManager.backStackEntryCount == 0) {
+                setTitle(R.string.txtSettings)
+            }
+        }
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        // Save current activity title so we can set it again after a configuration change
+        outState.putCharSequence(TITLE_TAG, title)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -26,57 +49,55 @@ class SettingsActivity : AppCompatPreferenceActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun setupActionBar() {
-        val actionBar = supportActionBar
-        actionBar?.setDisplayHomeAsUpEnabled(true)
+    override fun onSupportNavigateUp(): Boolean {
+        if (supportFragmentManager.popBackStackImmediate()) {
+            return true
+        }
+        return super.onSupportNavigateUp()
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    override fun onBuildHeaders(target: List<Header>) {
-        loadHeadersFromResource(R.xml.pref_headers, target)
+    override fun onPreferenceStartFragment(
+            caller: PreferenceFragmentCompat,
+            pref: Preference,
+    ): Boolean {
+        // Instantiate the new Fragment
+        val args = pref.extras
+        val fragment = supportFragmentManager.fragmentFactory.instantiate(
+                classLoader,
+                pref.fragment
+        ).apply {
+            arguments = args
+            setTargetFragment(caller, 0)
+        }
+        // Replace the existing Fragment with the new Fragment
+        supportFragmentManager.beginTransaction()
+                .replace(R.id.preferences, fragment)
+                .addToBackStack(null)
+                .commit()
+        title = pref.title
+        return true
     }
 
-    override fun isValidFragment(fragmentName: String): Boolean {
-        return PreferenceFragment::class.java.name == fragmentName || GeneralPreferenceFragment::class.java.name == fragmentName || NotificationPreferenceFragment::class.java.name == fragmentName
+    class MainPreferences : PreferenceFragmentCompat() {
+        override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+            setPreferencesFromResource(R.xml.preferences_mainfile, rootKey)
+        }
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    class GeneralPreferenceFragment : PreferenceFragment() {
-        override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            addPreferencesFromResource(R.xml.pref_general)
-            setHasOptionsMenu(true)
+    class GeneralPreferences : PreferenceFragmentCompat() {
+        override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+            setPreferencesFromResource(R.xml.preferences_general, rootKey)
+
             val fFirebaseAuth = FirebaseAuth.getInstance()
-            val sharedPreferences = activity.getSharedPreferences(fFirebaseAuth.currentUser!!.uid, MODE_PRIVATE)
-            val editTextPref = findPreference("favoriteListId") as EditTextPreference
-            editTextPref.summary = sharedPreferences.getString("favoriteListId", "")
-        }
-
-        override fun onOptionsItemSelected(item: MenuItem): Boolean {
-            val id = item.itemId
-            if (id == android.R.id.home) {
-                startActivity(Intent(activity, SettingsActivity::class.java))
-                return true
-            }
-            return super.onOptionsItemSelected(item)
+            val sharedPreferences = activity?.getSharedPreferences(fFirebaseAuth.currentUser!!.uid, MODE_PRIVATE)
+            val editTextPref: EditTextPreference? = findPreference("favoriteListId")
+            editTextPref?.summary = sharedPreferences?.getString("favoriteListId", "")
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    class NotificationPreferenceFragment : PreferenceFragment() {
-        override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            addPreferencesFromResource(R.xml.pref_notification)
-            setHasOptionsMenu(true)
-        }
-
-        override fun onOptionsItemSelected(item: MenuItem): Boolean {
-            val id = item.itemId
-            if (id == android.R.id.home) {
-                startActivity(Intent(activity, SettingsActivity::class.java))
-                return true
-            }
-            return super.onOptionsItemSelected(item)
+    class NotificationPreferences : PreferenceFragmentCompat() {
+        override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+            setPreferencesFromResource(R.xml.preferences_notifications, rootKey)
         }
     }
 }

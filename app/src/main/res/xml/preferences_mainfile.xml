@@ -1,0 +1,15 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <Preference
+        app:icon="@drawable/ic_info"
+        app:title="@string/txtGeneral"
+        app:summary="@string/txtGeneralDescription"
+        app:fragment="aromko.de.wishlist.activity.SettingsActivity$GeneralPreferences" />
+
+    <Preference
+        app:icon="@drawable/ic_notifications"
+        app:title="@string/txtNotifications"
+        app:summary="@string/txtNotificationsDescription"
+        app:fragment="aromko.de.wishlist.activity.SettingsActivity$NotificationPreferences" />
+
+</PreferenceScreen>

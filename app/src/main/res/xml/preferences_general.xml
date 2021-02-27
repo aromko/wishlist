@@ -1,0 +1,32 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Preference
+        app:title="Releasenotes"
+        app:summary="Hier kannst du alle Neuerungen nachlesen">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="https://sites.google.com/view/wishlist-releasenotes/startseite" />
+    </Preference>
+
+    <Preference
+        app:title="App-Intro"
+        app:summary="Lerne die wichtigsten Funktionen kennen">
+        <intent android:action="AppIntro" />
+    </Preference>
+
+    <EditTextPreference
+        app:defaultValue="Default"
+        app:key="favoriteListId"
+        app:persistent="false"
+        app:selectable="false"
+        app:summary="@string/txtNotEditable"
+        app:title="@string/txtFavoriteId" />
+
+    <Preference
+        app:persistent="false"
+        app:selectable="false"
+        app:summary="@string/app_version"
+        app:title="@string/txtVersion" />
+
+</PreferenceScreen>

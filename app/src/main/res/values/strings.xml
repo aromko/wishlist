@@ -107,4 +107,6 @@
     <string name="appIntroPhotoDesc">Zu jedem Wunsch kannst du ein Foto hinzufügen, direkt mit der Kamera, aus der Galerie oder dem Internet. Damit dies möglich ist, wird Zugriff auf deine Kamera benötigt, sowie Schreib- und Leserechte auf deinen Speicher.</string>
     <string name="appIntroEnding">Viel Spaß beim Benutzen der App!</string>
     <string name="no_share_suppot">Teilen wird nicht unterstütztt? Dann sende mir eine Nachricht und schreib mir um welche App es sich handelt. Vielleicht kommt sie dann in Zukunft dazu :-)</string>
+    <string name="txtGeneralDescription">Hier findest du allgemeine Informationen</string>
+    <string name="txtNotificationsDescription">Konfiguriere deine Benachrichtiungen</string>
 </resources>

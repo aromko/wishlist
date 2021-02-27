@@ -26,7 +26,12 @@
         android:theme="@style/AppTheme"
         tools:ignore="HardcodedDebugMode">
 
-        <activity android:name=".activity.AppIntroActivity" />
+        <activity android:name=".activity.AppIntroActivity">
+            <intent-filter>
+                <action android:name="AppIntro" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -47,6 +52,7 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
