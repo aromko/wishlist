@@ -142,6 +142,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         })
         addListeners()
         processFirebaseDynamicLink()
+        FirebaseMessaging.getInstance().subscribeToTopic("pushNotifications")
         val intent = intent
         when {
             intent?.action == Intent.ACTION_SEND -> {
@@ -159,7 +160,6 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
                 // Handle other intents, such as being started from the home screen
             }
         }
-        FirebaseMessaging.getInstance().subscribeToTopic("pushNotifications")
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -250,7 +250,11 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
                             removePinnedShortcut(shortcutId.toString())
                         }
                     }
-                    openFragment(listItems.indexOf(favoriteWishlist))
+                    if (shortcutId != null && shortcutId.toString().isNotEmpty()) {
+                        openFragment(listItems.indexOf(listItems.find { item -> item.key?.equals(shortcutId) == true }))
+                    } else {
+                        openFragment(listItems.indexOf(favoriteWishlist))
+                    }
                 }
                 break
             }

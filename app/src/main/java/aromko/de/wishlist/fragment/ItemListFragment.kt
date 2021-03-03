@@ -33,10 +33,10 @@ class ItemListFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
-            mColumnCount = arguments!!.getInt(ARG_COLUMN_COUNT)
+            mColumnCount = requireArguments().getInt(ARG_COLUMN_COUNT)
         }
         val fFirebaseAuth = FirebaseAuth.getInstance()
-        val sharedPreferences = activity!!.getSharedPreferences(fFirebaseAuth.currentUser!!.uid, Context.MODE_PRIVATE)
+        val sharedPreferences = requireActivity().getSharedPreferences(fFirebaseAuth.currentUser!!.uid, Context.MODE_PRIVATE)
         favoriteListId = sharedPreferences.getString("favoriteListId", "")
     }
 
@@ -45,8 +45,8 @@ class ItemListFragment : Fragment() {
             savedInstanceState: Bundle?,
     ): View? {
         var wishlistId: String? = ""
-        if (arguments!!.size() > 0) {
-            wishlistId = arguments!!.getString("wishlistId")
+        if (requireArguments().size() > 0) {
+            wishlistId = requireArguments().getString("wishlistId")
         }
         val view = inflater.inflate(R.layout.fragment_item_list, container, false)
         if (view is RecyclerView) {
@@ -57,7 +57,7 @@ class ItemListFragment : Fragment() {
             } else {
                 recyclerView.layoutManager = GridLayoutManager(context, mColumnCount)
             }
-            wishViewModel = ViewModelProvider(this, WishViewModelFactory(this.activity!!.application, wishlistId)).get(WishViewModel::class.java)
+            wishViewModel = ViewModelProvider(this, WishViewModelFactory(this.requireActivity().application, wishlistId)).get(WishViewModel::class.java)
             val listsLiveData = wishViewModel!!.listsLiveData
             listsLiveData.observe(viewLifecycleOwner, { lists: List<Wish?>? ->
                 val myLayoutManager = recyclerView.layoutManager as LinearLayoutManager?

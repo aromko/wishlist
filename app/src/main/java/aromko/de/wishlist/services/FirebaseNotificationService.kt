@@ -9,54 +9,67 @@ import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.ProcessLifecycleOwner
 import aromko.de.wishlist.R
 import aromko.de.wishlist.activity.MainActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import java.util.*
 
-class FirebaseNotificationService : FirebaseMessagingService() {
+class FirebaseNotificationService : FirebaseMessagingService(), LifecycleObserver {
     private var fFirebaseAuth: FirebaseAuth? = null
     private var fFirebaseUser: FirebaseUser? = null
+    private var isAppInForeground = false
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        var notificationTitle: String? = null
-        var notificationBody: String? = null
-        var userId: String? = null
+
+        var notificationTitle: String?
+        var notificationBody: String?
+        var userId: String?
+        var allowedUsers: String?
         fFirebaseAuth = FirebaseAuth.getInstance()
         fFirebaseUser = fFirebaseAuth!!.currentUser
 
-        if (remoteMessage.notification != null) {
-            Log.d(TAG, "Message Notification Body: " + remoteMessage.notification!!.body)
-            notificationTitle = remoteMessage.notification!!.title
-            notificationBody = remoteMessage.notification!!.body
-        }
-
-        userId = remoteMessage.data["userId"]
-        Log.d(TAG, "BenutzerId: $userId")
-
-        if (!fFirebaseUser!!.uid.equals(userId)) {
-            sendLocalNotification(notificationTitle, notificationBody)
+        if (isAppInForeground) {
+            //Do Nothing in foreground
         } else {
-            Log.d(TAG, "Keine Nachricht an den Sender!!")
+            notificationTitle = remoteMessage.data["title"]
+            notificationBody = remoteMessage.data["body"]
+            userId = remoteMessage.data["userId"]
+            allowedUsers = remoteMessage.data["allowedUsers"]
+            Log.d(TAG, "BenutzerId: $userId")
+
+            if (!fFirebaseUser!!.uid.equals(userId) && allowedUsers!!.contains(fFirebaseUser!!.uid)) {
+                sendLocalNotification(notificationTitle, notificationBody)
+            } else {
+                Log.d(TAG, "Keine Nachricht an den Sender!!")
+            }
         }
+
     }
 
     private fun sendLocalNotification(notificationTitle: String?, notificationBody: String?) {
         val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra("WISHLIST_ID", notificationBody)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         val pendingIntent = PendingIntent.getActivity(this, 0, intent,
-                PendingIntent.FLAG_ONE_SHOT)
+                PendingIntent.FLAG_UPDATE_CURRENT)
         val channelId = "Wishlist"
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
-                .setSmallIcon(R.drawable.ic_person)
+                .setSmallIcon(R.drawable.appicon_background)
                 .setContentTitle(notificationTitle)
                 .setContentText(notificationBody)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent)
+                .setColor(ContextCompat.getColor(this, R.color.colorAccent))
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         if (VERSION.SDK_INT >= VERSION_CODES.O) {
             val channel = NotificationChannel(channelId,
@@ -64,7 +77,32 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     NotificationManager.IMPORTANCE_DEFAULT)
             notificationManager.createNotificationChannel(channel)
         }
-        notificationManager.notify(1234, notificationBuilder.build())
+        notificationManager.notify(getNotificationId(), notificationBuilder.build())
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        ProcessLifecycleOwner.get().lifecycle.removeObserver(this)
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    fun onForegroundStart() {
+        isAppInForeground = true
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    fun onForegroundStop() {
+        isAppInForeground = false
+    }
+
+    private fun getNotificationId(): Int {
+        val rnd = Random()
+        return 100 + rnd.nextInt(9000)
     }
 
     companion object {

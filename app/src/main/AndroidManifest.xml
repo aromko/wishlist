@@ -98,9 +98,15 @@
             android:name=".activity.SettingsActivity"
             android:label="@string/txtSettings" />
 
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/appicon_background" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorAccent" />
+
         <service
             android:name=".services.UploadService"
-            android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
         <service android:name=".services.FirebaseNotificationService">
             <intent-filter>
