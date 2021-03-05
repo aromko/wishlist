@@ -1,13 +1,16 @@
 package aromko.de.wishlist.activity
 
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreference
 import aromko.de.wishlist.R
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.messaging.FirebaseMessaging
 
 private const val TITLE_TAG = "preferencesActivityTitle"
 
@@ -95,9 +98,33 @@ class SettingsActivity : AppCompatActivity(),
         }
     }
 
-    class NotificationPreferences : PreferenceFragmentCompat() {
+    class NotificationPreferences : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.preferences_notifications, rootKey)
+
+            val switch: SwitchPreference? = findPreference("notifications_wishlist_active")
+            switch?.onPreferenceChangeListener = this
+
+        }
+
+        override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
+            when (preference?.key) {
+                "notifications_wishlist_active" -> handleNotificationTopic(newValue, "wishlistNotifications")
+                "notifications_chat_messages_active" -> handleNotificationTopic(newValue, "chatNotifications")
+                else -> {
+                    Log.i("SettingsActivity", "No topic for setting " + preference?.key + " defined.")
+                }
+            }
+
+            return true
+        }
+
+        private fun handleNotificationTopic(newValue: Any?, topic: String) {
+            if (newValue as Boolean) {
+                FirebaseMessaging.getInstance().subscribeToTopic(topic)
+            } else {
+                FirebaseMessaging.getInstance().unsubscribeFromTopic(topic)
+            }
         }
     }
 }

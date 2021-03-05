@@ -109,4 +109,8 @@
     <string name="no_share_suppot">Teilen wird nicht unterstütztt? Dann sende mir eine Nachricht und schreib mir um welche App es sich handelt. Vielleicht kommt sie dann in Zukunft dazu :-)</string>
     <string name="txtGeneralDescription">Hier findest du allgemeine Informationen</string>
     <string name="txtNotificationsDescription">Konfiguriere deine Benachrichtiungen</string>
+    <string name="notifications_wishlist_active_title">Benachr. für Wunschlisten</string>
+    <string name="notifications_wishlist_active_description">Erhalte Benachrichtungen für alle Wunschlisten, wenn z.B. neue Wünsche angelegt wurden</string>
+    <string name="notifications_chat_messages_active_title">Benachr. für Chats</string>
+    <string name="notifications_chat_messages_active_description">Erhalte Benachrichtungen, sobald neue Nachrichten in den Chats vorhanden sind</string>
 </resources>

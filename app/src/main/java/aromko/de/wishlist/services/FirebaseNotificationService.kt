@@ -29,23 +29,22 @@ class FirebaseNotificationService : FirebaseMessagingService(), LifecycleObserve
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
 
-        var notificationTitle: String?
-        var notificationBody: String?
-        var userId: String?
-        var allowedUsers: String?
+        val notificationTitle: String?
+        val notificationBody: String?
+        val userId: String?
+        val allowedUsers: String?
         fFirebaseAuth = FirebaseAuth.getInstance()
         fFirebaseUser = fFirebaseAuth!!.currentUser
 
         if (isAppInForeground) {
             //Do Nothing in foreground
         } else {
-            notificationTitle = remoteMessage.data["title"]
-            notificationBody = remoteMessage.data["body"]
             userId = remoteMessage.data["userId"]
             allowedUsers = remoteMessage.data["allowedUsers"]
-            Log.d(TAG, "BenutzerId: $userId")
 
             if (!fFirebaseUser!!.uid.equals(userId) && allowedUsers!!.contains(fFirebaseUser!!.uid)) {
+                notificationTitle = remoteMessage.data["title"]
+                notificationBody = remoteMessage.data["body"]
                 sendLocalNotification(notificationTitle, notificationBody)
             } else {
                 Log.d(TAG, "Keine Nachricht an den Sender!!")

@@ -45,7 +45,6 @@ import com.google.firebase.dynamiclinks.DynamicLink.AndroidParameters
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.dynamiclinks.PendingDynamicLinkData
 import com.google.firebase.dynamiclinks.ShortDynamicLink
-import com.google.firebase.messaging.FirebaseMessaging
 import de.hdodenhof.circleimageview.CircleImageView
 import java.util.*
 import kotlin.collections.ArrayList
@@ -142,7 +141,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         })
         addListeners()
         processFirebaseDynamicLink()
-        FirebaseMessaging.getInstance().subscribeToTopic("pushNotifications")
+
         val intent = intent
         when {
             intent?.action == Intent.ACTION_SEND -> {
