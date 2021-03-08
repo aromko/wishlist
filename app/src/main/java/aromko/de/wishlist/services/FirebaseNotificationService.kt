@@ -29,10 +29,12 @@ class FirebaseNotificationService : FirebaseMessagingService(), LifecycleObserve
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
 
-        val notificationTitle: String?
-        val notificationBody: String?
+        val notificationTitleVal: String?
+        val notificationBodyVal: String?
         val userId: String?
         val allowedUsers: String?
+        val wishListId: String?
+        val wishListName: String?
         fFirebaseAuth = FirebaseAuth.getInstance()
         fFirebaseUser = fFirebaseAuth!!.currentUser
 
@@ -41,11 +43,13 @@ class FirebaseNotificationService : FirebaseMessagingService(), LifecycleObserve
         } else {
             userId = remoteMessage.data["userId"]
             allowedUsers = remoteMessage.data["allowedUsers"]
+            wishListId = remoteMessage.data["wishListId"]
+            wishListName = remoteMessage.data["wishListName"]
 
             if (!fFirebaseUser!!.uid.equals(userId) && allowedUsers!!.contains(fFirebaseUser!!.uid)) {
-                notificationTitle = remoteMessage.data["title"]
-                notificationBody = remoteMessage.data["body"]
-                sendLocalNotification(notificationTitle, notificationBody)
+                notificationTitleVal = remoteMessage.data["title"]
+                notificationBodyVal = remoteMessage.data["body"]
+                sendLocalNotification(getTextFromResource(notificationTitleVal, wishListName), getTextFromResource(notificationBodyVal, wishListName), wishListId)
             } else {
                 Log.d(TAG, "Keine Nachricht an den Sender!!")
             }
@@ -53,18 +57,24 @@ class FirebaseNotificationService : FirebaseMessagingService(), LifecycleObserve
 
     }
 
-    private fun sendLocalNotification(notificationTitle: String?, notificationBody: String?) {
+    private fun getTextFromResource(notificationTitleVal: String?, wishListName: String?): String? {
+        var notificationId = resources.getIdentifier(notificationTitleVal, "string", packageName)
+        return getString(notificationId).replace("XXX", wishListName.toString())
+    }
+
+    private fun sendLocalNotification(notificationTitle: String?, notificationBody: String?, wishListId: String?) {
         val intent = Intent(this, MainActivity::class.java)
-        intent.putExtra("WISHLIST_ID", notificationBody)
+        intent.putExtra("WISHLIST_ID", wishListId)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         val pendingIntent = PendingIntent.getActivity(this, 0, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT)
         val channelId = "Wishlist"
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
                 .setSmallIcon(R.drawable.appicon_background)
                 .setContentTitle(notificationTitle)
-                .setContentText(notificationBody)
+                .setStyle(NotificationCompat.BigTextStyle().bigText(notificationBody))
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent)

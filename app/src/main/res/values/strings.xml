@@ -113,4 +113,7 @@
     <string name="notifications_wishlist_active_description">Erhalte Benachrichtungen für alle Wunschlisten, wenn z.B. neue Wünsche angelegt wurden</string>
     <string name="notifications_chat_messages_active_title">Benachr. für Chats</string>
     <string name="notifications_chat_messages_active_description">Erhalte Benachrichtungen, sobald neue Nachrichten in den Chats vorhanden sind</string>
+    <string name="notifications_wishlist_title">Hey. Es gibt neue Aktivitäten in einer Wunschliste.</string>
+    <string name="notifications_wishlist_description_new">Es wurde ein neuer Wunsch in die Liste XXX hinzugefügt. Klicke hier, um direkt in die Liste zu gelangen.</string>
+    <string name="notifications_wishlist_description_delete">Es wurde ein Wunsch aus der Liste XXX entfernt. Klicke hier, um direkt in die Liste zu gelangen.</string>
 </resources>
