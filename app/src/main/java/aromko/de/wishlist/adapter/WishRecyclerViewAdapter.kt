@@ -144,7 +144,13 @@ class WishRecyclerViewAdapter(private val mValues: List<Wish?>, private val mLis
             }
         }
         holder.tvDescription.text = holder.mItem?.description
-        holder.ivChat.setOnClickListener { v: View? -> mListener?.onChatInteraction(holder.mItem?.wishId) }
+        holder.ivChat.setOnClickListener { v: View? ->
+            mListener?.onChatInteraction(
+                holder.mItem?.wishId,
+                holder.mItem?.wishlistId,
+                holder.mItem?.title
+            )
+        }
         holder.ivShowInfos.setOnClickListener { v: View? ->
             if (null != mListener) {
                 if (holder.tvDescription.visibility == View.GONE) {

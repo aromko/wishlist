@@ -33,6 +33,8 @@ class ChatActivity : AppCompatActivity() {
     private var chatMessageViewModel: ChatMessageViewModel? = null
     private val listItems = ArrayList<ChatMessage?>()
     private var wishId: String? = null
+    private var wishListId: String? = null
+    private var wishName: String? = null
     private var fFirebaseAuth: FirebaseAuth? = null
     private var fFirebaseUser: FirebaseUser? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,6 +47,8 @@ class ChatActivity : AppCompatActivity() {
         supportActionBar!!.setTitle(R.string.txtMessages)
         val myIntent = intent
         wishId = myIntent.getStringExtra("wishId")
+        wishListId = myIntent.getStringExtra("wishListId")
+        wishName = myIntent.getStringExtra("wishName")
         username = R.string.txtNameAnonym.toString()
         fFirebaseAuth = FirebaseAuth.getInstance()
         fFirebaseUser = fFirebaseAuth!!.currentUser
@@ -83,7 +87,9 @@ class ChatActivity : AppCompatActivity() {
         chatMessageViewModel!!.insertMessage(
             fFirebaseUser!!.displayName,
             etMessageText!!.text.toString(),
-            fFirebaseAuth!!.currentUser!!.uid
+            fFirebaseAuth!!.currentUser!!.uid,
+            wishName,
+            wishListId
         )
         etMessageText!!.setText("")
     }

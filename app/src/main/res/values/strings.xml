@@ -116,4 +116,6 @@
     <string name="notifications_wishlist_title">Hey. Es gibt neue Aktivitäten in einer Wunschliste.</string>
     <string name="notifications_wishlist_description_new">Es wurde ein neuer Wunsch in die Liste XXX hinzugefügt. Klicke hier, um direkt in die Liste zu gelangen.</string>
     <string name="notifications_wishlist_description_delete">Es wurde ein Wunsch aus der Liste XXX entfernt. Klicke hier, um direkt in die Liste zu gelangen.</string>
+    <string name="notifications_chat_title">Hey. Es gibt eine neue Nachricht in einer Wunschliste.</string>
+    <string name="notifications_chat_description_new">Es wurde ein neuer Nachricht bei XXX hinzugefügt. Klicke hier, um direkt in die Liste zu gelangen.</string>
 </resources>

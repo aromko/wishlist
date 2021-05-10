@@ -35,6 +35,8 @@ class FirebaseNotificationService : FirebaseMessagingService(), LifecycleObserve
         val allowedUsers: String?
         val wishListId: String?
         val wishListName: String?
+        val wishName: String?
+        val text: String?
         fFirebaseAuth = FirebaseAuth.getInstance()
         fFirebaseUser = fFirebaseAuth!!.currentUser
 
@@ -45,11 +47,17 @@ class FirebaseNotificationService : FirebaseMessagingService(), LifecycleObserve
             allowedUsers = remoteMessage.data["allowedUsers"]
             wishListId = remoteMessage.data["wishListId"]
             wishListName = remoteMessage.data["wishListName"]
+            wishName = remoteMessage.data["wishName"]
+            text = wishListName ?: wishName
 
             if (!fFirebaseUser!!.uid.equals(userId) && allowedUsers!!.contains(fFirebaseUser!!.uid)) {
                 notificationTitleVal = remoteMessage.data["title"]
                 notificationBodyVal = remoteMessage.data["body"]
-                sendLocalNotification(getTextFromResource(notificationTitleVal, wishListName), getTextFromResource(notificationBodyVal, wishListName), wishListId)
+                sendLocalNotification(
+                    getTextFromResource(notificationTitleVal, wishListName),
+                    getTextFromResource(notificationBodyVal, text),
+                    wishListId
+                )
             } else {
                 Log.d(TAG, "Keine Nachricht an den Sender!!")
             }

@@ -102,8 +102,12 @@ class SettingsActivity : AppCompatActivity(),
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.preferences_notifications, rootKey)
 
-            val switch: SwitchPreference? = findPreference("notifications_wishlist_active")
-            switch?.onPreferenceChangeListener = this
+            val wishlistNotification: SwitchPreference? =
+                findPreference("notifications_wishlist_active")
+            wishlistNotification?.onPreferenceChangeListener = this
+            val chatNotification: SwitchPreference? =
+                findPreference("notifications_chat_messages_active")
+            chatNotification?.onPreferenceChangeListener = this
 
         }
 

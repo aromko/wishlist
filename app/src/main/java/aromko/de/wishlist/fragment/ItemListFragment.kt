@@ -101,9 +101,15 @@ class ItemListFragment : Fragment() {
                     paymentViewModel.buyItem(wishId, price, partialPrice, wishlistId)
                 }
 
-                override fun onChatInteraction(wishId: String?) {
+                override fun onChatInteraction(
+                    wishId: String?,
+                    wishlistId: String?,
+                    wishName: String?
+                ) {
                     val chatActivity = Intent(getContext(), ChatActivity::class.java)
                     chatActivity.putExtra("wishId", wishId)
+                    chatActivity.putExtra("wishListId", wishlistId)
+                    chatActivity.putExtra("wishName", wishName)
                     startActivity(chatActivity)
                 }
 
@@ -135,8 +141,14 @@ class ItemListFragment : Fragment() {
         fun onFavoriteInteraction(wish: Wish?, isFavorite: Boolean?)
         fun onMapInteraction(longitude: Double, latitude: Double)
         fun onUrlInteraction(url: String?)
-        fun onPaymentInteraction(wishId: String?, price: Double, partialPrice: Double, wishlistId: String?)
-        fun onChatInteraction(wishId: String?)
+        fun onPaymentInteraction(
+            wishId: String?,
+            price: Double,
+            partialPrice: Double,
+            wishlistId: String?
+        )
+
+        fun onChatInteraction(wishId: String?, wishlistId: String?, wishName: String?)
         fun onDeleteWishInteraction(wishId: String?, wishlistId: String?)
     }
 

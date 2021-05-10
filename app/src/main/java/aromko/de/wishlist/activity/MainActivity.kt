@@ -509,8 +509,15 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
     override fun onFavoriteInteraction(wish: Wish?, isFavorite: Boolean?) {}
     override fun onMapInteraction(longitude: Double, latitude: Double) {}
     override fun onUrlInteraction(url: String?) {}
-    override fun onPaymentInteraction(wishId: String?, price: Double, partialPrice: Double, wishlistId: String?) {}
-    override fun onChatInteraction(wishId: String?) {}
+    override fun onPaymentInteraction(
+        wishId: String?,
+        price: Double,
+        partialPrice: Double,
+        wishlistId: String?
+    ) {
+    }
+
+    override fun onChatInteraction(wishId: String?, wishlistId: String?, wishName: String?) {}
     override fun onDeleteWishInteraction(wishId: String?, wishlistId: String?) {}
 
     companion object {
