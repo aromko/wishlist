@@ -15,7 +15,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import aromko.de.wishlist.R
-import aromko.de.wishlist.activity.LoginActivity
 import aromko.de.wishlist.adapter.ChatMessageViewHolderAdapter
 import aromko.de.wishlist.model.ChatMessage
 import aromko.de.wishlist.viewModel.ChatMessageViewModel
@@ -81,7 +80,11 @@ class ChatActivity : AppCompatActivity() {
     }
 
     fun insertChatMessage(view: View?) {
-        chatMessageViewModel!!.insertMessage(fFirebaseUser!!.displayName, etMessageText!!.text.toString())
+        chatMessageViewModel!!.insertMessage(
+            fFirebaseUser!!.displayName,
+            etMessageText!!.text.toString(),
+            fFirebaseAuth!!.currentUser!!.uid
+        )
         etMessageText!!.setText("")
     }
 
