@@ -370,6 +370,10 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
 
         if (sharedPreferences.getBoolean("showAppIntro", true)) {
             startActivity(Intent(this@MainActivity, AppIntroActivity::class.java))
+        } else if (!sharedPreferences.getString("showReleaseNotesIntro", "")
+                .equals(getString(R.string.app_version))
+        ) {
+            startActivity(Intent(this@MainActivity, ReleaseNotesIntroActivity::class.java))
         }
     }
 

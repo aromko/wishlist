@@ -33,6 +33,13 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".activity.ReleaseNotesIntroActivity">
+            <intent-filter>
+                <action android:name="ReleaseNotesIntro" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyD-KB0cNj0mGvmhNQ2FyFXIXDRKeHDV5Ck" />

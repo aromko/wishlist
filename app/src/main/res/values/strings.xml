@@ -1,5 +1,7 @@
 <resources>
     <string name="app_version">0.5.0</string>
+    <string name="releaseNotesIntroTitle">Release 0.5.0</string>
+    <string name="releaseNotesIntroDescription">Gute Neuigkeiten! Es gibt ein neues Release. Die aktuellen Änderungen findest du unter \n https://sites.google.com/view/wishlist-releasenotes/startseite \n oder im Einstellungsmenü --> \n Allgemein --> Releasenotes. \n\n Viel Spaß beim Benutzen der App.</string>
     <string name="app_name">Wishlist</string>
     <string name="txtSend">Senden</string>
     <string name="txtAdd">Hinzufügen</string>
