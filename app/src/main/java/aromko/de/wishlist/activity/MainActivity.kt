@@ -62,6 +62,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
     private var ibAddWishList: ImageButton? = null
     private var listViewModel: WishlistViewModel? = null
     private var selectedWishlistId: String? = null
+    private var selectedWishlistName: String? = null
     private var fab: FloatingActionButton? = null
     private var tvInfo: TextView? = null
     private var civImage: CircleImageView? = null
@@ -112,6 +113,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         fab?.setOnClickListener(View.OnClickListener { view: View? ->
             val wishActivity = Intent(this@MainActivity, WishActivity::class.java)
             wishActivity.putExtra("wishlistId", selectedWishlistId)
+            wishActivity.putExtra("wishlistName", selectedWishlistName)
             wishActivity.putExtra("sharedTitle", sharedTitle)
             wishActivity.putExtra("sharedUrl", sharedUrl)
             sharedTitle = null
@@ -206,6 +208,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
     private fun openFragment(position: Int) {
         listView!!.setSelection(position)
         selectedWishlistId = listItems[position].key
+        selectedWishlistName = listItems[position].name
         allowedUsersSize = listItems[position].allowedUsers?.size?.minus(1)
         hideMenuItem = ""
         if (selectedWishlistId == favoriteListId) {
@@ -215,8 +218,10 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
             fab!!.show()
         }
         invalidateOptionsMenu()
+
         val bundle = Bundle()
         bundle.putString("wishlistId", selectedWishlistId)
+        bundle.putString("wishlistName", selectedWishlistName)
         val fragment = Fragment.instantiate(this, ItemListFragment::class.java.name, bundle) as ItemListFragment
         if (fragment != null) {
             val ft = supportFragmentManager.beginTransaction()
@@ -229,7 +234,6 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         }
 
         val selectedWishlist = listView!!.getItemAtPosition(position) as Wishlist
-        this@MainActivity.title = selectedWishlist.name
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
             createAppShortcuts(selectedWishlist, position)
         }
@@ -536,6 +540,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
 
     override fun onChatInteraction(wishId: String?, wishlistId: String?, wishName: String?) {}
     override fun onDeleteWishInteraction(wishId: String?, wishlistId: String?) {}
+    override fun onCardViewInteraction(wishlistId: String?, wishlistName: String?) {}
 
     companion object {
         const val AROMKO_PAGE_LINK = "https://aromko.page.link"

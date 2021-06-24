@@ -25,9 +25,26 @@ class Wish : Comparable<Wish> {
     var salvagePrice = 0.0
     var placeId: String? = null
     var photoUrl: String? = null
+    var originalWishlistId: String? = null
+    var originalWishlistName: String? = null
 
     constructor()
-    constructor(title: String?, price: Double, url: String?, description: String?, wishstrength: Long, isImageSet: Boolean, timestamp: Long, longitude: Double, latitude: Double, salvagePrice: Double, placeId: String?, photoUrl: String?) {
+    constructor(
+        title: String?,
+        price: Double,
+        url: String?,
+        description: String?,
+        wishstrength: Long,
+        isImageSet: Boolean,
+        timestamp: Long,
+        longitude: Double,
+        latitude: Double,
+        salvagePrice: Double,
+        placeId: String?,
+        photoUrl: String?,
+        originalWishlistId: String?,
+        originalWishlistName: String?
+    ) {
         this.title = title
         this.price = price
         this.url = url
@@ -40,24 +57,12 @@ class Wish : Comparable<Wish> {
         this.salvagePrice = salvagePrice
         this.placeId = placeId
         this.photoUrl = photoUrl
+        this.originalWishlistId = originalWishlistId
+        this.originalWishlistName = originalWishlistName
     }
 
     override fun toString(): String {
-        return "Wish{" +
-                "title='" + title + '\'' +
-                ", price=" + price +
-                ", url='" + url + '\'' +
-                ", description='" + description + '\'' +
-                ", wishstrength=" + wishstrength +
-                ", isImageSet=" + isImageSet +
-                ", markedAsFavorite=" + markedAsFavorite +
-                ", timestamp=" + timestamp +
-                ", longitude=" + longitude +
-                ", latitude=" + latitude +
-                ", salvagePrice=" + salvagePrice +
-                ", placeId=" + placeId +
-                ", photoUrl=" + photoUrl +
-                '}'
+        return "Wish(title=$title, price=$price, url=$url, description=$description, wishstrength=$wishstrength, isImageSet=$isImageSet, markedAsFavorite=$markedAsFavorite, timestamp=$timestamp, longitude=$longitude, latitude=$latitude, salvagePrice=$salvagePrice, placeId=$placeId, photoUrl=$photoUrl, originalWishlistId=$originalWishlistId, originalWishlistName=$originalWishlistName)"
     }
 
     override fun compareTo(wish: Wish): Int {

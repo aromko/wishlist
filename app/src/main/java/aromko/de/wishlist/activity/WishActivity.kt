@@ -39,6 +39,7 @@ class WishActivity : AppCompatActivity() {
     private var flProgressBarHolder: FrameLayout? = null
     private var wishViewModel: WishViewModel? = null
     private var wishlistId: String? = null
+    private var wishlistName: String? = null
     private var tvLocation: TextView? = null
     private var longitude = 0.0
     private var latitude = 0.0
@@ -75,6 +76,7 @@ class WishActivity : AppCompatActivity() {
         wishViewModel = ViewModelProvider(this).get(WishViewModel::class.java)
         val myIntent = intent
         wishlistId = myIntent.getStringExtra("wishlistId")
+        wishlistName = myIntent.getStringExtra("wishlistName")
         sharedTitle = myIntent.getStringExtra("sharedTitle")
         sharedUrl = myIntent.getStringExtra("sharedUrl")
         if (sharedTitle != null) {
@@ -162,10 +164,29 @@ class WishActivity : AppCompatActivity() {
             if (!etPrice!!.text.toString().isEmpty()) {
                 price = java.lang.Double.valueOf(etPrice!!.text.toString().replace(",", "."))
             }
-            val wish = Wish(etTitle!!.text.toString(), price, etUrl!!.text.toString(), etDescription!!.text.toString(), java.lang.Long.valueOf(spWishstrength!!.selectedItemId), isImageSet, System.currentTimeMillis() / 1000, longitude, latitude, 0.0, placeId, photoUrl)
+            val wish = Wish(
+                etTitle!!.text.toString(),
+                price,
+                etUrl!!.text.toString(),
+                etDescription!!.text.toString(),
+                java.lang.Long.valueOf(spWishstrength!!.selectedItemId),
+                isImageSet,
+                System.currentTimeMillis() / 1000,
+                longitude,
+                latitude,
+                0.0,
+                placeId,
+                photoUrl,
+                wishlistId,
+                wishlistName
+            )
             val wishkey = wishViewModel!!.insertWish(wishlistId, wish)
             if (wishkey!!.isEmpty() || ivProductImage!!.tag.toString() != getString(R.string.txtImageChanged)) {
-                Toast.makeText(applicationContext, R.string.txtWishSuccessfulAdded, Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    applicationContext,
+                    R.string.txtWishSuccessfulAdded,
+                    Toast.LENGTH_LONG
+                ).show()
                 flProgressBarHolder!!.visibility = View.GONE
                 finish()
             } else {

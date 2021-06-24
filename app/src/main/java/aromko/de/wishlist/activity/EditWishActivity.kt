@@ -42,6 +42,7 @@ class EditWishActivity : AppCompatActivity() {
     private var flProgressBarHolder: FrameLayout? = null
     private val wishViewModel = WishViewModel()
     private var wishlistId: String? = null
+    private var wishlistName: String? = null
     private var wishId: String? = null
     private var tvLocation: TextView? = null
     private var longitude = 0.0
@@ -80,6 +81,7 @@ class EditWishActivity : AppCompatActivity() {
         photoHelper = PhotoHelper(this)
         val myIntent = intent
         wishlistId = myIntent.getStringExtra("wishlistId")
+        wishlistName = myIntent.getStringExtra("wishlistName")
         wishId = myIntent.getStringExtra("wishId")
         if (!Places.isInitialized()) {
             Places.initialize(applicationContext, "AIzaSyD-KB0cNj0mGvmhNQ2FyFXIXDRKeHDV5Ck")
@@ -213,7 +215,9 @@ class EditWishActivity : AppCompatActivity() {
                 latitude,
                 salvagePrice,
                 placeId,
-                photoUrl
+                photoUrl,
+                wishlistId,
+                wishlistName
             )
             wishViewModel.updateWish(wishlistId, wishId, wish, favoriteListId)
 

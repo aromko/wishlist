@@ -45,8 +45,11 @@ class ItemListFragment : Fragment() {
             savedInstanceState: Bundle?,
     ): View? {
         var wishlistId: String? = ""
+        var wishlistName: String? = ""
         if (requireArguments().size() > 0) {
             wishlistId = requireArguments().getString("wishlistId")
+            wishlistName = requireArguments().getString("wishlistName")
+            activity?.title = wishlistName
         }
         val view = inflater.inflate(R.layout.fragment_item_list, container, false)
         if (view is RecyclerView) {
@@ -116,6 +119,28 @@ class ItemListFragment : Fragment() {
                 override fun onDeleteWishInteraction(wishId: String?, wishlistId: String?) {
                     wishViewModel!!.deleteWish(wishId, wishlistId, favoriteListId)
                 }
+
+                override fun onCardViewInteraction(wishlistId: String?, wishlistName: String?) {
+                    var originalWishlistId: String? = ""
+                    if (requireArguments().size() > 0) {
+                        originalWishlistId = requireArguments().getString("wishlistId")
+                    }
+                    if (originalWishlistId.equals(favoriteListId)) {
+                        val bundle = Bundle()
+                        bundle.putString("wishlistId", wishlistId)
+                        bundle.putString("wishlistName", wishlistName)
+                        val fragment = Fragment.instantiate(
+                            context,
+                            ItemListFragment::class.java.name,
+                            bundle
+                        ) as ItemListFragment
+                        if (fragment != null) {
+                            val ft = activity?.supportFragmentManager?.beginTransaction()
+                            ft?.replace(R.id.content_frame, fragment)
+                            ft?.commit()
+                        }
+                    }
+                }
             }
         }
         return view
@@ -150,6 +175,7 @@ class ItemListFragment : Fragment() {
 
         fun onChatInteraction(wishId: String?, wishlistId: String?, wishName: String?)
         fun onDeleteWishInteraction(wishId: String?, wishlistId: String?)
+        fun onCardViewInteraction(wishlistId: String?, wishlistName: String?)
     }
 
     companion object {

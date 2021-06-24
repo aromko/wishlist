@@ -8,6 +8,7 @@ import android.net.Uri
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import aromko.de.wishlist.R
 import aromko.de.wishlist.activity.EditWishActivity
@@ -114,6 +115,7 @@ class WishRecyclerViewAdapter(private val mValues: List<Wish?>, private val mLis
                 if (itemId == R.id.edit) {
                     val editWishAcitivity = Intent(view.context, EditWishActivity::class.java)
                     editWishAcitivity.putExtra("wishlistId", holder.mItem?.wishlistId)
+                    editWishAcitivity.putExtra("wishlistName", holder.mItem?.originalWishlistName)
                     editWishAcitivity.putExtra("wishId", holder.mItem?.wishId)
                     view.context.startActivity(editWishAcitivity)
                     return@setOnMenuItemClickListener true
@@ -160,6 +162,12 @@ class WishRecyclerViewAdapter(private val mValues: List<Wish?>, private val mLis
                     holder.tvDescription.visibility = View.GONE
                 }
             }
+        }
+        holder.cvItem.setOnClickListener { v: View? ->
+            mListener?.onCardViewInteraction(
+                holder.mItem?.originalWishlistId,
+                holder.mItem?.originalWishlistName
+            )
         }
     }
 
@@ -223,6 +231,7 @@ class WishRecyclerViewAdapter(private val mValues: List<Wish?>, private val mLis
         val tvDescription: TextView
         val ivChat: ImageView
         val ivShowInfos: ImageView
+        val cvItem: CardView
         var mItem: Wish? = null
         override fun toString(): String {
             return super.toString() + " '" + item_name.text + "'"
@@ -242,6 +251,7 @@ class WishRecyclerViewAdapter(private val mValues: List<Wish?>, private val mLis
             tvDescription = mView.findViewById(R.id.tvDescription)
             ivChat = mView.findViewById(R.id.ivChat)
             ivShowInfos = mView.findViewById(R.id.ivShowInfos)
+            cvItem = mView.findViewById(R.id.cvItem)
         }
     }
 }
