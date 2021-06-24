@@ -34,6 +34,7 @@ class WishRecyclerViewAdapter(private val mValues: List<Wish?>, private val mLis
         checkValuesAndSetIconColor(holder)
         if (holder.mItem?.wishlistId == mFavoriteListId) {
             holder.favorite.visibility = View.INVISIBLE
+            holder.tvFavoriteCount.visibility = View.INVISIBLE
             holder.tvItemOptions.visibility = View.INVISIBLE
         }
         var counter = 0
@@ -44,7 +45,7 @@ class WishRecyclerViewAdapter(private val mValues: List<Wish?>, private val mLis
                 }
             }
         }
-        holder.tvUsers.text = counter.toString()
+        holder.tvFavoriteCount.text = counter.toString()
         holder.item_name.text = holder.mItem?.title
         val format = NumberFormat.getCurrencyInstance()
         if (holder.mItem?.salvagePrice == 0.0) {
@@ -214,7 +215,7 @@ class WishRecyclerViewAdapter(private val mValues: List<Wish?>, private val mLis
         val favorite: ImageView
         val productImage: ImageView
         val tvItemOptions: TextView
-        val tvUsers: TextView
+        val tvFavoriteCount: TextView
         val rlUsers: RelativeLayout
         val ivWishstrength: ImageView
         val ivMap: ImageView
@@ -233,7 +234,7 @@ class WishRecyclerViewAdapter(private val mValues: List<Wish?>, private val mLis
             favorite = mView.findViewById(R.id.favorite)
             productImage = mView.findViewById(R.id.ivProductImage)
             tvItemOptions = mView.findViewById(R.id.tvItemOptions)
-            tvUsers = mView.findViewById(R.id.tvUsers)
+            tvFavoriteCount = mView.findViewById(R.id.tvFavoriteCount)
             rlUsers = mView.findViewById(R.id.rlUsers)
             ivWishstrength = mView.findViewById(R.id.ivWishstrength)
             ivMap = mView.findViewById(R.id.ivMap)

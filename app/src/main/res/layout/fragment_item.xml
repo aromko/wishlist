@@ -19,6 +19,40 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <RelativeLayout
+            android:id="@+id/rlUsers"
+            android:layout_width="42dp"
+            android:layout_height="27dp"
+            android:layout_marginStart="170dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintEnd_toStartOf="@+id/tvItemOptions"
+            app:layout_constraintStart_toEndOf="@+id/relativeLayout"
+            app:layout_constraintTop_toBottomOf="@+id/divider">
+
+            <TextView
+                android:id="@+id/tvFavoriteCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="28dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="-7dp"
+                android:background="@color/cardview_light_background"
+                android:text="@string/txtExmapleUserCounter"
+                android:textSize="12sp"
+                tools:ignore="PrivateResource" />
+
+            <ImageView
+                android:id="@+id/favorite"
+                android:layout_width="29dp"
+                android:layout_height="27dp"
+                android:contentDescription="@string/txtExampleFavoriteIcon"
+                app:srcCompat="@drawable/ic_favorite_border" />
+
+        </RelativeLayout>
+
         <ImageView
             android:id="@+id/ivProductImage"
             android:layout_width="wrap_content"
@@ -101,21 +135,6 @@
             app:layout_constraintTop_toBottomOf="@+id/tvDescription"
             app:srcCompat="@drawable/ic_wishstrength_low" />
 
-        <ImageView
-            android:id="@+id/favorite"
-            android:layout_width="29dp"
-            android:layout_height="27dp"
-            android:layout_alignParentStart="false"
-            android:layout_margin="3dp"
-            android:contentDescription="@string/txtExampleFavoriteIcon"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/tvItemOptions"
-            app:layout_constraintHorizontal_bias="0.9"
-            app:layout_constraintStart_toEndOf="@+id/relativeLayout"
-            app:layout_constraintTop_toBottomOf="@+id/divider"
-            app:layout_constraintVertical_bias="0.421"
-            app:srcCompat="@drawable/ic_favorite_border" />
-
         <View
             android:id="@+id/divider"
             android:layout_width="match_parent"
@@ -129,51 +148,22 @@
 
         <RelativeLayout
             android:id="@+id/relativeLayout"
-            android:layout_width="235dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/ivWishstrength"
-            app:layout_constraintTop_toBottomOf="@+id/divider">
-
-            <RelativeLayout
-                android:id="@+id/rlUsers"
-                android:layout_width="40dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintVertical_bias="1.0"
-                tools:layout_editor_absoluteX="8dp">
-
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="29dp"
-                    android:contentDescription="@string/txtUserSymbol"
-                    app:srcCompat="@drawable/ic_person" />
-
-                <TextView
-                    android:id="@+id/tvUsers"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginStart="28dp"
-                    android:layout_marginTop="0dp"
-                    android:layout_marginEnd="-7dp"
-                    android:background="@color/cardview_light_background"
-                    android:text="@string/txtExmapleUserCounter"
-                    android:textSize="12sp"
-                    tools:ignore="PrivateResource" />
-
-            </RelativeLayout>
+            app:layout_constraintTop_toBottomOf="@+id/divider"
+            app:layout_constraintVertical_bias="1.0">
 
             <ImageView
                 android:id="@+id/ivMap"
                 android:layout_width="29dp"
                 android:layout_height="27dp"
-                android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:layout_marginStart="81dp"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@+id/ivChat"
                 android:contentDescription="@string/txtExampleMapIcon"
                 app:srcCompat="@drawable/ic_map" />
 
@@ -182,8 +172,10 @@
                 android:layout_width="29dp"
                 android:layout_height="27dp"
                 android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="86dp"
+                android:layout_alignParentEnd="false"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="0dp"
+                android:layout_toEndOf="@+id/ivMap"
                 android:contentDescription="@string/txtExampleUrlIcon"
                 app:srcCompat="@drawable/ic_open_in_browser" />
 
@@ -193,7 +185,7 @@
                 android:layout_height="27dp"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:layout_marginStart="42dp"
+                android:layout_marginStart="0dp"
                 android:contentDescription="@string/txtExampleChatIcon"
                 app:srcCompat="@drawable/ic_chat" />
         </RelativeLayout>

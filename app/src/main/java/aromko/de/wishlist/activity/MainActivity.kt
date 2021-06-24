@@ -69,15 +69,18 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
     private var hideMenuItem: String? = null
     private var sharedTitle: String? = null
     private var sharedUrl: String? = null
+    private var allowedUsersSize: Int? = 0
     private val receiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val bundle = intent.extras
             if (bundle != null) {
                 val resultCode = bundle.getInt(UploadService.RESULT)
                 if (resultCode == RESULT_OK) {
-                    Toast.makeText(this@MainActivity,
-                            getString(R.string.txtPictureSuccesfulUploaded),
-                            Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        this@MainActivity,
+                        getString(R.string.txtPictureSuccesfulUploaded),
+                        Toast.LENGTH_LONG
+                    ).show()
                 } else {
                     Toast.makeText(this@MainActivity, getString(R.string.txtPictureNotSuccesfulUploaded),
                             Toast.LENGTH_LONG).show()
@@ -203,6 +206,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
     private fun openFragment(position: Int) {
         listView!!.setSelection(position)
         selectedWishlistId = listItems[position].key
+        allowedUsersSize = listItems[position].allowedUsers?.size?.minus(1)
         hideMenuItem = ""
         if (selectedWishlistId == favoriteListId) {
             fab!!.hide()
@@ -292,6 +296,15 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
+
+        val invitePeopleMenuItem = menu.findItem(R.id.action_invitePeople)
+        val actionView: View = invitePeopleMenuItem.actionView
+        val tvUser: TextView = actionView.findViewById(R.id.tvFavoriteCount)
+        tvUser.text = allowedUsersSize.toString()
+        actionView.setOnClickListener {
+            onOptionsItemSelected(invitePeopleMenuItem)
+        }
+
         if (HIDE_INVITE_PEOPLE == hideMenuItem) {
             menu.findItem(R.id.action_invitePeople).isVisible = false
         }
