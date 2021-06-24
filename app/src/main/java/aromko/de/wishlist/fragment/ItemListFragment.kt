@@ -69,7 +69,8 @@ class ItemListFragment : Fragment() {
                 val scrollPosition = myLayoutManager!!.findFirstVisibleItemPosition()
                 listItems.clear()
                 listItems.addAll(lists!!)
-                recyclerView.adapter = WishRecyclerViewAdapter(listItems, mListener, favoriteListId)
+                recyclerView.adapter =
+                    WishRecyclerViewAdapter(listItems, mListener, favoriteListId, wishlistName)
                 recyclerView.scrollToPosition(scrollPosition)
             })
             mListener = object : OnListFragmentInteractionListener {

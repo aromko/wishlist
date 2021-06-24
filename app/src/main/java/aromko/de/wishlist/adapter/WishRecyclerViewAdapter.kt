@@ -21,11 +21,16 @@ import com.squareup.picasso.Picasso
 import java.text.NumberFormat
 
 
-class WishRecyclerViewAdapter(private val mValues: List<Wish?>, private val mListener: OnListFragmentInteractionListener?, private val mFavoriteListId: String?) : RecyclerView.Adapter<WishRecyclerViewAdapter.ViewHolder>() {
+class WishRecyclerViewAdapter(
+    private val mValues: List<Wish?>,
+    private val mListener: OnListFragmentInteractionListener?,
+    private val mFavoriteListId: String?,
+    private val mWishlistName: String?
+) : RecyclerView.Adapter<WishRecyclerViewAdapter.ViewHolder>() {
     private var context: Context? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.fragment_item, parent, false)
+            .inflate(R.layout.fragment_item, parent, false)
         context = parent.context
         return ViewHolder(view)
     }
@@ -115,7 +120,7 @@ class WishRecyclerViewAdapter(private val mValues: List<Wish?>, private val mLis
                 if (itemId == R.id.edit) {
                     val editWishAcitivity = Intent(view.context, EditWishActivity::class.java)
                     editWishAcitivity.putExtra("wishlistId", holder.mItem?.wishlistId)
-                    editWishAcitivity.putExtra("wishlistName", holder.mItem?.originalWishlistName)
+                    editWishAcitivity.putExtra("wishlistName", mWishlistName)
                     editWishAcitivity.putExtra("wishId", holder.mItem?.wishId)
                     view.context.startActivity(editWishAcitivity)
                     return@setOnMenuItemClickListener true
