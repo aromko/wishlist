@@ -7,14 +7,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import aromko.de.wishlist.database.FirebaseQueryLiveData
+import aromko.de.wishlist.model.UserSetting
 import aromko.de.wishlist.model.Wish
 import aromko.de.wishlist.model.Wishlist
 import aromko.de.wishlist.tasks.AppExecutors
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
-import java.util.*
-import kotlin.collections.ArrayList
 
 class WishViewModel : ViewModel {
     private val liveData: FirebaseQueryLiveData
@@ -51,42 +50,53 @@ class WishViewModel : ViewModel {
     }
 
     fun updateWish(wishlistId: String?, wishId: String?, wish: Wish, favoriteListId: String?) {
-        FirebaseDatabase.getInstance().getReference("/$DB_PATH_WISHES/$wishlistId/$wishId").addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val savedWish = dataSnapshot.getValue(Wish::class.java)
-                wish.markedAsFavorite = savedWish?.markedAsFavorite
-                dataSnapshot.ref.setValue(wish)
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {}
-        })
-        FirebaseDatabase.getInstance().getReference("/$DB_PATH_WISHES/$favoriteListId/$wishId").addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val savedWish = dataSnapshot.getValue(Wish::class.java)
-                if (savedWish != null) {
-                    wish.markedAsFavorite = savedWish.markedAsFavorite
+        FirebaseDatabase.getInstance().getReference("/$DB_PATH_WISHES/$wishlistId/$wishId")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val savedWish = dataSnapshot.getValue(Wish::class.java)
+                    wish.markedAsFavorite = savedWish?.markedAsFavorite
                     dataSnapshot.ref.setValue(wish)
                 }
-            }
 
-            override fun onCancelled(databaseError: DatabaseError) {}
-        })
+                override fun onCancelled(databaseError: DatabaseError) {}
+            })
+    }
+
+    fun updateFavoriteWishlist(
+        favoriteListId: String?,
+        wishId: String?,
+        wish: Wish
+    ) {
+        FirebaseDatabase.getInstance().getReference("/$DB_PATH_WISHES/$favoriteListId/$wishId")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val savedWish = dataSnapshot.getValue(Wish::class.java)
+                    if (savedWish != null) {
+                        wish.markedAsFavorite = savedWish.markedAsFavorite
+                        dataSnapshot.ref.setValue(wish)
+                    }
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {}
+            })
     }
 
     fun insertWish(wishlistId: String?, wish: Wish?): String? {
         val wishId = FirebaseDatabase.getInstance().getReference("/$DB_PATH_WISHES").push().key
-        FirebaseDatabase.getInstance().getReference("/$DB_PATH_WISHES/$wishlistId/$wishId").setValue(wish)
-        FirebaseDatabase.getInstance().getReference("/$DB_PATH_WISHLISTS/$wishlistId").addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val currentWishlist = dataSnapshot.getValue(Wishlist::class.java)
-                var counter = 1
-                counter += currentWishlist?.wishCounter!!
-                currentWishlist.wishCounter = counter
-                dataSnapshot.ref.setValue(currentWishlist)
-            }
+        FirebaseDatabase.getInstance().getReference("/$DB_PATH_WISHES/$wishlistId/$wishId")
+            .setValue(wish)
+        FirebaseDatabase.getInstance().getReference("/$DB_PATH_WISHLISTS/$wishlistId")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val currentWishlist = dataSnapshot.getValue(Wishlist::class.java)
+                    var counter = 1
+                    counter += currentWishlist?.wishCounter!!
+                    currentWishlist.wishCounter = counter
+                    dataSnapshot.ref.setValue(currentWishlist)
+                }
 
-            override fun onCancelled(databaseError: DatabaseError) {}
-        })
+                override fun onCancelled(databaseError: DatabaseError) {}
+            })
         return wishId
     }
 
@@ -176,6 +186,21 @@ class WishViewModel : ViewModel {
         })
     }
 
+    fun getAllFavoriteWishlistsIdsFromMarkedAsFavoriteUsers(
+        userId: String?,
+        firebaseCallback: (UserSetting) -> Unit
+    ) {
+        FirebaseDatabase.getInstance().getReference("/$DB_PATH_SETTINGS/$userId")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val userSetting = dataSnapshot.getValue(UserSetting::class.java)
+                    firebaseCallback.invoke(userSetting!!)
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {}
+            })
+    }
+
     interface FirebaseCallback {
         fun onCallback(wish: Wish?)
     }
@@ -184,5 +209,6 @@ class WishViewModel : ViewModel {
         private const val DB_PATH_WISHES = "wishes"
         private const val DB_PATH_WISHLISTS = "wishLists"
         private var wishes_ref: DatabaseReference? = null
+        private const val DB_PATH_SETTINGS = "settings"
     }
 }

@@ -11,6 +11,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import aromko.de.wishlist.R
+import aromko.de.wishlist.model.UserSetting
 import aromko.de.wishlist.model.Wish
 import aromko.de.wishlist.utilities.PhotoHelper
 import aromko.de.wishlist.utilities.Validator
@@ -51,6 +52,7 @@ class EditWishActivity : AppCompatActivity() {
     private var photoUrl: String? = null
     private var favoriteListId: String? = ""
     private var salvagePrice = 0.0
+    private var markedAsFavorite: Map<String?, Boolean?>? = null
     var photoHelper: PhotoHelper? = null
     var awesomeValidation: AwesomeValidation? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -109,12 +111,18 @@ class EditWishActivity : AppCompatActivity() {
                 }.addOnFailureListener { exception: Exception? ->
                     if (exception is ApiException) {
                         val apiException = exception
-                        Toast.makeText(applicationContext, R.string.txtNoPlaceFound, Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            applicationContext,
+                            R.string.txtNoPlaceFound,
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 }
             }
             btnDeleteImage?.tag = photoUrl
             salvagePrice = wish.salvagePrice
+
+            markedAsFavorite = wish.markedAsFavorite
         }
         val fFirebaseAuth = FirebaseAuth.getInstance()
         val sharedPreferences = getSharedPreferences(fFirebaseAuth.currentUser!!.uid, MODE_PRIVATE)
@@ -193,16 +201,52 @@ class EditWishActivity : AppCompatActivity() {
             if (!etPrice!!.text.toString().isEmpty()) {
                 price = java.lang.Double.valueOf(etPrice!!.text.toString().replace(",", "."))
             }
-            val wish = Wish(etTitle!!.text.toString(), price, etUrl!!.text.toString(), etDescription!!.text.toString(), java.lang.Long.valueOf(spWishstrength!!.selectedItemId), isImageSet, System.currentTimeMillis() / 1000, longitude, latitude, salvagePrice, placeId, photoUrl)
+            val wish = Wish(
+                etTitle!!.text.toString(),
+                price,
+                etUrl!!.text.toString(),
+                etDescription!!.text.toString(),
+                java.lang.Long.valueOf(spWishstrength!!.selectedItemId),
+                isImageSet,
+                System.currentTimeMillis() / 1000,
+                longitude,
+                latitude,
+                salvagePrice,
+                placeId,
+                photoUrl
+            )
             wishViewModel.updateWish(wishlistId, wishId, wish, favoriteListId)
+
+            if (markedAsFavorite != null) {
+                for ((userId, value) in markedAsFavorite!!) {
+                    wishViewModel.getAllFavoriteWishlistsIdsFromMarkedAsFavoriteUsers(userId) { userSetting: UserSetting ->
+                        wishViewModel.updateFavoriteWishlist(
+                            userSetting.favoriteListId,
+                            wishId,
+                            wish
+                        )
+                    }
+                }
+            }
             if (ivProductImage!!.tag.toString() != getString(R.string.txtImageChanged)) {
-                Toast.makeText(applicationContext, R.string.txtSuccessfulChangedWish, Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    applicationContext,
+                    R.string.txtSuccessfulChangedWish,
+                    Toast.LENGTH_LONG
+                ).show()
                 flProgressBarHolder!!.visibility = View.GONE
                 finish()
             } else {
                 val userId: String? = null
                 if (bitmap != null) {
-                    photoHelper!!.uploadImage(bitmap, wishId, userId, wishViewModel, wishlistId, favoriteListId)
+                    photoHelper!!.uploadImage(
+                        bitmap,
+                        wishId,
+                        userId,
+                        wishViewModel,
+                        wishlistId,
+                        favoriteListId
+                    )
                 }
             }
         }
