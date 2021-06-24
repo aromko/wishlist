@@ -222,6 +222,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         val bundle = Bundle()
         bundle.putString("wishlistId", selectedWishlistId)
         bundle.putString("wishlistName", selectedWishlistName)
+        bundle.putString("allowedUsersSize", allowedUsersSize.toString())
         val fragment = Fragment.instantiate(this, ItemListFragment::class.java.name, bundle) as ItemListFragment
         if (fragment != null) {
             val ft = supportFragmentManager.beginTransaction()

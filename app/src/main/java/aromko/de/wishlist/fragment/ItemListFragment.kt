@@ -5,9 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -50,6 +49,9 @@ class ItemListFragment : Fragment() {
             wishlistId = requireArguments().getString("wishlistId")
             wishlistName = requireArguments().getString("wishlistName")
             activity?.title = wishlistName
+            if (!wishlistId.equals(favoriteListId)) {
+                setHasOptionsMenu(true)
+            }
         }
         val view = inflater.inflate(R.layout.fragment_item_list, container, false)
         if (view is RecyclerView) {
@@ -146,13 +148,25 @@ class ItemListFragment : Fragment() {
         return view
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        var allowedUsersSize = requireArguments().getString("allowedUsersSize")
+        val invitePeopleMenuItem = menu.findItem(R.id.action_invitePeople)
+        val actionView: View = invitePeopleMenuItem.actionView
+        val tvUser: TextView = actionView.findViewById(R.id.tvFavoriteCount)
+        tvUser.text = allowedUsersSize
+        invitePeopleMenuItem.isVisible = true
+    }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mListener = if (context is OnListFragmentInteractionListener) {
             context
         } else {
-            throw RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener")
+            throw RuntimeException(
+                context.toString()
+                        + " must implement OnListFragmentInteractionListener"
+            )
         }
     }
 
