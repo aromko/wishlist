@@ -23,7 +23,7 @@
     <string name="txtDeleteWishlist">Wunschliste löschen</string>
     <string name="txtWouldYouLikeToDeleteTheWishlist">Möchten Sie wirklich die Wunschliste löschen?</string>
     <string name="txtEditWishlist">Wunschliste editieren</string>
-    <string name="txtPartialPayment">Anteilig bezahlen</string>
+    <string name="txtPartialPayment">Anteilig schenken</string>
     <string name="txtAmount">Betrag</string>
     <string name="txtChooseAnImage">Wähle ein Bild aus</string>
     <string name="txtTakePhoto">Foto aufnehmen</string>
@@ -32,7 +32,7 @@
     <string name="txtDownloadImage">Bild herunterladen</string>
     <string name="txtNameAnonym">Anonym</string>
     <string name="txtEmailAnonym">anonym@anonym.com</string>
-    <string name="txtPayment">Bezahlen</string>
+    <string name="txtPayment">Schenken</string>
     <string name="txtEdit">Editieren</string>
     <string name="txtProfile">Profil</string>
     <string name="txtSettings">Einstellungen</string>
