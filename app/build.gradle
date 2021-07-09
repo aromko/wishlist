@@ -1,13 +1,16 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
+Properties props = new Properties()
+props.load(new FileInputStream(file(project.property("wishlistapp_keystore.properties"))))
+
 android {
     signingConfigs {
         release {
-            storeFile file('C:\\Users\\mko_1\\Dropbox\\Wishlist\\android_keystore\\keystore')
-            storePassword 'BEha$mufr09'
-            keyAlias = 'release'
-            keyPassword 'BEha$mufr09'
+            storeFile file(props['keystore'])
+            storePassword props['keystore.password']
+            keyPassword props['keystore.keyPassword']
+            keyAlias props['keystore.keyAlias']
         }
     }
     compileSdkVersion 30
@@ -15,7 +18,7 @@ android {
         applicationId "aromko.de.wishlist"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 8
+        versionCode 9
         versionName "@string/app_version"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -33,20 +36,20 @@ android {
         targetCompatibility = 1.8
         sourceCompatibility JavaVersion.VERSION_1_8
     }
-    buildToolsVersion '29.0.2'
+    buildToolsVersion '30.0.3'
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.3.0'
-    implementation 'com.google.android.material:material:1.3.0'
+    implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'com.google.firebase:firebase-messaging:22.0.0'
     testImplementation 'junit:junit:4.13.1'
-    androidTestImplementation 'androidx.test:runner:1.4.0-rc01'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0-rc01'
+    androidTestImplementation 'androidx.test:runner:1.4.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     implementation 'com.google.firebase:firebase-core:19.0.0'
     implementation 'com.google.firebase:firebase-auth:21.0.1'
     implementation 'com.google.android.gms:play-services-auth:19.0.0'
@@ -68,7 +71,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-perf'
     implementation 'com.basgeekball:awesome-validation:4.2'
-    implementation "androidx.core:core-ktx:1.5.0"
+    implementation "androidx.core:core-ktx:1.6.0"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "androidx.preference:preference-ktx:1.1.1"
