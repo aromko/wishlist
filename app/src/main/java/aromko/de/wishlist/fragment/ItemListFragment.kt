@@ -3,6 +3,7 @@ package aromko.de.wishlist.fragment
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
@@ -20,6 +21,7 @@ import aromko.de.wishlist.model.Wish
 import aromko.de.wishlist.viewModel.PaymentViewModel
 import aromko.de.wishlist.viewModel.WishViewModel
 import aromko.de.wishlist.viewModel.WishViewModelFactory
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import java.util.*
 
@@ -94,7 +96,11 @@ class ItemListFragment : Fragment() {
                         val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
                         startActivity(mapIntent)
                     } catch (e: ActivityNotFoundException) {
-                        Toast.makeText(context, "Leider befindet sich keine Navigationsapp auf Ihrem Handy oder ist deaktiviert.", Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            context,
+                            getString(R.string.txtNoNavigationAppFound),
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 }
 
@@ -102,9 +108,30 @@ class ItemListFragment : Fragment() {
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
                 }
 
-                override fun onPaymentInteraction(wishId: String?, price: Double, partialPrice: Double, wishlistId: String?) {
+                override fun onPaymentInteraction(
+                    wishId: String?,
+                    price: Double,
+                    partialPrice: Double,
+                    wishlistId: String?,
+                    salvagePrice: Double,
+                    favoriteListId: String?
+                ) {
                     val paymentViewModel = PaymentViewModel()
-                    paymentViewModel.buyItem(wishId, price, partialPrice, wishlistId)
+                    if ((salvagePrice + partialPrice) <= price) {
+                        paymentViewModel.buyItem(
+                            wishId,
+                            price,
+                            partialPrice,
+                            wishlistId,
+                            favoriteListId
+                        )
+                    } else {
+                        Snackbar.make(
+                            view,
+                            getString(R.string.txtGiveAwayNotPossible),
+                            Snackbar.LENGTH_LONG
+                        ).setBackgroundTint(Color.RED).show()
+                    }
                 }
 
                 override fun onChatInteraction(
@@ -185,7 +212,9 @@ class ItemListFragment : Fragment() {
             wishId: String?,
             price: Double,
             partialPrice: Double,
-            wishlistId: String?
+            wishlistId: String?,
+            salvagePrice: Double,
+            favoriteListId: String?
         )
 
         fun onChatInteraction(wishId: String?, wishlistId: String?, wishName: String?)

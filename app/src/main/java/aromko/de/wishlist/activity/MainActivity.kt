@@ -535,7 +535,9 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         wishId: String?,
         price: Double,
         partialPrice: Double,
-        wishlistId: String?
+        wishlistId: String?,
+        salvagePrice: Double,
+        favoriteListId: String?
     ) {
     }
 

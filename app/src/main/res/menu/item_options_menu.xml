@@ -5,7 +5,8 @@
         android:title="@string/txtPayment" />
     <item
         android:id="@+id/partial_payment"
-        android:title="@string/txtPartialPayment" />
+        android:title="@string/txtPartialPayment"
+        android:visible="false" />
     <item
         android:id="@+id/edit"
         android:title="@string/txtEdit" />

@@ -123,4 +123,6 @@
     <string name="txtInviteFriends">Freunde einladen</string>
     <string name="txtGivesAway">Verschenkt</string>
     <string name="txtShowAdditionalInfos">Weitere Infos anzeigen</string>
+    <string name="txtNoNavigationAppFound">Leider befindet sich keine Navigationsapp auf Ihrem Handy oder ist deaktiviert.</string>
+    <string name="txtGiveAwayNotPossible">Wunsch wurde bereits verschenkt.</string>
 </resources>

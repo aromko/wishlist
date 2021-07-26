@@ -57,10 +57,16 @@ class WishRecyclerViewAdapter(
         if (holder.mItem?.salvagePrice == 0.0) {
             holder.item_price.text = format.format(holder.mItem?.price)
         } else {
-            val priceText = format.format(holder.mItem?.salvagePrice) + " / " + format.format(holder.mItem?.price)
+            val priceText =
+                format.format(holder.mItem?.salvagePrice) + " / " + format.format(holder.mItem?.price)
             holder.item_price.text = priceText
         }
-        if (holder.mItem?.markedAsFavorite != null && holder.mItem?.markedAsFavorite!!.containsKey(FirebaseAuth.getInstance().currentUser!!.uid) && holder.mItem!!.markedAsFavorite?.get(FirebaseAuth.getInstance().currentUser!!.uid) == true) {
+        //TODO: Entfernen, wenn anteilig
+        holder.item_price.text = format.format(holder.mItem?.price)
+        if (holder.mItem?.markedAsFavorite != null && holder.mItem?.markedAsFavorite!!.containsKey(
+                FirebaseAuth.getInstance().currentUser!!.uid
+            ) && holder.mItem!!.markedAsFavorite?.get(FirebaseAuth.getInstance().currentUser!!.uid) == true
+        ) {
             holder.favorite.setImageResource(R.drawable.ic_favorite)
             holder.favorite.tag = context!!.getString(R.string.txtIsFavorite)
         } else {
@@ -100,17 +106,22 @@ class WishRecyclerViewAdapter(
         }
         if (mValues[position]!!.isImageSet) {
             Picasso.get()
-                    .load(Uri.parse(mValues[position]?.photoUrl))
-                    .networkPolicy(NetworkPolicy.OFFLINE)
-                    .into(holder.productImage, object : Callback {
-                        override fun onSuccess() {}
-                        override fun onError(e: Exception) {
-                            Picasso.get()
-                                    .load(Uri.parse(mValues[position]?.photoUrl))
-                                    .error(R.drawable.no_image_available)
-                                    .into(holder.productImage)
-                        }
-                    })
+                .load(Uri.parse(mValues[position]?.photoUrl))
+                .networkPolicy(NetworkPolicy.OFFLINE)
+                .into(holder.productImage, object : Callback {
+                    override fun onSuccess() {}
+                    override fun onError(e: Exception) {
+                        Picasso.get()
+                            .load(Uri.parse(mValues[position]?.photoUrl))
+                            .error(R.drawable.no_image_available)
+                            .into(holder.productImage)
+                    }
+                })
+        }
+        if (holder.mItem?.salvagePrice != holder.mItem?.price || holder.mItem?.price == 0.0 && holder.mItem?.salvagePrice == 0.0) {
+            holder.tvGiveAway.visibility = View.GONE
+        } else {
+            holder.tvGiveAway.visibility = View.VISIBLE
         }
         holder.tvItemOptions.setOnClickListener { view: View ->
             val popupMenu = PopupMenu(context, holder.tvItemOptions)
@@ -125,11 +136,23 @@ class WishRecyclerViewAdapter(
                     view.context.startActivity(editWishAcitivity)
                     return@setOnMenuItemClickListener true
                 } else if (itemId == R.id.payment) {
-                    mListener?.onPaymentInteraction(holder.mItem?.wishId, holder.mItem?.price!!, holder.mItem?.price!!, holder.mItem!!.wishlistId)
+                    mListener?.onPaymentInteraction(
+                        holder.mItem?.wishId,
+                        holder.mItem?.price!!,
+                        holder.mItem?.price!!,
+                        holder.mItem!!.wishlistId,
+                        holder.mItem?.salvagePrice!!,
+                        mFavoriteListId
+                    )
                     return@setOnMenuItemClickListener true
                 } else if (itemId == R.id.partial_payment) {
                     if (null != mListener) {
-                        showPaymentAlertDialog(holder.mItem?.wishId, holder.mItem?.price!!, holder.mItem!!.wishlistId)
+                        showPaymentAlertDialog(
+                            holder.mItem?.wishId,
+                            holder.mItem?.price!!,
+                            holder.mItem!!.wishlistId,
+                            holder.mItem?.salvagePrice!!
+                        )
                     }
                     return@setOnMenuItemClickListener true
                 } else if (itemId == R.id.delete_wish) {
@@ -176,7 +199,16 @@ class WishRecyclerViewAdapter(
         }
     }
 
-    fun showPaymentAlertDialog(wishId: String?, price: Double, wishlistId: String?) {
+    override fun getItemCount(): Int {
+        return mValues.size
+    }
+
+    private fun showPaymentAlertDialog(
+        wishId: String?,
+        price: Double,
+        wishlistId: String?,
+        salvagePrice: Double
+    ) {
         val builder = AlertDialog.Builder(context!!)
         val inflater = context!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val viewPartialPayment = inflater.inflate(R.layout.dialog_payment, null)
@@ -186,7 +218,14 @@ class WishRecyclerViewAdapter(
             if ("" != txtPartialPayment.text.toString()) {
                 val partialPrice = txtPartialPayment.text.toString().replace(",", ".").toDouble()
                 if (partialPrice != 0.0) {
-                    mListener?.onPaymentInteraction(wishId, price, partialPrice, wishlistId)
+                    mListener?.onPaymentInteraction(
+                        wishId,
+                        price,
+                        partialPrice,
+                        wishlistId,
+                        salvagePrice,
+                        mFavoriteListId
+                    )
                 }
             }
             dialogInterface.dismiss()
@@ -195,7 +234,7 @@ class WishRecyclerViewAdapter(
         dialog.show()
     }
 
-    fun showDeleteWishAlertDialog(wishId: String?, wishlistId: String?) {
+    private fun showDeleteWishAlertDialog(wishId: String?, wishlistId: String?) {
         val builder = AlertDialog.Builder(context!!)
         val inflater = context!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val viewDeleteWish = inflater.inflate(R.layout.dialog_deletewish, null)
@@ -203,13 +242,10 @@ class WishRecyclerViewAdapter(
         builder.setPositiveButton(R.string.txtOk) { dialogInterface: DialogInterface, i: Int ->
             mListener?.onDeleteWishInteraction(wishId, wishlistId)
             dialogInterface.dismiss()
-        }.setNegativeButton(R.string.txtCancel) { dialogInterface: DialogInterface, i: Int -> dialogInterface.cancel() }
+        }
+            .setNegativeButton(R.string.txtCancel) { dialogInterface: DialogInterface, i: Int -> dialogInterface.cancel() }
         val dialog = builder.create()
         dialog.show()
-    }
-
-    override fun getItemCount(): Int {
-        return mValues.size
     }
 
     private fun checkValuesAndSetIconColor(holder: ViewHolder) {
@@ -238,6 +274,8 @@ class WishRecyclerViewAdapter(
         val ivShowInfos: ImageView
         val cvItem: CardView
         var mItem: Wish? = null
+        val tvGiveAway: TextView
+
         override fun toString(): String {
             return super.toString() + " '" + item_name.text + "'"
         }
@@ -257,6 +295,7 @@ class WishRecyclerViewAdapter(
             ivChat = mView.findViewById(R.id.ivChat)
             ivShowInfos = mView.findViewById(R.id.ivShowInfos)
             cvItem = mView.findViewById(R.id.cvItem)
+            tvGiveAway = mView.findViewById(R.id.tvGiveAway)
         }
     }
 }

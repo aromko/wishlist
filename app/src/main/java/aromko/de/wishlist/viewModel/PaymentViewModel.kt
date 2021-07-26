@@ -11,39 +11,47 @@ import java.util.*
 
 class PaymentViewModel {
     private val fFirebaseUser = FirebaseAuth.getInstance().currentUser
-    fun buyItem(wishId: String?, price: Double, partialPrice: Double, wishlistId: String?) {
-        FirebaseDatabase.getInstance().getReference(DB_PATH_PAYMENTS + wishId).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val partialPayments: MutableMap<String?, Double?> = HashMap()
-                var salvagePrice: Double
-                var salvagePriceUser = 0.0
-                if (dataSnapshot.exists()) {
-                    val currentPayment = dataSnapshot.getValue(Payment::class.java)
-                    if (currentPayment?.partialPayments != null) {
-                        partialPayments.putAll(currentPayment.partialPayments!!)
+    fun buyItem(
+        wishId: String?,
+        price: Double,
+        partialPrice: Double,
+        wishlistId: String?,
+        favoriteListId: String?
+    ) {
+        FirebaseDatabase.getInstance().getReference(DB_PATH_PAYMENTS + wishId)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val partialPayments: MutableMap<String?, Double?> = HashMap()
+                    var salvagePrice: Double
+                    var salvagePriceUser = 0.0
+                    if (dataSnapshot.exists()) {
+                        val currentPayment = dataSnapshot.getValue(Payment::class.java)
+                        if (currentPayment?.partialPayments != null) {
+                            partialPayments.putAll(currentPayment.partialPayments!!)
+                        }
+                        if (partialPayments.containsKey(fFirebaseUser!!.uid)) {
+                            salvagePriceUser = partialPayments[fFirebaseUser.uid]!! + partialPrice
+                        }
+                        salvagePrice = currentPayment?.salvagePrice!! + partialPrice
+                        if (salvagePrice <= 0.00) {
+                            salvagePrice = 0.00
+                        }
+                        partialPayments[fFirebaseUser.uid] = salvagePriceUser
+                        currentPayment.salvagePrice = salvagePrice
+                        currentPayment.partialPayments = partialPayments
+                        dataSnapshot.ref.setValue(currentPayment)
+                    } else {
+                        salvagePrice = partialPrice
+                        if (salvagePrice <= 0.00) {
+                            salvagePrice = 0.00
+                        }
+                        partialPayments[fFirebaseUser!!.uid] = partialPrice
+                        val payment = Payment(price, salvagePrice, partialPayments)
+                        dataSnapshot.ref.setValue(payment)
                     }
-                    if (partialPayments.containsKey(fFirebaseUser!!.uid)) {
-                        salvagePriceUser = partialPayments[fFirebaseUser.uid]!! + partialPrice
-                    }
-                    salvagePrice = currentPayment?.salvagePrice!! + partialPrice
-                    if (salvagePrice <= 0.00) {
-                        salvagePrice = 0.00
-                    }
-                    partialPayments[fFirebaseUser.uid] = salvagePriceUser
-                    currentPayment.salvagePrice = salvagePrice
-                    currentPayment.partialPayments = partialPayments
-                    dataSnapshot.ref.setValue(currentPayment)
-                } else {
-                    salvagePrice = partialPrice
-                    if (salvagePrice <= 0.00) {
-                        salvagePrice = 0.00
-                    }
-                    partialPayments[fFirebaseUser!!.uid] = partialPrice
-                    val payment = Payment(price, salvagePrice, partialPayments)
-                    dataSnapshot.ref.setValue(payment)
+                    updateSalvagePriceInWish(salvagePrice, wishId, wishlistId)
+                    updateSalvagePriceInWish(salvagePrice, wishId, favoriteListId)
                 }
-                updateSalvagePriceInWish(salvagePrice, wishId, wishlistId)
-            }
 
             override fun onCancelled(databaseError: DatabaseError) {}
         })
