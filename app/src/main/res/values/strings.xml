@@ -122,4 +122,5 @@
     <string name="notifications_chat_description_new">Es wurde ein neuer Nachricht bei XXX hinzugefügt. Klicke hier, um direkt in die Liste zu gelangen.</string>
     <string name="txtInviteFriends">Freunde einladen</string>
     <string name="txtGivesAway">Verschenkt</string>
+    <string name="txtShowAdditionalInfos">Weitere Infos anzeigen</string>
 </resources>
