@@ -142,7 +142,7 @@ class WishRecyclerViewAdapter(
                         holder.mItem?.price!!,
                         holder.mItem!!.wishlistId,
                         holder.mItem?.salvagePrice!!,
-                        mFavoriteListId
+                        holder.mItem?.markedAsFavorite
                     )
                     return@setOnMenuItemClickListener true
                 } else if (itemId == R.id.partial_payment) {
@@ -151,7 +151,8 @@ class WishRecyclerViewAdapter(
                             holder.mItem?.wishId,
                             holder.mItem?.price!!,
                             holder.mItem!!.wishlistId,
-                            holder.mItem?.salvagePrice!!
+                            holder.mItem?.salvagePrice!!,
+                            holder.mItem?.markedAsFavorite
                         )
                     }
                     return@setOnMenuItemClickListener true
@@ -207,7 +208,8 @@ class WishRecyclerViewAdapter(
         wishId: String?,
         price: Double,
         wishlistId: String?,
-        salvagePrice: Double
+        salvagePrice: Double,
+        markedAsFavorite: Map<String?, Boolean?>?
     ) {
         val builder = AlertDialog.Builder(context!!)
         val inflater = context!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -224,7 +226,7 @@ class WishRecyclerViewAdapter(
                         partialPrice,
                         wishlistId,
                         salvagePrice,
-                        mFavoriteListId
+                        markedAsFavorite
                     )
                 }
             }

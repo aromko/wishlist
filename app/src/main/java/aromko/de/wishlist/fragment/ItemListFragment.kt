@@ -114,7 +114,7 @@ class ItemListFragment : Fragment() {
                     partialPrice: Double,
                     wishlistId: String?,
                     salvagePrice: Double,
-                    favoriteListId: String?
+                    markedAsFavorite: Map<String?, Boolean?>?
                 ) {
                     val paymentViewModel = PaymentViewModel()
                     if ((salvagePrice + partialPrice) <= price) {
@@ -123,7 +123,7 @@ class ItemListFragment : Fragment() {
                             price,
                             partialPrice,
                             wishlistId,
-                            favoriteListId
+                            markedAsFavorite
                         )
                     } else {
                         Snackbar.make(
@@ -214,7 +214,7 @@ class ItemListFragment : Fragment() {
             partialPrice: Double,
             wishlistId: String?,
             salvagePrice: Double,
-            favoriteListId: String?
+            markedAsFavorite: Map<String?, Boolean?>?
         )
 
         fun onChatInteraction(wishId: String?, wishlistId: String?, wishName: String?)

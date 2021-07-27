@@ -537,7 +537,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         partialPrice: Double,
         wishlistId: String?,
         salvagePrice: Double,
-        favoriteListId: String?
+        markedAsFavorite: Map<String?, Boolean?>?
     ) {
     }
 

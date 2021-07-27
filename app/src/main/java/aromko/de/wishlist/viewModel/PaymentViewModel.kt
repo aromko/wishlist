@@ -1,6 +1,7 @@
 package aromko.de.wishlist.viewModel
 
 import aromko.de.wishlist.model.Payment
+import aromko.de.wishlist.model.UserSetting
 import aromko.de.wishlist.model.Wish
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -16,7 +17,7 @@ class PaymentViewModel {
         price: Double,
         partialPrice: Double,
         wishlistId: String?,
-        favoriteListId: String?
+        markedAsFavorite: Map<String?, Boolean?>?
     ) {
         FirebaseDatabase.getInstance().getReference(DB_PATH_PAYMENTS + wishId)
             .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -50,11 +51,34 @@ class PaymentViewModel {
                         dataSnapshot.ref.setValue(payment)
                     }
                     updateSalvagePriceInWish(salvagePrice, wishId, wishlistId)
-                    updateSalvagePriceInWish(salvagePrice, wishId, favoriteListId)
+
+                    if (markedAsFavorite != null) {
+                        for ((userId, value) in markedAsFavorite!!) {
+                            getAllFavoriteWishlistsIdsFromMarkedAsFavoriteUsers(userId) { userSetting: UserSetting ->
+                                updateSalvagePriceInWish(salvagePrice, wishId, userSetting.favoriteListId)
+                            }
+                        }
+                    }
+
                 }
 
             override fun onCancelled(databaseError: DatabaseError) {}
         })
+    }
+
+    private fun getAllFavoriteWishlistsIdsFromMarkedAsFavoriteUsers(
+        userId: String?,
+        firebaseCallback: (UserSetting) -> Unit
+    ) {
+        FirebaseDatabase.getInstance().getReference("${DB_PATH_SETTINGS}$userId")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val userSetting = dataSnapshot.getValue(UserSetting::class.java)
+                    firebaseCallback.invoke(userSetting!!)
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {}
+            })
     }
 
     private fun updateSalvagePriceInWish(salvagePrice: Double, wishId: String?, wishlistId: String?) {
@@ -74,5 +98,6 @@ class PaymentViewModel {
     companion object {
         private const val DB_PATH_PAYMENTS = "/payments/"
         private const val DB_PATH_WISHES = "/wishes/"
+        private const val DB_PATH_SETTINGS = "/settings/"
     }
 }
