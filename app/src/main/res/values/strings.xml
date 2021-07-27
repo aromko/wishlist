@@ -74,7 +74,7 @@
     <string name="navigation_drawer_close">Navigation schließen</string>
     <string name="txtInvitationLinkCouldNotBeCreated">Einladungslink konnte nicht generiert werden.</string>
     <string name="txtObjectNotFound">Objekt wurde nicht gefunden.</string>
-    <string name="txtLogin">Anmelden</string>
+    <string name="txtLogin">Weiter mit Google</string>
     <string name="txtNoImageSourceFound">Es konnte kein Bildinhalt gefunden werden. Bitte geben Sie URLs mit der Endung .jpg, .gif, .png oder .jpeg an.</string>
     <string name="txtTextFromIntent">Lege einen neuen Wunsch an, um den Text zu übernehmen.</string>
     <string name="txtPictureSuccesfulUploaded">Das Bild wurde erfolgreich hochgeladen.</string>
@@ -125,4 +125,6 @@
     <string name="txtShowAdditionalInfos">Weitere Infos anzeigen</string>
     <string name="txtNoNavigationAppFound">Leider befindet sich keine Navigationsapp auf Ihrem Handy oder ist deaktiviert.</string>
     <string name="txtGiveAwayNotPossible">Wunsch wurde bereits verschenkt.</string>
+    <string name="txtLoginDescription">Wunschlisten immer und überall. Und das in Echtzeit.</string>
+    <string name="txtLogo">Logo</string>
 </resources>
