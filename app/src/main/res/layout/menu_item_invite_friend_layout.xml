@@ -11,7 +11,7 @@
     <ImageView
         android:layout_width="25dp"
         android:layout_height="25dp"
-        android:contentDescription="@string/txtUserSymbol"
+        android:contentDescription="@string/txtUserIcon"
         app:srcCompat="@drawable/ic_person_add_white" />
 
     <TextView

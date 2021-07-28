@@ -31,13 +31,13 @@
     <string name="txtEnterLinkToThePicture">Link zum Bild angeben</string>
     <string name="txtDownloadImage">Bild herunterladen</string>
     <string name="txtNameAnonym">Anonym</string>
-    <string name="txtEmailAnonym">anonym@anonym.com</string>
+    <string name="txtEmailAnonym" translatable="false">anonym@anonym.com</string>
     <string name="txtPayment">Schenken</string>
     <string name="txtEdit">Editieren</string>
     <string name="txtProfile">Profil</string>
     <string name="txtSettings">Einstellungen</string>
     <string name="txtLogout">Abmelden</string>
-    <string name="txtFavoriteId">Favoriten Id</string>
+    <string name="txtFavoriteId">Favoritenid</string>
     <string name="txtNotEditable">nicht änderbar</string>
     <string name="txtGeneral">Allgemein</string>
     <string name="txtNotifications">Benachrichtigungen</string>
@@ -47,11 +47,11 @@
     <string name="txtMessages">Nachrichten</string>
     <string name="txtEditWish">Wunsch bearbeiten</string>
     <string name="txtNoPlaceFound">Es wurde kein Standort angegeben.</string>
-    <string name="txtImageChanged">imageChanged</string>
-    <string name="txtImageDeleted">imageDeleted</string>
+    <string name="txtImageChanged" translatable="false">imageChanged</string>
+    <string name="txtImageDeleted" translatable="false">imageDeleted</string>
     <string name="txtSuccessfulChangedWish">Wunsch wurde erfolgreich geändert.</string>
-    <string name="txtGoogleSignInFauked">Google Anmeldung fehlgeschlagen.</string>
-    <string name="txtAithenticationFailed">Authentifizierung fehlgeschlagen.</string>
+    <string name="txtGoogleSignInFailed">Google Anmeldung fehlgeschlagen.</string>
+    <string name="txtAuthenticationFailed">Authentifizierung fehlgeschlagen.</string>
     <string name="txtNoInvitationFound">Die Einladung konnte nicht zugeordnet werden.</string>
     <string name="txtOk">OK</string>
     <string name="txtCancel">Abbrechen</string>
@@ -61,15 +61,15 @@
     <string name="txtAddWish">Wunsch hinzufügen</string>
     <string name="txtWishSuccessfulAdded">Wunsch wurde erfolgreich hinzugefügt.</string>
     <string name="txtNoUrlFound">Es wurde keine Url angegeben.</string>
-    <string name="txtIsFavorite">isFavorite</string>
-    <string name="txtIsNoFavorite">isNoFavorite</string>
+    <string name="txtIsFavorite" translatable="false">isFavorite</string>
+    <string name="txtIsNoFavorite" translatable="false">isNoFavorite</string>
     <string name="txtUnknownError">Unbekannter Fehler.</string>
     <string name="txtSuccessfulSave">Speichern erfolgreich.</string>
-    <string name="title_activity_wish">WishActivity</string>
-    <string name="title_activity_profil">ProfilActivity</string>
-    <string name="title_activity_edit_wish">EditWishActivity</string>
-    <string name="title_activity_chat">ChatActivity</string>
-    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="title_activity_wish" translatable="false">WishActivity</string>
+    <string name="title_activity_profil" translatable="false">ProfilActivity</string>
+    <string name="title_activity_edit_wish" translatable="false">EditWishActivity</string>
+    <string name="title_activity_chat" translatable="false">ChatActivity</string>
+    <string name="title_activity_settings" translatable="false">SettingsActivity</string>
     <string name="navigation_drawer_open">Navigation öffnen</string>
     <string name="navigation_drawer_close">Navigation schließen</string>
     <string name="txtInvitationLinkCouldNotBeCreated">Einladungslink konnte nicht generiert werden.</string>
@@ -81,18 +81,18 @@
     <string name="txtPictureNotSuccesfulUploaded">Das Bild konnte nicht hochgeladen werden.</string>
     <string name="txtGetPermissions">Um wichtige Funktionen der App nutzen zu können müssen Sie den dafür erforderlichen Berechtigungen zustimmen.</string>
     <string name="txtHaveFunWithTheApp">Viel Spaß beim Benutzen der App.</string>
-    <string name="txtPermissionDenied">Permission denied</string>
-    <string name="txtUserSymbol">Benutzersymbol</string>
-    <string name="txtExampleTitle">Samsung S7</string>
-    <string name="txtExamplePrice">100 €</string>
+    <string name="txtPermissionDenied">Berechtigung verweigert.</string>
+    <string name="txtUserIcon">Benutzersymbol</string>
+    <string name="txtExampleTitle" translatable="false">Samsung S7</string>
+    <string name="txtExamplePrice" translatable="false">100 €</string>
     <string name="txtProductImage">Produktbild</string>
     <string name="txtWishstrengthIcon">Wunschstärke</string>
-    <string name="txtExmapleUserCounter">10</string>
+    <string name="txtExmapleUserCounter" translatable="false">10</string>
     <string name="txtExampleMapIcon">Kartensymbol</string>
     <string name="txtExampleUrlIcon">Urlsymbol</string>
     <string name="txtExampleChatIcon">Chaticon</string>
     <string name="txtExampleFavoriteIcon">Favoriteicon</string>
-    <string name="txtMenue">⋮</string>
+    <string name="txtMenue" translatable="false">⋮</string>
     <string name="txtErrorPlaces">Hier ist ein fehler aufgetreten:</string>
     <string name="invalid_title">Bitte geben sie einen Titel ein.</string>
     <string name="invalid_url">Bitte geben Sie eine gültige URL ein.</string>

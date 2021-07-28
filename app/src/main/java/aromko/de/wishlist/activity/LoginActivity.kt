@@ -7,7 +7,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import aromko.de.wishlist.R
-import aromko.de.wishlist.activity.MainActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -55,7 +54,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                 val account = task.getResult(ApiException::class.java)
                 loginToFirebase(account)
             } catch (e: ApiException) {
-                Toast.makeText(applicationContext, R.string.txtGoogleSignInFauked, Toast.LENGTH_LONG).show()
+                Toast.makeText(applicationContext, R.string.txtGoogleSignInFailed, Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -70,7 +69,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                             finish()
                         }
                     } else {
-                        Snackbar.make(findViewById(R.id.main_layout), R.string.txtAithenticationFailed, Snackbar.LENGTH_SHORT).show()
+                        Snackbar.make(findViewById(R.id.main_layout), R.string.txtAuthenticationFailed, Snackbar.LENGTH_SHORT).show()
                     }
                 }
     }
