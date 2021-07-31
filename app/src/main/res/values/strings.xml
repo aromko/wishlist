@@ -37,7 +37,7 @@
     <string name="txtProfile">Profil</string>
     <string name="txtSettings">Einstellungen</string>
     <string name="txtLogout">Abmelden</string>
-    <string name="txtFavoriteId">Favoritenid</string>
+    <string name="txtFavoriteId">Favoriten-Id</string>
     <string name="txtNotEditable">nicht änderbar</string>
     <string name="txtGeneral">Allgemein</string>
     <string name="txtNotifications">Benachrichtigungen</string>
@@ -127,4 +127,6 @@
     <string name="txtGiveAwayNotPossible">Wunsch wurde bereits verschenkt.</string>
     <string name="txtLoginDescription">Wunschlisten immer und überall in Echtzeit.</string>
     <string name="txtLogo">Logo</string>
+    <string name="general_releasenotes">Hier kannst du alle Neuerungen nachlesen.</string>
+    <string name="general_app_intro">Lerne die wichtigsten Funktionen kennen.</string>
 </resources>

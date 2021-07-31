@@ -3,7 +3,7 @@
 
     <Preference
         app:title="Releasenotes"
-        app:summary="Hier kannst du alle Neuerungen nachlesen">
+        app:summary="@string/general_releasenotes">
         <intent
             android:action="android.intent.action.VIEW"
             android:data="https://sites.google.com/view/wishlist-releasenotes/startseite" />
@@ -11,7 +11,7 @@
 
     <Preference
         app:title="App-Intro"
-        app:summary="Lerne die wichtigsten Funktionen kennen">
+        app:summary="@string/general_app_intro">
         <intent android:action="AppIntro" />
     </Preference>
 

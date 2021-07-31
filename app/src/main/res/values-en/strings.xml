@@ -41,7 +41,7 @@
     <string name="txtLogin">Continue with Google</string>
     <string name="txtEditProfile">Edit profile</string>
     <string name="txtNoUrlFound">No URL found.</string>
-    <string name="releaseNotesIntroDescription">Good news! There is a new release. You can find the latest changes at \\n https://sites.google.com/view/wishlist-releasenotes/startseite \\n or in the settings menu -> \\n General -> Release Notes. \\n\\n Have fun using the app. \\n\\n\\n Note: To improve the app continuously I need your feedback. You can write a review directly in the App-Store or send an email to aromkoapps@gmail.com.</string>
+    <string name="releaseNotesIntroDescription">Good news! There is a new release. You can find the latest changes at \n https://sites.google.com/view/wishlist-releasenotes/startseite \n or in the settings menu -> \n General -> Release Notes. \n\n Have fun using the app. \n\n\n Note: To improve the app continuously I need your feedback. You can write a review directly in the App-Store or send an email to aromkoapps@gmail.com.</string>
     <string name="txtPriceInEuro">Price in €</string>
     <string name="txtWishstrength">Desired thickness</string>
     <string name="txtNameOfTheList">Name of the list</string>
@@ -52,7 +52,7 @@
     <string name="txtEnterLinkToThePicture">Provide link to image</string>
     <string name="txtNameAnonym">Anonymous</string>
     <string name="txtPayment">Give</string>
-    <string name="txtFavoriteId">Favorite id</string>
+    <string name="txtFavoriteId">Favorite-Id</string>
     <string name="txtNotEditable">not changeable</string>
     <string name="txtGeneral">General</string>
     <string name="txtWishlistNotifications">Wish List Notifications</string>
@@ -114,4 +114,6 @@
     <string name="txtLoginDescription">Wish lists always and everywhere in real time.</string>
     <string name="txtLogo">Logo</string>
     <string name="txtUserIcon">User icon</string>
+    <string name="general_releasenotes">Here you can read all the innovations.</string>
+    <string name="general_app_intro">Get to know the most important functions.</string>
 </resources>
