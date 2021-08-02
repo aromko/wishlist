@@ -41,7 +41,7 @@
     <string name="txtLogin">Continue with Google</string>
     <string name="txtEditProfile">Edit profile</string>
     <string name="txtNoUrlFound">No URL found.</string>
-    <string name="releaseNotesIntroDescription">Good news! There is a new release. You can find the latest changes at \n https://sites.google.com/view/wishlist-releasenotes/startseite \n or in the settings menu -> \n General -> Release Notes. \n\n Have fun using the app. \n\n\n Note: To improve the app continuously I need your feedback. You can write a review directly in the App-Store or send an email to aromkoapps@gmail.com.</string>
+    <string name="releaseNotesIntroDescription">Good news! There is a new release. You can find the latest changes at \n https://sites.google.com/view/wishlist-releasenotes/releasenotes/english \n or in the settings menu -> \n General -> Release Notes. \n\n Have fun using the app. \n\n\n Note: To improve the app continuously I need your feedback. You can write a review directly in the App-Store or send an email to aromkoapps@gmail.com.</string>
     <string name="txtPriceInEuro">Price in €</string>
     <string name="txtWishstrength">Desired thickness</string>
     <string name="txtNameOfTheList">Name of the list</string>
@@ -116,4 +116,5 @@
     <string name="txtUserIcon">User icon</string>
     <string name="general_releasenotes">Here you can read all the innovations.</string>
     <string name="general_app_intro">Get to know the most important functions.</string>
+    <string name="general_link_to_releasenotes">https://sites.google.com/view/wishlist-releasenotes/releasenotes/english</string>
 </resources>
