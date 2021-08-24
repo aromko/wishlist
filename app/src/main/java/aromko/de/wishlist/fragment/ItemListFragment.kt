@@ -117,7 +117,7 @@ class ItemListFragment : Fragment() {
                     markedAsFavorite: Map<String?, Boolean?>?
                 ) {
                     val paymentViewModel = PaymentViewModel()
-                    if ((salvagePrice + partialPrice) <= price) {
+                    if (salvagePrice < price) {
                         paymentViewModel.buyItem(
                             wishId,
                             price,
