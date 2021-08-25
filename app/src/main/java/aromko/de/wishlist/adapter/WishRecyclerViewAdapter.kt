@@ -13,7 +13,9 @@ import androidx.recyclerview.widget.RecyclerView
 import aromko.de.wishlist.R
 import aromko.de.wishlist.activity.EditWishActivity
 import aromko.de.wishlist.fragment.ItemListFragment.OnListFragmentInteractionListener
+import aromko.de.wishlist.model.Payment
 import aromko.de.wishlist.model.Wish
+import aromko.de.wishlist.viewModel.PaymentViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.squareup.picasso.Callback
 import com.squareup.picasso.NetworkPolicy
@@ -121,6 +123,13 @@ class WishRecyclerViewAdapter(
         if (holder.mItem?.salvagePrice != holder.mItem?.price || holder.mItem?.price == 0.0 && holder.mItem?.salvagePrice == 0.0) {
             holder.tvGiveAway.visibility = View.GONE
         } else {
+            val paymentViewModel = PaymentViewModel()
+            paymentViewModel.getPayment(holder.mItem?.wishId) { payment: Payment? ->
+                val fFirebaseAuth = FirebaseAuth.getInstance()
+                if(payment?.partialPayments?.containsKey(fFirebaseAuth.currentUser!!.uid) == true){
+                    holder.tvGiveAway.setBackgroundResource(R.drawable.ribbon_primary)
+                }
+            }
             holder.tvGiveAway.visibility = View.VISIBLE
         }
         holder.tvItemOptions.setOnClickListener { view: View ->
