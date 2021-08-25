@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import aromko.de.wishlist.R
 import aromko.de.wishlist.activity.ChatActivity
 import aromko.de.wishlist.adapter.WishRecyclerViewAdapter
+import aromko.de.wishlist.model.Payment
 import aromko.de.wishlist.model.Wish
 import aromko.de.wishlist.viewModel.PaymentViewModel
 import aromko.de.wishlist.viewModel.WishViewModel
@@ -117,20 +118,27 @@ class ItemListFragment : Fragment() {
                     markedAsFavorite: Map<String?, Boolean?>?
                 ) {
                     val paymentViewModel = PaymentViewModel()
-                    if (salvagePrice < price) {
-                        paymentViewModel.buyItem(
-                            wishId,
-                            price,
-                            partialPrice,
-                            wishlistId,
-                            markedAsFavorite
-                        )
-                    } else {
-                        Snackbar.make(
-                            view,
-                            getString(R.string.txtGiveAwayNotPossible),
-                            Snackbar.LENGTH_LONG
-                        ).setBackgroundTint(Color.RED).show()
+                    paymentViewModel.getPayment(wishId) { payment: Payment? ->
+                        val fFirebaseAuth = FirebaseAuth.getInstance()
+                        if(payment != null && payment.partialPayments!!.containsKey(fFirebaseAuth.currentUser!!.uid)){
+                            paymentViewModel.deletePayment(wishId, wishlistId, markedAsFavorite)
+                        } else {
+                            if (salvagePrice < price) {
+                                paymentViewModel.buyItem(
+                                    wishId,
+                                    price,
+                                    partialPrice,
+                                    wishlistId,
+                                    markedAsFavorite
+                                )
+                            } else {
+                                Snackbar.make(
+                                    view,
+                                    getString(R.string.txtGiveAwayNotPossible),
+                                    Snackbar.LENGTH_LONG
+                                ).setBackgroundTint(Color.RED).show()
+                            }
+                        }
                     }
                 }
 
@@ -159,16 +167,14 @@ class ItemListFragment : Fragment() {
                         val bundle = Bundle()
                         bundle.putString("wishlistId", wishlistId)
                         bundle.putString("wishlistName", wishlistName)
-                        val fragment = Fragment.instantiate(
+                        val fragment = instantiate(
                             context,
                             ItemListFragment::class.java.name,
                             bundle
                         ) as ItemListFragment
-                        if (fragment != null) {
-                            val ft = activity?.supportFragmentManager?.beginTransaction()
-                            ft?.replace(R.id.content_frame, fragment)
-                            ft?.commit()
-                        }
+                        val ft = activity?.supportFragmentManager?.beginTransaction()
+                        ft?.replace(R.id.content_frame, fragment)
+                        ft?.commit()
                     }
                 }
             }
@@ -178,7 +184,7 @@ class ItemListFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        var allowedUsersSize = requireArguments().getString("allowedUsersSize")
+        val allowedUsersSize = requireArguments().getString("allowedUsersSize")
         val invitePeopleMenuItem = menu.findItem(R.id.action_invitePeople)
         val actionView: View = invitePeopleMenuItem.actionView
         val tvUser: TextView = actionView.findViewById(R.id.tvFavoriteCount)

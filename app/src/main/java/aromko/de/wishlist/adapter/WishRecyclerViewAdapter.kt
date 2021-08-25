@@ -36,7 +36,7 @@ class WishRecyclerViewAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.mItem = mValues[position]
+        holder.mItem = mValues[holder.absoluteAdapterPosition]
         checkValuesAndSetIconColor(holder)
         if (holder.mItem?.wishlistId == mFavoriteListId) {
             holder.favorite.visibility = View.INVISIBLE
@@ -82,7 +82,7 @@ class WishRecyclerViewAdapter(
             2 -> holder.ivWishstrength.setImageResource(R.drawable.ic_wishstrength_high)
             else -> holder.ivWishstrength.setImageResource(R.drawable.ic_wishstrength_low)
         }
-        holder.mView.setOnClickListener { view: View? -> mListener?.onListFragmentInteraction(holder.mItem, holder.adapterPosition) }
+        holder.mView.setOnClickListener { view: View? -> mListener?.onListFragmentInteraction(holder.mItem, holder.absoluteAdapterPosition) }
         holder.favorite.setOnClickListener { view: View? ->
             var isFavorite = true
             if (holder.favorite.tag === context!!.getString(R.string.txtIsNoFavorite)) {
@@ -104,15 +104,15 @@ class WishRecyclerViewAdapter(
                 }
             }
         }
-        if (mValues[position]!!.isImageSet) {
+        if (mValues[holder.absoluteAdapterPosition]!!.isImageSet) {
             Picasso.get()
-                .load(Uri.parse(mValues[position]?.photoUrl))
+                .load(Uri.parse(mValues[holder.absoluteAdapterPosition]?.photoUrl))
                 .networkPolicy(NetworkPolicy.OFFLINE)
                 .into(holder.productImage, object : Callback {
                     override fun onSuccess() {}
                     override fun onError(e: Exception) {
                         Picasso.get()
-                            .load(Uri.parse(mValues[position]?.photoUrl))
+                            .load(Uri.parse(mValues[holder.absoluteAdapterPosition]?.photoUrl))
                             .error(R.drawable.no_image_available)
                             .into(holder.productImage)
                     }
