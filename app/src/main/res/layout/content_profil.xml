@@ -72,6 +72,7 @@
                                 android:id="@+id/etName"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:background="@color/colorWhite"
                                 android:inputType="textPersonName"
                                 android:textSize="18sp" />
                         </com.google.android.material.textfield.TextInputLayout>
@@ -99,6 +100,7 @@
                                 android:id="@+id/etEmail"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:background="@color/colorWhite"
                                 android:enabled="false"
                                 android:inputType="textEmailAddress"
                                 android:textSize="18sp" />
