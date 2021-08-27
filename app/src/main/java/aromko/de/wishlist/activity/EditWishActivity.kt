@@ -52,7 +52,7 @@ class EditWishActivity : AppCompatActivity() {
     private var btnDeleteImage: ImageButton? = null
     private var photoUrl: String? = null
     private var favoriteListId: String? = ""
-    private var salvagePrice = 0.0
+    private var salvagePrice: Double? = null
     private var markedAsFavorite: Map<String?, Boolean?>? = null
     var photoHelper: PhotoHelper? = null
     var awesomeValidation: AwesomeValidation? = null
@@ -123,7 +123,6 @@ class EditWishActivity : AppCompatActivity() {
             }
             btnDeleteImage?.tag = photoUrl
             salvagePrice = wish.salvagePrice
-
             markedAsFavorite = wish.markedAsFavorite
         }
         val fFirebaseAuth = FirebaseAuth.getInstance()
@@ -219,7 +218,7 @@ class EditWishActivity : AppCompatActivity() {
                 wishlistId,
                 wishlistName
             )
-            wishViewModel.updateWish(wishlistId, wishId, wish, favoriteListId)
+            wishViewModel.updateWish(wishlistId, wishId, wish)
 
             if (markedAsFavorite != null) {
                 for ((userId, value) in markedAsFavorite!!) {

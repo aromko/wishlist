@@ -56,13 +56,14 @@ class WishRecyclerViewAdapter(
         holder.tvFavoriteCount.text = counter.toString()
         holder.item_name.text = holder.mItem?.title
         val format = NumberFormat.getCurrencyInstance()
-        if (holder.mItem?.salvagePrice == 0.0) {
+        holder.item_price.text = format.format(holder.mItem?.price)
+        /*if (holder.mItem?.salvagePrice == 0.0) {
             holder.item_price.text = format.format(holder.mItem?.price)
         } else {
             val priceText =
                 format.format(holder.mItem?.salvagePrice) + " / " + format.format(holder.mItem?.price)
             holder.item_price.text = priceText
-        }
+        }*/
         //TODO: Entfernen, wenn anteilig
         holder.item_price.text = format.format(holder.mItem?.price)
         if (holder.mItem?.markedAsFavorite != null && holder.mItem?.markedAsFavorite!!.containsKey(
@@ -120,7 +121,8 @@ class WishRecyclerViewAdapter(
                     }
                 })
         }
-        if (holder.mItem?.salvagePrice != holder.mItem?.price || holder.mItem?.price == 0.0 && holder.mItem?.salvagePrice == 0.0) {
+
+        if (holder.mItem?.salvagePrice == null) {
             holder.tvGiveAway.visibility = View.GONE
         } else {
             val paymentViewModel = PaymentViewModel()
@@ -132,6 +134,7 @@ class WishRecyclerViewAdapter(
             }
             holder.tvGiveAway.visibility = View.VISIBLE
         }
+
         holder.tvItemOptions.setOnClickListener { view: View ->
             val popupMenu = PopupMenu(context, holder.tvItemOptions)
             popupMenu.inflate(R.menu.item_options_menu)
@@ -150,7 +153,7 @@ class WishRecyclerViewAdapter(
                         holder.mItem?.price!!,
                         holder.mItem?.price!!,
                         holder.mItem!!.wishlistId,
-                        holder.mItem?.salvagePrice!!,
+                        holder.mItem?.salvagePrice,
                         holder.mItem?.markedAsFavorite
                     )
                     return@setOnMenuItemClickListener true
@@ -160,7 +163,7 @@ class WishRecyclerViewAdapter(
                             holder.mItem?.wishId,
                             holder.mItem?.price!!,
                             holder.mItem!!.wishlistId,
-                            holder.mItem?.salvagePrice!!,
+                            holder.mItem?.salvagePrice,
                             holder.mItem?.markedAsFavorite
                         )
                     }
@@ -217,7 +220,7 @@ class WishRecyclerViewAdapter(
         wishId: String?,
         price: Double,
         wishlistId: String?,
-        salvagePrice: Double,
+        salvagePrice: Double?,
         markedAsFavorite: Map<String?, Boolean?>?
     ) {
         val builder = AlertDialog.Builder(context!!)

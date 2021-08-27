@@ -1,6 +1,5 @@
 package aromko.de.wishlist.viewModel
 
-import android.app.Application
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -23,7 +22,7 @@ class WishViewModel : ViewModel {
         liveData = FirebaseQueryLiveData(wishes_ref)
     }
 
-    constructor(mApplication: Application?, wishlistId: String?) {
+    constructor(wishlistId: String?) {
         wishes_ref = FirebaseDatabase.getInstance().getReference("/$DB_PATH_WISHES/$wishlistId")
         liveData = FirebaseQueryLiveData(wishes_ref!!.orderByChild("timestamp"))
         listsLiveData.addSource(liveData) { dataSnapshot: DataSnapshot? ->
@@ -49,7 +48,8 @@ class WishViewModel : ViewModel {
         return listsLiveData
     }
 
-    fun updateWish(wishlistId: String?, wishId: String?, wish: Wish, favoriteListId: String?) {
+    fun updateWish(wishlistId: String?, wishId: String?, wish: Wish) {
+        FirebaseDatabase.getInstance().getReference("${DB_PATH_PAYMENTS}$wishId/price").setValue(wish.price)
         FirebaseDatabase.getInstance().getReference("/$DB_PATH_WISHES/$wishlistId/$wishId")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -139,6 +139,7 @@ class WishViewModel : ViewModel {
     fun deleteWish(wishId: String?, wishlistId: String?, favoriteListId: String?) {
         val counter = 1
         FirebaseDatabase.getInstance().getReference("/$DB_PATH_WISHES/$wishlistId/$wishId").removeValue()
+        FirebaseDatabase.getInstance().getReference("${DB_PATH_PAYMENTS}$wishId").removeValue()
         FirebaseDatabase.getInstance().getReference("/$DB_PATH_WISHLISTS/$wishlistId").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val wishlist = dataSnapshot.getValue(Wishlist::class.java)
@@ -167,7 +168,7 @@ class WishViewModel : ViewModel {
         deleteImageFromFirebaseStorageByWishId(wishId)
     }
 
-    fun deleteImageFromFirebaseStorageByWishId(wishId: String?) {
+    private fun deleteImageFromFirebaseStorageByWishId(wishId: String?) {
         val storage = FirebaseStorage.getInstance()
         val storageRef = storage.reference
         val desertRef = storageRef.child(wishId!!)
@@ -210,5 +211,6 @@ class WishViewModel : ViewModel {
         private const val DB_PATH_WISHLISTS = "wishLists"
         private var wishes_ref: DatabaseReference? = null
         private const val DB_PATH_SETTINGS = "settings"
+        private const val DB_PATH_PAYMENTS = "/payments/"
     }
 }

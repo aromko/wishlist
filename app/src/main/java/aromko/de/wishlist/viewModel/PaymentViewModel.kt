@@ -67,17 +67,15 @@ class PaymentViewModel {
     }
 
     fun deletePayment(wishId: String?, wishlistId: String?, markedAsFavorite: Map<String?, Boolean?>?) {
-        FirebaseDatabase.getInstance().getReference("${DB_PATH_PAYMENTS}$wishId").removeValue()
-
-        val salvagePrice = 0.0
-        updateSalvagePriceInWish(salvagePrice, wishId, wishlistId)
+        FirebaseDatabase.getInstance().getReference("$DB_PATH_WISHES$wishlistId/$wishId/salvagePrice").removeValue()
         if (markedAsFavorite != null) {
             for ((userId) in markedAsFavorite) {
                 getFavoriteListIdFromUserId(userId) { favoriteListId: String? ->
-                    updateSalvagePriceInWish(salvagePrice, wishId, favoriteListId)
+                    FirebaseDatabase.getInstance().getReference("$DB_PATH_WISHES$favoriteListId/$wishId/salvagePrice").removeValue()
                 }
             }
         }
+        FirebaseDatabase.getInstance().getReference("${DB_PATH_PAYMENTS}$wishId").removeValue()
     }
 
     fun getPayment(wishId: String?, firebaseCallback: (Payment?) -> Unit) {

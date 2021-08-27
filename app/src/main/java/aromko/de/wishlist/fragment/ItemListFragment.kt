@@ -114,7 +114,7 @@ class ItemListFragment : Fragment() {
                     price: Double,
                     partialPrice: Double,
                     wishlistId: String?,
-                    salvagePrice: Double,
+                    salvagePrice: Double?,
                     markedAsFavorite: Map<String?, Boolean?>?
                 ) {
                     val paymentViewModel = PaymentViewModel()
@@ -123,7 +123,7 @@ class ItemListFragment : Fragment() {
                         if(payment != null && payment.partialPayments!!.containsKey(fFirebaseAuth.currentUser!!.uid)){
                             paymentViewModel.deletePayment(wishId, wishlistId, markedAsFavorite)
                         } else {
-                            if (salvagePrice < price) {
+                            if (payment == null) {
                                 paymentViewModel.buyItem(
                                     wishId,
                                     price,
@@ -219,7 +219,7 @@ class ItemListFragment : Fragment() {
             price: Double,
             partialPrice: Double,
             wishlistId: String?,
-            salvagePrice: Double,
+            salvagePrice: Double?,
             markedAsFavorite: Map<String?, Boolean?>?
         )
 

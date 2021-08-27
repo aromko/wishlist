@@ -142,9 +142,9 @@ class WishActivity : AppCompatActivity() {
     }
 
     fun saveWish(view: View?) {
-        var url = etUrl!!.text.toString()
+        val url = etUrl!!.text.toString()
         if (!url.isEmpty() && Validator.checkUrl(etUrl?.text.toString())) {
-            etUrl?.setText("https://" + url)
+            etUrl?.setText("https://$url")
         }
 
         if (awesomeValidation!!.validate()) {
@@ -174,7 +174,7 @@ class WishActivity : AppCompatActivity() {
                 System.currentTimeMillis() / 1000,
                 longitude,
                 latitude,
-                0.0,
+                null,
                 placeId,
                 photoUrl,
                 wishlistId,

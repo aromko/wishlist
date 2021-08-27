@@ -224,11 +224,9 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         bundle.putString("wishlistName", selectedWishlistName)
         bundle.putString("allowedUsersSize", allowedUsersSize.toString())
         val fragment = Fragment.instantiate(this, ItemListFragment::class.java.name, bundle) as ItemListFragment
-        if (fragment != null) {
-            val ft = supportFragmentManager.beginTransaction()
-            ft.replace(R.id.content_frame, fragment)
-            ft.commit()
-        }
+        val ft = supportFragmentManager.beginTransaction()
+        ft.replace(R.id.content_frame, fragment)
+        ft.commit()
 
         if (listView!!.getChildAt(position - listView!!.firstVisiblePosition) != null) {
             listView!!.getChildAt(position - listView!!.firstVisiblePosition).setBackgroundColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
@@ -536,7 +534,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         price: Double,
         partialPrice: Double,
         wishlistId: String?,
-        salvagePrice: Double,
+        salvagePrice: Double?,
         markedAsFavorite: Map<String?, Boolean?>?
     ) {
     }
