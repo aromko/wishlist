@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Wishlist</string>
-    <string name="app_version">0.6.1-alpha</string>
-    <string name="releaseNotesIntroTitle">Release 0.6.1-alpha</string>
+    <string name="app_version">1.0.0-beta</string>
+    <string name="releaseNotesIntroTitle">Release 1.0.0-beta</string>
     <string name="txtSend">Send</string>
     <string name="txtAdd">Add</string>
     <string name="txtDelete">Delete</string>
