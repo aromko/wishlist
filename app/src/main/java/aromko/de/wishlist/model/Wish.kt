@@ -22,7 +22,7 @@ class Wish : Comparable<Wish> {
     var timestamp: Long = 0
     var longitude = 0.0
     var latitude = 0.0
-    var salvagePrice = 0.0
+    var salvagePrice: Double? = null
     var placeId: String? = null
     var photoUrl: String? = null
     var originalWishlistId: String? = null
@@ -39,7 +39,7 @@ class Wish : Comparable<Wish> {
         timestamp: Long,
         longitude: Double,
         latitude: Double,
-        salvagePrice: Double,
+        salvagePrice: Double?,
         placeId: String?,
         photoUrl: String?,
         originalWishlistId: String?,
@@ -66,6 +66,6 @@ class Wish : Comparable<Wish> {
     }
 
     override fun compareTo(wish: Wish): Int {
-        return java.lang.Long.compare(wish.timestamp, timestamp)
+        return wish.timestamp.compareTo(timestamp)
     }
 }

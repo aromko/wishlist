@@ -13,7 +13,9 @@ import androidx.recyclerview.widget.RecyclerView
 import aromko.de.wishlist.R
 import aromko.de.wishlist.activity.EditWishActivity
 import aromko.de.wishlist.fragment.ItemListFragment.OnListFragmentInteractionListener
+import aromko.de.wishlist.model.Payment
 import aromko.de.wishlist.model.Wish
+import aromko.de.wishlist.viewModel.PaymentViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.squareup.picasso.Callback
 import com.squareup.picasso.NetworkPolicy
@@ -36,7 +38,7 @@ class WishRecyclerViewAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.mItem = mValues[position]
+        holder.mItem = mValues[holder.absoluteAdapterPosition]
         checkValuesAndSetIconColor(holder)
         if (holder.mItem?.wishlistId == mFavoriteListId) {
             holder.favorite.visibility = View.INVISIBLE
@@ -54,13 +56,14 @@ class WishRecyclerViewAdapter(
         holder.tvFavoriteCount.text = counter.toString()
         holder.item_name.text = holder.mItem?.title
         val format = NumberFormat.getCurrencyInstance()
-        if (holder.mItem?.salvagePrice == 0.0) {
+        holder.item_price.text = format.format(holder.mItem?.price)
+        /*if (holder.mItem?.salvagePrice == 0.0) {
             holder.item_price.text = format.format(holder.mItem?.price)
         } else {
             val priceText =
                 format.format(holder.mItem?.salvagePrice) + " / " + format.format(holder.mItem?.price)
             holder.item_price.text = priceText
-        }
+        }*/
         //TODO: Entfernen, wenn anteilig
         holder.item_price.text = format.format(holder.mItem?.price)
         if (holder.mItem?.markedAsFavorite != null && holder.mItem?.markedAsFavorite!!.containsKey(
@@ -82,7 +85,7 @@ class WishRecyclerViewAdapter(
             2 -> holder.ivWishstrength.setImageResource(R.drawable.ic_wishstrength_high)
             else -> holder.ivWishstrength.setImageResource(R.drawable.ic_wishstrength_low)
         }
-        holder.mView.setOnClickListener { view: View? -> mListener?.onListFragmentInteraction(holder.mItem, holder.adapterPosition) }
+        holder.mView.setOnClickListener { view: View? -> mListener?.onListFragmentInteraction(holder.mItem, holder.absoluteAdapterPosition) }
         holder.favorite.setOnClickListener { view: View? ->
             var isFavorite = true
             if (holder.favorite.tag === context!!.getString(R.string.txtIsNoFavorite)) {
@@ -104,25 +107,34 @@ class WishRecyclerViewAdapter(
                 }
             }
         }
-        if (mValues[position]!!.isImageSet) {
+        if (mValues[holder.absoluteAdapterPosition]!!.isImageSet) {
             Picasso.get()
-                .load(Uri.parse(mValues[position]?.photoUrl))
+                .load(Uri.parse(mValues[holder.absoluteAdapterPosition]?.photoUrl))
                 .networkPolicy(NetworkPolicy.OFFLINE)
                 .into(holder.productImage, object : Callback {
                     override fun onSuccess() {}
                     override fun onError(e: Exception) {
                         Picasso.get()
-                            .load(Uri.parse(mValues[position]?.photoUrl))
+                            .load(Uri.parse(mValues[holder.absoluteAdapterPosition]?.photoUrl))
                             .error(R.drawable.no_image_available)
                             .into(holder.productImage)
                     }
                 })
         }
-        if (holder.mItem?.salvagePrice != holder.mItem?.price || holder.mItem?.price == 0.0 && holder.mItem?.salvagePrice == 0.0) {
+
+        if (holder.mItem?.salvagePrice == null) {
             holder.tvGiveAway.visibility = View.GONE
         } else {
+            val paymentViewModel = PaymentViewModel()
+            paymentViewModel.getPayment(holder.mItem?.wishId) { payment: Payment? ->
+                val fFirebaseAuth = FirebaseAuth.getInstance()
+                if(payment?.partialPayments?.containsKey(fFirebaseAuth.currentUser!!.uid) == true){
+                    holder.tvGiveAway.setBackgroundResource(R.drawable.ribbon_primary)
+                }
+            }
             holder.tvGiveAway.visibility = View.VISIBLE
         }
+
         holder.tvItemOptions.setOnClickListener { view: View ->
             val popupMenu = PopupMenu(context, holder.tvItemOptions)
             popupMenu.inflate(R.menu.item_options_menu)
@@ -141,7 +153,7 @@ class WishRecyclerViewAdapter(
                         holder.mItem?.price!!,
                         holder.mItem?.price!!,
                         holder.mItem!!.wishlistId,
-                        holder.mItem?.salvagePrice!!,
+                        holder.mItem?.salvagePrice,
                         holder.mItem?.markedAsFavorite
                     )
                     return@setOnMenuItemClickListener true
@@ -151,7 +163,7 @@ class WishRecyclerViewAdapter(
                             holder.mItem?.wishId,
                             holder.mItem?.price!!,
                             holder.mItem!!.wishlistId,
-                            holder.mItem?.salvagePrice!!,
+                            holder.mItem?.salvagePrice,
                             holder.mItem?.markedAsFavorite
                         )
                     }
@@ -208,7 +220,7 @@ class WishRecyclerViewAdapter(
         wishId: String?,
         price: Double,
         wishlistId: String?,
-        salvagePrice: Double,
+        salvagePrice: Double?,
         markedAsFavorite: Map<String?, Boolean?>?
     ) {
         val builder = AlertDialog.Builder(context!!)

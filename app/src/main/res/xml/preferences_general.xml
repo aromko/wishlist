@@ -6,7 +6,7 @@
         app:summary="@string/general_releasenotes">
         <intent
             android:action="android.intent.action.VIEW"
-            android:data="https://sites.google.com/view/wishlist-releasenotes/startseite" />
+            android:data="@string/general_link_to_releasenotes" />
     </Preference>
 
     <Preference

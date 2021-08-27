@@ -19,7 +19,7 @@ class PaymentViewModel {
         wishlistId: String?,
         markedAsFavorite: Map<String?, Boolean?>?
     ) {
-        FirebaseDatabase.getInstance().getReference(DB_PATH_PAYMENTS + wishId)
+        FirebaseDatabase.getInstance().getReference("${DB_PATH_PAYMENTS}$wishId")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     val partialPayments: MutableMap<String?, Double?> = HashMap()
@@ -31,15 +31,15 @@ class PaymentViewModel {
                             partialPayments.putAll(currentPayment.partialPayments!!)
                         }
                         if (partialPayments.containsKey(fFirebaseUser!!.uid)) {
-                            salvagePriceUser = partialPayments[fFirebaseUser.uid]!! + partialPrice
+                            salvagePriceUser = partialPrice
                         }
-                        salvagePrice = currentPayment?.salvagePrice!! + partialPrice
+                        salvagePrice = partialPrice
                         if (salvagePrice <= 0.00) {
                             salvagePrice = 0.00
                         }
                         partialPayments[fFirebaseUser.uid] = salvagePriceUser
-                        currentPayment.salvagePrice = salvagePrice
-                        currentPayment.partialPayments = partialPayments
+                        currentPayment?.salvagePrice = salvagePrice
+                        currentPayment?.partialPayments = partialPayments
                         dataSnapshot.ref.setValue(currentPayment)
                     } else {
                         salvagePrice = partialPrice
@@ -53,9 +53,9 @@ class PaymentViewModel {
                     updateSalvagePriceInWish(salvagePrice, wishId, wishlistId)
 
                     if (markedAsFavorite != null) {
-                        for ((userId, value) in markedAsFavorite!!) {
-                            getAllFavoriteWishlistsIdsFromMarkedAsFavoriteUsers(userId) { userSetting: UserSetting ->
-                                updateSalvagePriceInWish(salvagePrice, wishId, userSetting.favoriteListId)
+                        for ((userId) in markedAsFavorite) {
+                            getFavoriteListIdFromUserId(userId) { favoriteListId: String? ->
+                                updateSalvagePriceInWish(salvagePrice, wishId, favoriteListId)
                             }
                         }
                     }
@@ -66,15 +66,39 @@ class PaymentViewModel {
         })
     }
 
-    private fun getAllFavoriteWishlistsIdsFromMarkedAsFavoriteUsers(
+    fun deletePayment(wishId: String?, wishlistId: String?, markedAsFavorite: Map<String?, Boolean?>?) {
+        FirebaseDatabase.getInstance().getReference("$DB_PATH_WISHES$wishlistId/$wishId/salvagePrice").removeValue()
+        if (markedAsFavorite != null) {
+            for ((userId) in markedAsFavorite) {
+                getFavoriteListIdFromUserId(userId) { favoriteListId: String? ->
+                    FirebaseDatabase.getInstance().getReference("$DB_PATH_WISHES$favoriteListId/$wishId/salvagePrice").removeValue()
+                }
+            }
+        }
+        FirebaseDatabase.getInstance().getReference("${DB_PATH_PAYMENTS}$wishId").removeValue()
+    }
+
+    fun getPayment(wishId: String?, firebaseCallback: (Payment?) -> Unit) {
+        FirebaseDatabase.getInstance().getReference("${DB_PATH_PAYMENTS}$wishId")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val payment = dataSnapshot.getValue(Payment::class.java)
+                    firebaseCallback.invoke(payment)
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {}
+            })
+    }
+
+    private fun getFavoriteListIdFromUserId(
         userId: String?,
-        firebaseCallback: (UserSetting) -> Unit
+        firebaseCallback: (String?) -> Unit
     ) {
         FirebaseDatabase.getInstance().getReference("${DB_PATH_SETTINGS}$userId")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     val userSetting = dataSnapshot.getValue(UserSetting::class.java)
-                    firebaseCallback.invoke(userSetting!!)
+                    firebaseCallback.invoke(userSetting!!.favoriteListId)
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {}
@@ -93,6 +117,10 @@ class PaymentViewModel {
 
             override fun onCancelled(databaseError: DatabaseError) {}
         })
+    }
+
+    interface FirebaseCallback {
+        fun onCallback(payment: Payment?)
     }
 
     companion object {
