@@ -376,9 +376,6 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
                     favoriteListId = userSetting.favoriteListId
                 }
                 sharedPreferences.edit().putString("favoriteListId", favoriteListId).commit()
-                val refresh = Intent(this, MainActivity::class.java)
-                startActivity(refresh)
-                finish()
             }]
         } else {
             favoriteListId = sharedPreferences.getString("favoriteListId", "")
