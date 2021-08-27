@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_version">0.7.0-alpha</string>
-    <string name="releaseNotesIntroTitle">Release 0.7.0-alpha</string>
+    <string name="app_version">0.6.1-alpha</string>
+    <string name="releaseNotesIntroTitle">Release 0.6.1-alpha</string>
     <string name="releaseNotesIntroDescription"><![CDATA[Gute Neuigkeiten! Es gibt ein neues Release. Die aktuellen Änderungen findest du unter \n https://sites.google.com/view/wishlist-releasenotes/releasenotes \n oder im Einstellungsmenü —> \n Allgemein —> Releasenotes. \n\n Viel Spaß beim Benutzen der App. \n\n\n Hinweis: Um die App stetig verbessern zu können bin ich auf dein Feedback angewiesen. Dafür kannst du direkt im App-Store eine Rezension oder eine E-Mail an aromkoapps@gmail.com schreiben.]]></string>
     <string name="app_name">Wishlist</string>
     <string name="txtSend">Senden</string>
